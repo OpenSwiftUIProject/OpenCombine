@@ -10,9 +10,8 @@ extension Publisher {
     /// Republishes elements while a predicate closure indicates publishing should
     /// continue.
     ///
-    /// Use `prefix(while:)` to emit values while elements from the upstream publishe
-    /// meet a condition you specify. The publisher finishes when the closure returns
-    /// `false`.
+    /// Use `prefix(while:)` to emit values while elements from the upstream publishe meet
+    /// a condition you specify. The publisher finishes when the closure returns `false`.
     ///
     /// In the example below, the `prefix(while:)` operator emits values while the element
     /// it receives is less than five:
@@ -34,10 +33,13 @@ extension Publisher {
         return .init(upstream: self, predicate: predicate)
     }
 
-    /// Republishes elements while an error-throwing predicate closure indicates publishing should continue.
+    /// Republishes elements while an error-throwing predicate closure indicates
+    /// publishing should continue.
     ///
-    /// Use ``Publisher/tryPrefix(while:)`` to emit values from the upstream publisher that meet a condition you specify in an error-throwing closure.
-    /// The publisher finishes when the closure returns `false`. If the closure throws an error, the publisher fails with that error.
+    /// Use ``Publisher/tryPrefix(while:)`` to emit values from the upstream publisher
+    /// that meet a condition you specify in an error-throwing closure. The publisher
+    /// finishes when the closure returns `false`. If the closure throws an error, the
+    /// publisher fails with that error.
     ///
     ///     struct OutOfRangeError: Error {}
     ///
@@ -54,8 +56,10 @@ extension Publisher {
     ///
     ///     // Prints: "10 9 8 7 6 5 4 3 2 1 completion: failure(OutOfRangeError()) "
     ///
-    /// - Parameter predicate: A closure that takes an element as its parameter and returns a Boolean value indicating whether publishing should continue.
-    /// - Returns: A publisher that passes through elements until the predicate throws or indicates publishing should finish.
+    /// - Parameter predicate: A closure that takes an element as its parameter and
+    ///   returns a Boolean value indicating whether publishing should continue.
+    /// - Returns: A publisher that passes through elements until the predicate throws or
+    ///   indicates publishing should finish.
     public func tryPrefix(
         while predicate: @escaping (Output) throws -> Bool
     ) -> Publishers.TryPrefixWhile<Self> {

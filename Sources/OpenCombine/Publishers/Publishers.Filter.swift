@@ -23,8 +23,8 @@ extension Publisher {
     ///
     ///     // Prints: "2 4"
     ///
-    /// - Parameter isIncluded: A closure that takes one element and returns
-    ///   a Boolean value indicating whether to republish the element.
+    /// - Parameter isIncluded: A closure that takes one element and returns a Boolean
+    ///   value indicating whether to republish the element.
     /// - Returns: A publisher that republishes all elements that satisfy the closure.
     public func filter(
         _ isIncluded: @escaping (Output) -> Bool
@@ -34,9 +34,14 @@ extension Publisher {
 
     /// Republishes all elements that match a provided error-throwing closure.
     ///
-    /// Use ``Publisher/tryFilter(_:)`` to filter elements evaluated in an error-throwing closure. If the `isIncluded` closure throws an error, the publisher fails with that error.
+    /// Use ``Publisher/tryFilter(_:)`` to filter elements evaluated in an error-throwing
+    /// closure. If the `isIncluded` closure throws an error, the publisher fails with
+    /// that error.
     ///
-    /// In the example below, ``Publisher/tryFilter(_:)`` checks to see if the element provided by the publisher is zero, and throws a `ZeroError` before terminating the publisher with the thrown error. Otherwise, it republishes the element only if it's even:
+    /// In the example below, ``Publisher/tryFilter(_:)`` checks to see if the element
+    /// provided by the publisher is zero, and throws a `ZeroError` before terminating the
+    /// publisher with the thrown error. Otherwise, it republishes the element only if
+    /// it's even:
     ///
     ///     struct ZeroError: Error {}
     ///
@@ -56,7 +61,8 @@ extension Publisher {
     ///
     ///     // Prints: "2 4 failure(DivisionByZeroError())".
     ///
-    /// - Parameter isIncluded: A closure that takes one element and returns a Boolean value that indicated whether to republish the element or throws an error.
+    /// - Parameter isIncluded: A closure that takes one element and returns a Boolean
+    ///   value that indicated whether to republish the element or throws an error.
     /// - Returns: A publisher that republishes all elements that satisfy the closure.
     public func tryFilter(
         _ isIncluded: @escaping (Output) throws -> Bool
@@ -119,8 +125,8 @@ extension Publishers {
             self.isIncluded = isIncluded
         }
 
-        /// This function is called to attach the specified `Subscriber`
-        /// to this `Publisher` by `subscribe(_:)`
+        /// This function is called to attach the specified `Subscriber` to this
+        /// `Publisher` by `subscribe(_:)`
         ///
         /// - SeeAlso: `subscribe(_:)`
         /// - Parameters:
@@ -134,7 +140,8 @@ extension Publishers {
         }
     }
 
-    /// A publisher that republishes all elements that match a provided error-throwing closure.
+    /// A publisher that republishes all elements that match a provided error-throwing
+    /// closure.
     public struct TryFilter<Upstream>: Publisher where Upstream: Publisher {
 
         /// The kind of values published by this publisher.
@@ -157,8 +164,8 @@ extension Publishers {
             self.isIncluded = isIncluded
         }
 
-        /// This function is called to attach the specified `Subscriber`
-        /// to this `Publisher` by `subscribe(_:)`
+        /// This function is called to attach the specified `Subscriber` to this
+        /// `Publisher` by `subscribe(_:)`
         ///
         /// - SeeAlso: `subscribe(_:)`
         /// - Parameters:

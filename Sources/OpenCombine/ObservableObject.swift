@@ -7,7 +7,9 @@
 
 /// A type of object with a publisher that emits before the object has changed.
 ///
-/// By default an ``ObservableObject`` synthesizes an ``ObservableObject/objectWillChange-5rtyt`` publisher that emits the changed value before any of its `@Published` properties changes.
+/// By default an ``ObservableObject`` synthesizes an
+/// ``ObservableObject/objectWillChange-5rtyt`` publisher that emits the changed value
+/// before any of its `@Published` properties changes.
 ///
 ///     class Contact: ObservableObject {
 ///         @Published var name: String

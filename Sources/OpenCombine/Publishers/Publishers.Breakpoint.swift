@@ -13,14 +13,14 @@
 
 extension Publisher {
 
-    /// Raises a debugger signal when a provided closure needs to stop the process in
-    /// the debugger.
+    /// Raises a debugger signal when a provided closure needs to stop the process in the
+    /// debugger.
     ///
     /// Use `breakpoint(receiveSubscription:receiveOutput:receiveCompletion:)` to examine
-    /// one or more stages of the subscribe/publish/completion process and stop in
-    /// the debugger, based on conditions you specify. When any of the provided closures
-    /// returns `true`, this operator raises the `SIGTRAP` signal to stop the process
-    /// in the debugger. Otherwise, this publisher passes through values and completions
+    /// one or more stages of the subscribe/publish/completion process and stop in the
+    /// debugger, based on conditions you specify. When any of the provided closures
+    /// returns `true`, this operator raises the `SIGTRAP` signal to stop the process in
+    /// the debugger. Otherwise, this publisher passes through values and completions
     /// as-is.
     ///
     /// In the example below, a `PassthroughSubject` publishes strings to a breakpoint
@@ -65,9 +65,14 @@ extension Publisher {
 
     /// Raises a debugger signal upon receiving a failure.
     ///
-    /// When the upstream publisher fails with an error, this publisher raises the `SIGTRAP` signal, which stops the process in the debugger. Otherwise, this publisher passes through values and completions as-is.
+    /// When the upstream publisher fails with an error, this publisher raises the
+    /// `SIGTRAP` signal, which stops the process in the debugger. Otherwise, this
+    /// publisher passes through values and completions as-is.
     ///
-    /// In this example a ``PassthroughSubject`` publishes strings, but its downstream ``Publisher/tryMap(_:)`` operator throws an error. This sends the error downstream as a ``Subscribers/Completion/failure(_:)``. The ``Publisher/breakpointOnError()`` operator receives this completion and stops the app in the debugger.
+    /// In this example a ``PassthroughSubject`` publishes strings, but its downstream
+    /// ``Publisher/tryMap(_:)`` operator throws an error. This sends the error downstream
+    /// as a ``Subscribers/Completion/failure(_:)``. The ``Publisher/breakpointOnError()``
+    /// operator receives this completion and stops the app in the debugger.
     ///
     ///      struct CustomError : Error {}
     ///      let publisher = PassthroughSubject<String?, Error>()
@@ -105,9 +110,9 @@ extension Publishers {
     /// A publisher that raises a debugger signal when a provided closure needs to stop
     /// the process in the debugger.
     ///
-    /// When any of the provided closures returns `true`, this publisher raises
-    /// the `SIGTRAP` signal to stop the process in the debugger.
-    /// Otherwise, this publisher passes through values and completions as-is.
+    /// When any of the provided closures returns `true`, this publisher raises the
+    /// `SIGTRAP` signal to stop the process in the debugger. Otherwise, this publisher
+    /// passes through values and completions as-is.
     public struct Breakpoint<Upstream: Publisher>: Publisher {
 
         public typealias Output = Upstream.Output
@@ -121,7 +126,8 @@ extension Publishers {
         /// raise a debugger signal by returning a `true` Boolean value.
         public let receiveSubscription: ((Subscription) -> Bool)?
 
-        /// A closure that executes when the publisher receives output from the upstream publisher, and can raise a debugger signal by returning a true Boolean value.
+        /// A closure that executes when the publisher receives output from the upstream
+        /// publisher, and can raise a debugger signal by returning a true Boolean value.
         public let receiveOutput: ((Upstream.Output) -> Bool)?
 
         /// A closure that executes when the publisher receives completion, and can raise

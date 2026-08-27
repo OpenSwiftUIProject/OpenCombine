@@ -23,7 +23,9 @@ override func viewDidLoad() {
 
 ### Migrate Notification-Handling Code to Use OpenCombine
 
-Using notification center callbacks and closures requires you to do all your work inside the callback method or closure. By migrating to OpenCombine, you can use operators to perform common tasks like filtering.
+Using notification center callbacks and closures requires you to do all your work inside
+the callback method or closure. By migrating to OpenCombine, you can use operators to
+perform common tasks like filtering.
 
 To take advantage of OpenCombine, use the [NotificationCenter.Publisher](https://developer.apple.com/documentation/foundation/notificationcenter/publisher) to migrate your [NSNotification](https://developer.apple.com/documentation/foundation/nsnotification) handling code to the OpenCombine idiom. You create this publisher with the [NotificationCenter](https://developer.apple.com/documentation/foundation/notificationcenter) method [publisher(for:object:)](https://developer.apple.com/documentation/foundation/notificationcenter/publisher(for:object:)), passing in the notification name in which you’re interested and a source object, if any.
 

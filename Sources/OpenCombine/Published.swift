@@ -7,9 +7,15 @@
 
 extension Publisher where Failure == Never {
 
-    /// Republishes elements received from a publisher, by assigning them to a property marked as a publisher.
+    /// Republishes elements received from a publisher, by assigning them to a property
+    /// marked as a publisher.
     ///
-    /// Use this operator when you want to receive elements from a publisher and republish them through a property marked with the `@Published` attribute. The `assign(to:)` operator manages the life cycle of the subscription, canceling the subscription automatically when the ``Published`` instance deinitializes. Because of this, the `assign(to:)` operator doesn't return an ``AnyCancellable`` that you're responsible for like ``assign(to:on:)`` does.
+    /// Use this operator when you want to receive elements from a publisher and republish
+    /// them through a property marked with the `@Published` attribute. The `assign(to:)`
+    /// operator manages the life cycle of the subscription, canceling the subscription
+    /// automatically when the ``Published`` instance deinitializes. Because of this, the
+    /// `assign(to:)` operator doesn't return an ``AnyCancellable`` that you're
+    /// responsible for like ``assign(to:on:)`` does.
     ///
     /// The example below shows a model class that receives elements from an internal [Timer.TimerPublisher](https://developer.apple.com/documentation/foundation/timer/timerpublisher), and assigns them to a `@Published` property called `lastUpdated`. Because the `to` parameter has the `inout` keyword, you need to use the `&` operator when calling this method.
     ///
@@ -22,9 +28,14 @@ extension Publisher where Failure == Never {
     ///         }
     ///     }
     ///
-    /// If you instead implemented `MyModel` with `assign(to: lastUpdated, on: self)`, storing the returned ``AnyCancellable`` instance could cause a reference cycle, because the ``Subscribers/Assign`` subscriber would hold a strong reference to `self`. Using `assign(to:)` solves this problem.
+    /// If you instead implemented `MyModel` with `assign(to: lastUpdated, on: self)`,
+    /// storing the returned ``AnyCancellable`` instance could cause a reference cycle,
+    /// because the ``Subscribers/Assign`` subscriber would hold a strong reference to
+    /// `self`. Using `assign(to:)` solves this problem.
     ///
-    /// While the `to` parameter uses the `inout` keyword, this method doesn't replace a reference type passed to it. Instead, this notation indicates that the operator may modify members of the assigned object, as seen in the following example:
+    /// While the `to` parameter uses the `inout` keyword, this method doesn't replace a
+    /// reference type passed to it. Instead, this notation indicates that the operator
+    /// may modify members of the assigned object, as seen in the following example:
     ///
     ///         class MyModel2: ObservableObject {
     ///             @Published var id: Int = 0
@@ -32,7 +43,8 @@ extension Publisher where Failure == Never {
     ///         let model2 = MyModel2()
     ///         Just(100).assign(to: &model2.$id)
     ///
-    /// - Parameter published: A property marked with the `@Published` attribute, which receives and republishes all elements received from the upstream publisher.
+    /// - Parameter published: A property marked with the `@Published` attribute, which
+    ///   receives and republishes all elements received from the upstream publisher.
     public func assign(to published: inout Published<Output>.Publisher) {
         subscribe(PublishedSubscriber(published.subject))
     }
@@ -62,10 +74,10 @@ extension Publisher where Failure == Never {
 ///     // Temperature now: 25.0
 ///
 /// When the property changes, publishing occurs in the property's `willSet` block,
-/// meaning subscribers receive the new value before it's actually set on the property.
-/// In the above example, the second time the sink executes its closure, it receives
-/// the parameter value `25`. However, if the closure evaluated `weather.temperature`,
-/// the value returned would be `20`.
+/// meaning subscribers receive the new value before it's actually set on the property. In
+/// the above example, the second time the sink executes its closure, it receives the
+/// parameter value `25`. However, if the closure evaluated `weather.temperature`, the
+/// value returned would be `20`.
 ///
 /// > Important: The `@Published` attribute is class constrained. Use it with properties
 /// of classes, not with non-class types like structures.
@@ -127,7 +139,8 @@ public struct Published<Value> {
 
     /// Creates the published instance with an initial value.
     ///
-    /// Don't use this initializer directly. Instead, create a property with the `@Published` attribute, as shown here:
+    /// Don't use this initializer directly. Instead, create a property with the
+    /// `@Published` attribute, as shown here:
     ///
     ///     @Published var lastUpdated: Date = Date()
     ///
@@ -138,7 +151,8 @@ public struct Published<Value> {
 
     /// Creates the published instance with an initial wrapped value.
     ///
-    /// Don't use this initializer directly. Instead, create a property with the `@Published` attribute, as shown here:
+    /// Don't use this initializer directly. Instead, create a property with the
+    /// `@Published` attribute, as shown here:
     ///
     ///     @Published var lastUpdated: Date = Date()
     ///

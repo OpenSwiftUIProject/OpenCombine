@@ -7,8 +7,8 @@
 
 extension Publishers {
 
-    /// A publisher that converts any failure from the
-    /// upstream publisher into a new error.
+    /// A publisher that converts any failure from the upstream publisher into a new
+    /// error.
     public struct MapError<Upstream: Publisher, Failure: Error>: Publisher {
 
         /// The kind of values published by this publisher.
@@ -27,8 +27,8 @@ extension Publishers {
             self.transform = map
         }
 
-        /// This function is called to attach the specified `Subscriber`
-        /// to this `Publisher` by `subscribe(_:)`
+        /// This function is called to attach the specified `Subscriber` to this
+        /// `Publisher` by `subscribe(_:)`
         ///
         /// - SeeAlso: `subscribe(_:)`
         /// - Parameters:
@@ -52,8 +52,8 @@ extension Publisher {
     /// match.
     ///
     /// The following example uses a `tryMap(_:)` operator to divide `1` by each element
-    /// produced by a sequence publisher. When the publisher produces a `0`,
-    /// the `tryMap(_:)` fails with a `DivisionByZeroError`. The `mapError(_:)` operator
+    /// produced by a sequence publisher. When the publisher produces a `0`, the
+    /// `tryMap(_:)` fails with a `DivisionByZeroError`. The `mapError(_:)` operator
     /// converts this into a `MyGenericError`.
     ///
     ///     struct DivisionByZeroError: Error {}

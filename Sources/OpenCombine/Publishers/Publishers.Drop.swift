@@ -8,7 +8,8 @@
 extension Publisher {
     /// Omits the specified number of elements before republishing subsequent elements.
     ///
-    /// Use ``Publisher/dropFirst(_:)`` when you want to drop the first `n` elements from the upstream publisher, and republish the remaining elements.
+    /// Use ``Publisher/dropFirst(_:)`` when you want to drop the first `n` elements from
+    /// the upstream publisher, and republish the remaining elements.
     ///
     /// The example below drops the first five elements from the stream:
     ///
@@ -27,8 +28,8 @@ extension Publisher {
 }
 
 extension Publishers {
-    /// A publisher that omits a specified number of elements before republishing
-    /// later elements.
+    /// A publisher that omits a specified number of elements before republishing later
+    /// elements.
     public struct Drop<Upstream: Publisher>: Publisher {
 
         public typealias Output = Upstream.Output

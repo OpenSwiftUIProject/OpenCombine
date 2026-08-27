@@ -29,8 +29,8 @@ extension Publisher {
     ///     the previously-accumulated value and the next element it receives from
     ///     the upstream publisher.
     /// - Returns: A publisher that applies the closure to all received elements and
-    ///   produces an accumulated value when the upstream publisher finishes.
-    ///   If `reduce(_:_:)` receives an error from the upstream publisher, the operator
+    ///   produces an accumulated value when the upstream publisher finishes. If
+    ///   `reduce(_:_:)` receives an error from the upstream publisher, the operator
     ///   delivers it to the downstream subscriber, the publisher terminates and publishes
     ///   no value.
     public func reduce<Accumulator>(
@@ -46,9 +46,8 @@ extension Publisher {
     /// publishes a final result upon completion.
     ///
     /// Use `tryReduce(_:_:)` to collect a stream of elements and produce an accumulated
-    /// value based on an error-throwing closure you provide.
-    /// If the closure throws an error, the publisher fails and passes the error to its
-    /// subscriber.
+    /// value based on an error-throwing closure you provide. If the closure throws an
+    /// error, the publisher fails and passes the error to its subscriber.
     ///
     /// In the example below, the publisher’s `0` element causes the `myDivide(_:_:)`
     /// function to throw an error and publish the `Double.nan` result:
@@ -86,8 +85,8 @@ extension Publisher {
 
 extension Publishers {
 
-    /// A publisher that applies a closure to all received elements and produces
-    /// an accumulated value when the upstream publisher finishes.
+    /// A publisher that applies a closure to all received elements and produces an
+    /// accumulated value when the upstream publisher finishes.
     public struct Reduce<Upstream: Publisher, Output>: Publisher {
 
         public typealias Failure = Upstream.Failure
@@ -97,7 +96,8 @@ extension Publishers {
         /// The initial value provided on the first invocation of the closure.
         public let initial: Output
 
-        /// A closure that takes the previously-accumulated value and the next element from the upstream publisher to produce a new value.
+        /// A closure that takes the previously-accumulated value and the next element
+        /// from the upstream publisher to produce a new value.
         public let nextPartialResult: (Output, Upstream.Output) -> Output
 
         public init(upstream: Upstream,
@@ -130,11 +130,11 @@ extension Publishers {
         /// The initial value provided on the first invocation of the closure.
         public let initial: Output
 
-        /// An error-throwing closure that takes the previously-accumulated value and
-        /// the next element from the upstream to produce a new value.
+        /// An error-throwing closure that takes the previously-accumulated value and the
+        /// next element from the upstream to produce a new value.
         ///
-        /// If this closure throws an error, the publisher fails and passes the error
-        /// to its subscriber.
+        /// If this closure throws an error, the publisher fails and passes the error to
+        /// its subscriber.
         public let nextPartialResult: (Output, Upstream.Output) throws -> Output
 
         public init(

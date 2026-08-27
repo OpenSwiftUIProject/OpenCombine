@@ -9,11 +9,10 @@ extension Result {
 
     /// A namespace for disambiguation when both OpenCombine and Combine are imported.
     ///
-    /// Combine extends `Result` with a nested type `Publisher`.
-    /// If you import both OpenCombine and Combine (either explicitly or implicitly,
-    /// e. g. when importing Foundation), you will not be able
-    /// to write `Result<Int, Error>.Publisher`,
-    /// because Swift is unable to understand which `Publisher` you're referring to.
+    /// Combine extends `Result` with a nested type `Publisher`. If you import both
+    /// OpenCombine and Combine (either explicitly or implicitly, e. g. when importing
+    /// Foundation), you will not be able to write `Result<Int, Error>.Publisher`, because
+    /// Swift is unable to understand which `Publisher` you're referring to.
     ///
     /// So you have to write `Result<Int, Error>.OCombine.Publisher`.
     ///
@@ -36,8 +35,8 @@ extension Result {
         /// finishes, or fails immediately without producing any elements.
         ///
         /// If `result` is `.success`, then `Once` waits until it receives a request for
-        /// at least 1 value before sending the output. If `result` is `.failure`,
-        /// then `Once` sends the failure immediately upon subscription.
+        /// at least 1 value before sending the output. If `result` is `.failure`, then
+        /// `Once` sends the failure immediately upon subscription.
         ///
         /// In contrast with `Just`, a `Once` publisher can terminate with an error
         /// instead of sending a value. In contrast with `Optional`, a `Once` publisher
@@ -53,8 +52,7 @@ extension Result {
             ///
             /// If the result is `.success`, the `Once` publisher sends the specified
             /// output to all subscribers and finishes normally. If the result is
-            /// `.failure`, then the publisher fails immediately with the specified
-            /// error.
+            /// `.failure`, then the publisher fails immediately with the specified error.
             ///
             /// - Parameter result: The result to deliver to each subscriber.
             public init(_ result: Result) {
@@ -69,7 +67,8 @@ extension Result {
                 self.init(.success(output))
             }
 
-            /// Creates a publisher that immediately terminates upon subscription with the given failure.
+            /// Creates a publisher that immediately terminates upon subscription with the
+            /// given failure.
             ///
             /// - Parameter failure: The failure to send when terminating.
             public init(_ failure: Failure) {
@@ -99,8 +98,8 @@ extension Result {
     /// A publisher that publishes an output to each subscriber exactly once then
     /// finishes, or fails immediately without producing any elements.
     ///
-    /// If `result` is `.success`, then `Once` waits until it receives a request for
-    /// at least 1 value before sending the output. If `result` is `.failure`, then `Once`
+    /// If `result` is `.success`, then `Once` waits until it receives a request for at
+    /// least 1 value before sending the output. If `result` is `.failure`, then `Once`
     /// sends the failure immediately upon subscription.
     ///
     /// In contrast with `Just`, a `Once` publisher can terminate with an error instead of

@@ -4,7 +4,9 @@ Expose KVO changes with an OpenCombine publisher.
 
 ## Overview
 
-Several frameworks use key-value observing to notify your app of asynchronous changes. By converting your use of KVO from callbacks and closures to OpenCombine, you can make your code more elegant and maintainable.
+Several frameworks use key-value observing to notify your app of asynchronous changes. By
+converting your use of KVO from callbacks and closures to OpenCombine, you can make your
+code more elegant and maintainable.
 
 ### Monitoring Changes with KVO
 

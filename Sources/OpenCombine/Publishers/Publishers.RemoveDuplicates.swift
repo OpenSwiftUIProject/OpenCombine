@@ -9,9 +9,15 @@ extension Publisher where Output: Equatable {
 
     /// Publishes only elements that don’t match the previous element.
     ///
-    /// Use ``Publisher/removeDuplicates()`` to remove repeating elements from an upstream publisher. This operator has a two-element memory: the operator uses the current and previously published elements as the basis for its comparison.
+    /// Use ``Publisher/removeDuplicates()`` to remove repeating elements from an upstream
+    /// publisher. This operator has a two-element memory: the operator uses the current
+    /// and previously published elements as the basis for its comparison.
     ///
-    /// In the example below, ``Publisher/removeDuplicates()`` triggers on the doubled, tripled, and quadrupled occurrences of `1`, `3`, and `4` respectively. Because the two-element memory considers only the current element and the previous element, the operator prints the final `0` in the example data since its immediate predecessor is `4`.
+    /// In the example below, ``Publisher/removeDuplicates()`` triggers on the doubled,
+    /// tripled, and quadrupled occurrences of `1`, `3`, and `4` respectively. Because the
+    /// two-element memory considers only the current element and the previous element,
+    /// the operator prints the final `0` in the example data since its immediate
+    /// predecessor is `4`.
     ///
     ///     let numbers = [0, 1, 2, 2, 3, 3, 3, 4, 4, 4, 4, 0]
     ///     cancellable = numbers.publisher
@@ -28,8 +34,8 @@ extension Publisher where Output: Equatable {
 
 extension Publisher {
 
-    /// Publishes only elements that don’t match the previous element, as evaluated by
-    /// a provided closure.
+    /// Publishes only elements that don’t match the previous element, as evaluated by a
+    /// provided closure.
     ///
     /// Use `removeDuplicates(by:)` to remove repeating elements from an upstream
     /// publisher based upon the evaluation of the current and previously published
@@ -39,9 +45,9 @@ extension Publisher {
     /// themselves implement `Equatable`, or if you need to compare values differently
     /// than the type’s `Equatable` implementation.
     ///
-    /// In the example below, the `removeDuplicates(by:)` functionality triggers when
-    /// the `x` property of the current and previous elements are equal, otherwise
-    /// the operator publishes the current `Point` to the downstream subscriber:
+    /// In the example below, the `removeDuplicates(by:)` functionality triggers when the
+    /// `x` property of the current and previous elements are equal, otherwise the
+    /// operator publishes the current `Point` to the downstream subscriber:
     ///
     ///     struct Point {
     ///         let x: Int
@@ -61,8 +67,8 @@ extension Publisher {
     ///     // Prints: Point(x: 0, y: 0) Point(x: 1, y: 1) Point(x: 2, y: 1)
     ///
     /// - Parameter predicate: A closure to evaluate whether two elements are equivalent,
-    ///   for purposes of filtering. Return `true` from this closure to indicate that
-    ///   the second element is a duplicate of the first.
+    ///   for purposes of filtering. Return `true` from this closure to indicate that the
+    ///   second element is a duplicate of the first.
     /// - Returns: A publisher that consumes — rather than publishes — duplicate elements.
     public func removeDuplicates(
         by predicate: @escaping (Output, Output) -> Bool
@@ -70,12 +76,19 @@ extension Publisher {
         return .init(upstream: self, predicate: predicate)
     }
 
-    /// Publishes only elements that don’t match the previous element, as evaluated by a provided error-throwing closure.
+    /// Publishes only elements that don’t match the previous element, as evaluated by a
+    /// provided error-throwing closure.
     ///
-    /// Use ``Publisher/tryRemoveDuplicates(by:)`` to remove repeating elements from an upstream publisher based upon the evaluation of elements using an error-throwing closure you provide. If your closure throws an error, the publisher terminates with the error.
+    /// Use ``Publisher/tryRemoveDuplicates(by:)`` to remove repeating elements from an
+    /// upstream publisher based upon the evaluation of elements using an error-throwing
+    /// closure you provide. If your closure throws an error, the publisher terminates
+    /// with the error.
     ///
-    /// In the example below, the closure provided to ``Publisher/tryRemoveDuplicates(by:)`` returns `true` when two consecutive elements are equal, thereby filtering out `0`,
-    /// `1`, `2`, and `3`. However, the closure throws an error when it encounters `4`. The publisher then terminates with this error.
+    /// In the example below, the closure provided to
+    /// ``Publisher/tryRemoveDuplicates(by:)`` returns `true` when two consecutive
+    /// elements are equal, thereby filtering out `0`, `1`, `2`, and `3`. However, the
+    /// closure throws an error when it encounters `4`. The publisher then terminates with
+    /// this error.
     ///
     ///     struct BadValuesError: Error {}
     ///     let numbers = [0, 0, 0, 0, 1, 2, 2, 3, 3, 3, 4, 4, 4, 4]
@@ -93,7 +106,10 @@ extension Publisher {
     ///
     ///      // Prints: "0 1 2 3 4 failure(BadValuesError()"
     ///
-    /// - Parameter predicate: A closure to evaluate whether two elements are equivalent, for purposes of filtering. Return `true` from this closure to indicate that the second element is a duplicate of the first. If this closure throws an error, the publisher terminates with the thrown error.
+    /// - Parameter predicate: A closure to evaluate whether two elements are equivalent,
+    ///   for purposes of filtering. Return `true` from this closure to indicate that the
+    ///   second element is a duplicate of the first. If this closure throws an error, the
+    ///   publisher terminates with the thrown error.
     /// - Returns: A publisher that consumes — rather than publishes — duplicate elements.
     public func tryRemoveDuplicates(
         by predicate: @escaping (Output, Output) throws -> Bool
@@ -123,8 +139,8 @@ extension Publishers {
         /// - Parameter upstream: The publisher from which this publisher receives
         ///   elements.
         /// - Parameter predicate: A closure to evaluate whether two elements are
-        ///   equivalent, for purposes of filtering. Return `true` from this closure
-        ///   to indicate that the second element is a duplicate of the first.
+        ///   equivalent, for purposes of filtering. Return `true` from this closure to
+        ///   indicate that the second element is a duplicate of the first.
         public init(upstream: Upstream, predicate: @escaping (Output, Output) -> Bool) {
             self.upstream = upstream
             self.predicate = predicate
@@ -138,8 +154,8 @@ extension Publishers {
         }
     }
 
-    /// A publisher that publishes only elements that don’t match the previous element,
-    /// as evaluated by a provided error-throwing closure.
+    /// A publisher that publishes only elements that don’t match the previous element, as
+    /// evaluated by a provided error-throwing closure.
     public struct TryRemoveDuplicates<Upstream: Publisher>: Publisher {
 
         public typealias Output = Upstream.Output
@@ -149,8 +165,8 @@ extension Publishers {
         /// The publisher from which this publisher receives elements.
         public let upstream: Upstream
 
-        /// An error-throwing closure to evaluate whether two elements are equivalent,
-        /// for purposes of filtering.
+        /// An error-throwing closure to evaluate whether two elements are equivalent, for
+        /// purposes of filtering.
         public let predicate: (Output, Output) throws -> Bool
 
         /// Creates a publisher that publishes only elements that don’t match the previous
@@ -160,9 +176,9 @@ extension Publishers {
         ///   elements.
         /// - Parameter predicate: An error-throwing closure to evaluate whether two
         ///   elements are equivalent, for purposes of filtering. Return `true` from this
-        ///   closure to indicate that the second element is a duplicate of the first.
-        ///   If this closure throws an error, the publisher terminates
-        ///   with the thrown error.
+        ///   closure to indicate that the second element is a duplicate of the first. If
+        ///   this closure throws an error, the publisher terminates with the thrown
+        ///   error.
         public init(upstream: Upstream,
                     predicate: @escaping (Output, Output) throws -> Bool) {
             self.upstream = upstream

@@ -9,9 +9,13 @@ extension Publisher {
 
     /// Replaces any errors in the stream with the provided element.
     ///
-    /// If the upstream publisher fails with an error, this publisher emits the provided element, then finishes normally.
+    /// If the upstream publisher fails with an error, this publisher emits the provided
+    /// element, then finishes normally.
     ///
-    /// In the example below, a publisher of strings fails with a `MyError` instance, which sends a failure completion downstream. The ``Publisher/replaceError(with:)`` operator handles the failure by publishing the string `(replacement element)` and completing normally.
+    /// In the example below, a publisher of strings fails with a `MyError` instance,
+    /// which sends a failure completion downstream. The ``Publisher/replaceError(with:)``
+    /// operator handles the failure by publishing the string `(replacement element)` and
+    /// completing normally.
     ///
     ///     struct MyError: Error {}
     ///     let fail = Fail<String, MyError>(error: MyError())
@@ -24,10 +28,14 @@ extension Publisher {
     ///
     ///     // Prints: "(replacement element) finished".
     ///
-    /// This ``Publisher/replaceError(with:)`` functionality is useful when you want to handle an error by sending a single replacement element and end the stream. Use ``Publisher/catch(_:)`` to recover from an error and provide a replacement publisher to continue providing elements to the downstream subscriber.
+    /// This ``Publisher/replaceError(with:)`` functionality is useful when you want to
+    /// handle an error by sending a single replacement element and end the stream. Use
+    /// ``Publisher/catch(_:)`` to recover from an error and provide a replacement
+    /// publisher to continue providing elements to the downstream subscriber.
     ///
     /// - Parameter output: An element to emit when the upstream publisher fails.
-    /// - Returns: A publisher that replaces an error from the upstream publisher with the provided output element.
+    /// - Returns: A publisher that replaces an error from the upstream publisher with the
+    ///   provided output element.
     public func replaceError(with output: Output) -> Publishers.ReplaceError<Self> {
         return .init(upstream: self, output: output)
     }
@@ -57,8 +65,8 @@ extension Publishers {
             self.output = output
         }
 
-        /// This function is called to attach the specified `Subscriber`
-        /// to this `Publisher` by `subscribe(_:)`
+        /// This function is called to attach the specified `Subscriber` to this
+        /// `Publisher` by `subscribe(_:)`
         ///
         /// - SeeAlso: `subscribe(_:)`
         /// - Parameters:

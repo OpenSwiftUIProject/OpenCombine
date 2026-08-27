@@ -7,13 +7,19 @@
 
 extension Publisher {
 
-    /// Collects up to the specified number of elements, and then emits a single array of the collection.
+    /// Collects up to the specified number of elements, and then emits a single array of
+    /// the collection.
     ///
-    /// Use ``Publisher/collect(_:)`` to emit arrays of at most `count` elements from an upstream publisher. If the upstream publisher finishes before collecting the specified number of elements, the publisher sends an array of only the items it received. This may be fewer than `count` elements.
+    /// Use ``Publisher/collect(_:)`` to emit arrays of at most `count` elements from an
+    /// upstream publisher. If the upstream publisher finishes before collecting the
+    /// specified number of elements, the publisher sends an array of only the items it
+    /// received. This may be fewer than `count` elements.
     ///
-    /// If the upstream publisher fails with an error, this publisher forwards the error to the downstream receiver instead of sending its output.
+    /// If the upstream publisher fails with an error, this publisher forwards the error
+    /// to the downstream receiver instead of sending its output.
     ///
-    /// In the example below, the ``Publisher/collect(_:)`` operator emits one partial and two full arrays based on the requested collection size of `5`:
+    /// In the example below, the ``Publisher/collect(_:)`` operator emits one partial and
+    /// two full arrays based on the requested collection size of `5`:
     ///
     ///     let numbers = (0...10)
     ///     cancellable = numbers.publisher
@@ -22,10 +28,13 @@ extension Publisher {
     ///
     ///     // Prints "[0, 1, 2, 3, 4] [5, 6, 7, 8, 9] [10] "
     ///
-    /// > Note: When this publisher receives a request for `.max(n)` elements, it requests `.max(count * n)` from the upstream publisher.
+    /// > Note: When this publisher receives a request for `.max(n)` elements, it requests
+    /// `.max(count * n)` from the upstream publisher.
     ///
-    /// - Parameter count: The maximum number of received elements to buffer before publishing.
-    /// - Returns: A publisher that collects up to the specified number of elements, and then publishes them as an array.
+    /// - Parameter count: The maximum number of received elements to buffer before
+    ///   publishing.
+    /// - Returns: A publisher that collects up to the specified number of elements, and
+    ///   then publishes them as an array.
     public func collect(_ count: Int) -> Publishers.CollectByCount<Self> {
         return .init(upstream: self, count: count)
     }
@@ -43,7 +52,7 @@ extension Publishers {
         /// The publisher from which this publisher receives elements.
         public let upstream: Upstream
 
-        ///  The maximum number of received elements to buffer before publishing.
+        /// The maximum number of received elements to buffer before publishing.
         public let count: Int
 
         public init(upstream: Upstream, count: Int) {

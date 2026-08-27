@@ -17,9 +17,9 @@ extension Publisher {
     ///
     /// The example below uses a range of numbers as the source for a collection based
     /// publisher. The `compactMap(_:)` operator consumes each element from the `numbers`
-    /// publisher attempting to access the dictionary using the element as the key.
-    /// If the example’s dictionary returns a `nil`, due to a non-existent key,
-    /// `compactMap(_:)` filters out the `nil` (missing) elements.
+    /// publisher attempting to access the dictionary using the element as the key. If the
+    /// example’s dictionary returns a `nil`, due to a non-existent key, `compactMap(_:)`
+    /// filters out the `nil` (missing) elements.
     ///
     ///     let numbers = (0...5)
     ///     let romanNumeralDict: [Int : String] =
@@ -44,17 +44,17 @@ extension Publisher {
     /// returned optional that has a value.
     ///
     /// Use `tryCompactMap(_:)` to remove `nil` elements from a publisher’s stream based
-    /// on an error-throwing closure you provide. If the closure throws an error,
-    /// the publisher cancels the upstream publisher and sends the thrown error to
-    /// the downstream subscriber as a `Publisher.Failure`.
+    /// on an error-throwing closure you provide. If the closure throws an error, the
+    /// publisher cancels the upstream publisher and sends the thrown error to the
+    /// downstream subscriber as a `Publisher.Failure`.
     ///
-    /// The following example uses an array of numbers as the source for
-    /// a collection-based publisher. A `tryCompactMap(_:)` operator consumes each integer
+    /// The following example uses an array of numbers as the source for a
+    /// collection-based publisher. A `tryCompactMap(_:)` operator consumes each integer
     /// from the publisher and uses a dictionary to transform the numbers from its Arabic
     /// to Roman numerals, as an optional `String`.
     ///
-    /// If the closure called by `tryCompactMap(_:)` fails to look up a Roman numeral,
-    /// it returns the optional String `(unknown)`.
+    /// If the closure called by `tryCompactMap(_:)` fails to look up a Roman numeral, it
+    /// returns the optional String `(unknown)`.
     ///
     /// If the closure called by `tryCompactMap(_:)` determines the input is `0`, it
     /// throws an error. The `tryCompactMap(_:)` operator catches this error and stops
@@ -116,8 +116,8 @@ extension Publishers.TryCompactMap {
 
 extension Publishers {
 
-    /// A publisher that republishes all non-`nil` results of calling a closure
-    /// with each received element.
+    /// A publisher that republishes all non-`nil` results of calling a closure with each
+    /// received element.
     public struct CompactMap<Upstream: Publisher, Output>: Publisher {
 
         public typealias Failure = Upstream.Failure
@@ -125,7 +125,8 @@ extension Publishers {
         /// The publisher from which this publisher receives elements.
         public let upstream: Upstream
 
-        /// A closure that receives values from the upstream publisher and returns optional values.
+        /// A closure that receives values from the upstream publisher and returns
+        /// optional values.
         public let transform: (Upstream.Output) -> Output?
 
         public init(upstream: Upstream,
@@ -150,7 +151,8 @@ extension Publishers {
         /// The publisher from which this publisher receives elements.
         public let upstream: Upstream
 
-        /// An error-throwing closure that receives values from the upstream publisher and returns optional values.
+        /// An error-throwing closure that receives values from the upstream publisher and
+        /// returns optional values.
         ///
         /// If this closure throws an error, the publisher fails.
         public let transform: (Upstream.Output) throws -> Output?

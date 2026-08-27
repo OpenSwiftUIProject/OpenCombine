@@ -9,8 +9,8 @@ extension Publisher {
 
     /// Performs the specified closures when publisher events occur.
     ///
-    /// Use `handleEvents` when you want to examine elements as they progress through
-    /// the stages of the publisher’s lifecycle.
+    /// Use `handleEvents` when you want to examine elements as they progress through the
+    /// stages of the publisher’s lifecycle.
     ///
     /// In the example below, a publisher of integers shows the effect of printing
     /// debugging information at each stage of the element-processing lifecycle:
@@ -79,23 +79,24 @@ extension Publishers {
         /// The publisher from which this publisher receives elements.
         public let upstream: Upstream
 
-        /// A closure that executes when the publisher receives the subscription from
-        /// the upstream publisher.
+        /// A closure that executes when the publisher receives the subscription from the
+        /// upstream publisher.
         public var receiveSubscription: ((Subscription) -> Void)?
 
-        ///  A closure that executes when the publisher receives a value from the upstream
-        ///  publisher.
+        /// A closure that executes when the publisher receives a value from the upstream
+        /// publisher.
         public var receiveOutput: ((Upstream.Output) -> Void)?
 
-        /// A closure that executes when the publisher receives the completion from
-        /// the upstream publisher.
+        /// A closure that executes when the publisher receives the completion from the
+        /// upstream publisher.
         public var receiveCompletion:
             ((Subscribers.Completion<Upstream.Failure>) -> Void)?
 
         /// A closure that executes when the downstream receiver cancels publishing.
         public var receiveCancel: (() -> Void)?
 
-        /// A closure that executes when the publisher receives a request for more elements.
+        /// A closure that executes when the publisher receives a request for more
+        /// elements.
         public var receiveRequest: ((Subscribers.Demand) -> Void)?
 
         public init(

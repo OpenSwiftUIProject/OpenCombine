@@ -11,8 +11,8 @@ extension Publisher {
     /// Publishes either the most-recent or first element published by the upstream
     /// publisher in the specified time interval.
     ///
-    /// Use `throttle(for:scheduler:latest:`` to selectively republish elements from
-    /// an upstream publisher during an interval you specify. Other elements received from
+    /// Use `throttle(for:scheduler:latest:`` to selectively republish elements from an
+    /// upstream publisher during an interval you specify. Other elements received from
     /// the upstream in the throttling interval aren’t republished.
     ///
     /// In the example below, a `Timer.TimerPublisher` produces elements on 3-second
@@ -63,7 +63,8 @@ extension Publisher {
 
 extension Publishers {
 
-    /// A publisher that publishes either the most-recent or first element published by the upstream publisher in a specified time interval.
+    /// A publisher that publishes either the most-recent or first element published by
+    /// the upstream publisher in a specified time interval.
     public struct Throttle<Upstream, Context>: Publisher
     where Upstream: Publisher, Context: Scheduler
     {
@@ -87,8 +88,8 @@ extension Publishers {
 
         /// A Boolean value indicating whether to publish the most recent element.
         ///
-        /// If `false`, the publisher emits the first element received during
-        /// the interval.
+        /// If `false`, the publisher emits the first element received during the
+        /// interval.
         public let latest: Bool
 
         public init(upstream: Upstream,

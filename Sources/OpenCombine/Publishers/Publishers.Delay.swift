@@ -13,9 +13,9 @@ extension Publisher {
     /// Use `delay(for:tolerance:scheduler:options:)` when you need to delay the delivery
     /// of elements to a downstream by a specified amount of time.
     ///
-    /// In this example, a `Timer` publishes an event every second.
-    /// The `delay(for:tolerance:scheduler:options:)` operator holds the delivery of
-    /// the initial element for 3 seconds (±0.5 seconds), after which each element is
+    /// In this example, a `Timer` publishes an event every second. The
+    /// `delay(for:tolerance:scheduler:options:)` operator holds the delivery of the
+    /// initial element for 3 seconds (±0.5 seconds), after which each element is
     /// delivered to the downstream on the main run loop after the specified delay:
     ///
     ///     let df = DateFormatter()
@@ -62,8 +62,8 @@ extension Publisher {
     ///   - tolerance: The allowed tolerance in firing delayed events.
     ///   - scheduler: The scheduler to deliver the delayed events.
     ///   - options: Options relevant to the scheduler’s behavior.
-    /// - Returns: A publisher that delays delivery of elements and completion to
-    ///   the downstream receiver.
+    /// - Returns: A publisher that delays delivery of elements and completion to the
+    ///   downstream receiver.
     public func delay<Context: Scheduler>(
         for interval: Context.SchedulerTimeType.Stride,
         tolerance: Context.SchedulerTimeType.Stride? = nil,
@@ -80,8 +80,8 @@ extension Publisher {
 
 extension Publishers {
 
-    /// A publisher that delays delivery of elements and completion
-    /// to the downstream receiver.
+    /// A publisher that delays delivery of elements and completion to the downstream
+    /// receiver.
     public struct Delay<Upstream: Publisher, Context: Scheduler>: Publisher {
 
         public typealias Output = Upstream.Output

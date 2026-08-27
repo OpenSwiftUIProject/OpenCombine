@@ -9,9 +9,14 @@ extension Publisher {
 
     /// Publishes the first element of a stream, then finishes.
     ///
-    /// Use ``Publisher/first()`` to publish just the first element from an upstream publisher, then finish normally. The ``Publisher/first()`` operator requests ``Subscribers/Demand/unlimited`` from its upstream as soon as downstream requests at least one element. If the upstream completes before ``Publisher/first()`` receives any elements, it completes without emitting any values.
+    /// Use ``Publisher/first()`` to publish just the first element from an upstream
+    /// publisher, then finish normally. The ``Publisher/first()`` operator requests
+    /// ``Subscribers/Demand/unlimited`` from its upstream as soon as downstream requests
+    /// at least one element. If the upstream completes before ``Publisher/first()``
+    /// receives any elements, it completes without emitting any values.
     ///
-    /// In this example, the ``Publisher/first()`` publisher republishes the first element received from the sequence publisher, `-10`, then finishes normally.
+    /// In this example, the ``Publisher/first()`` publisher republishes the first element
+    /// received from the sequence publisher, `-10`, then finishes normally.
     ///
     ///     let numbers = (-10...10)
     ///     cancellable = numbers.publisher
@@ -30,12 +35,12 @@ extension Publisher {
     ///
     /// Use `first(where:)` to republish only the first element of a stream that satisfies
     /// a closure you specify. The publisher ignores all elements after the first element
-    /// that satisfies the closure and finishes normally.
-    /// If this publisher doesn’t receive any elements, it finishes without publishing.
+    /// that satisfies the closure and finishes normally. If this publisher doesn’t
+    /// receive any elements, it finishes without publishing.
     ///
     /// In the example below, the provided closure causes the `Publishers.FirstWhere`
-    /// publisher to republish the first received element that’s greater than `0`,
-    /// then finishes normally.
+    /// publisher to republish the first received element that’s greater than `0`, then
+    /// finishes normally.
     ///
     ///     let numbers = (-10...10)
     ///     cancellable = numbers.publisher
@@ -58,11 +63,11 @@ extension Publisher {
     /// Publishes the first element of a stream to satisfy a throwing predicate closure,
     /// then finishes normally.
     ///
-    /// Use `tryFirst(where:)` when you need to republish only the first element of
-    /// a stream that satisfies an error-throwing closure you specify.
-    /// The publisher ignores all elements after the first. If this publisher doesn’t
-    /// receive any elements, it finishes without publishing. If the predicate closure
-    /// throws an error, the publisher fails.
+    /// Use `tryFirst(where:)` when you need to republish only the first element of a
+    /// stream that satisfies an error-throwing closure you specify. The publisher ignores
+    /// all elements after the first. If this publisher doesn’t receive any elements, it
+    /// finishes without publishing. If the predicate closure throws an error, the
+    /// publisher fails.
     ///
     /// In the example below, a range publisher emits the first element in the range then
     /// finishes normally:
@@ -83,12 +88,17 @@ extension Publisher {
     ///     // the tryFirst operator would terminate publishing with a RangeError.
     ///
 
-    /// Publishes the first element of a stream to satisfy a throwing predicate closure, then finishes normally.
+    /// Publishes the first element of a stream to satisfy a throwing predicate closure,
+    /// then finishes normally.
     ///
-    /// Use ``Publisher/tryFirst(where:)`` when you need to republish only the first element of a stream that satisfies an error-throwing closure you specify.
-    /// The publisher ignores all elements after the first. If this publisher doesn’t receive any elements, it finishes without publishing. If the predicate closure throws an error, the publisher fails.
+    /// Use ``Publisher/tryFirst(where:)`` when you need to republish only the first
+    /// element of a stream that satisfies an error-throwing closure you specify. The
+    /// publisher ignores all elements after the first. If this publisher doesn’t receive
+    /// any elements, it finishes without publishing. If the predicate closure throws an
+    /// error, the publisher fails.
     ///
-    /// In the example below, a range publisher emits the first element in the range then finishes normally:
+    /// In the example below, a range publisher emits the first element in the range then
+    /// finishes normally:
     ///
     ///     let numberRange: ClosedRange<Int> = (-1...50)
     ///     numberRange.publisher
@@ -104,8 +114,10 @@ extension Publisher {
     ///     // Prints: "-1 completion: finished"
     ///     // If instead the number range were ClosedRange<Int> = (100...200), the tryFirst operator would terminate publishing with a RangeError.
     ///
-    /// - Parameter predicate: A closure that takes an element as a parameter and returns a Boolean value that indicates whether to publish the element.
-    /// - Returns: A publisher that only publishes the first element of a stream that satisfies the predicate.
+    /// - Parameter predicate: A closure that takes an element as a parameter and returns
+    ///   a Boolean value that indicates whether to publish the element.
+    /// - Returns: A publisher that only publishes the first element of a stream that
+    ///   satisfies the predicate.
     public func tryFirst(
         where predicate: @escaping (Output) throws -> Bool
     ) -> Publishers.TryFirstWhere<Self> {
@@ -136,8 +148,8 @@ extension Publishers {
         }
     }
 
-    /// A publisher that only publishes the first element of a
-    /// stream to satisfy a predicate closure.
+    /// A publisher that only publishes the first element of a stream to satisfy a
+    /// predicate closure.
     public struct FirstWhere<Upstream: Publisher>: Publisher {
 
         public typealias Output = Upstream.Output
@@ -162,8 +174,8 @@ extension Publishers {
         }
     }
 
-    /// A publisher that only publishes the first element of a stream
-    /// to satisfy a throwing predicate closure.
+    /// A publisher that only publishes the first element of a stream to satisfy a
+    /// throwing predicate closure.
     public struct TryFirstWhere<Upstream: Publisher>: Publisher {
 
         public typealias Output = Upstream.Output

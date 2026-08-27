@@ -9,7 +9,9 @@ extension Future where Failure == Never {
 
     /// The published value of the future, delivered asynchronously.
     ///
-    /// This property subscribes to the `Future` and delivers the value asynchronously when the `Future` publishes it. Use this property when you want to use the `async`-`await` syntax with a `Future`.
+    /// This property subscribes to the `Future` and delivers the value asynchronously
+    /// when the `Future` publishes it. Use this property when you want to use the
+    /// `async`-`await` syntax with a `Future`.
     @available(macOS 10.15, iOS 13.0, watchOS 6.0, tvOS 13.0, *)
     public var value: Output {
         get async {

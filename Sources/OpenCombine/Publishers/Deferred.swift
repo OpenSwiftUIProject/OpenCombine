@@ -5,8 +5,8 @@
 //  Created by Joseph Spadafora on 7/7/19.
 //
 
-/// A publisher that awaits subscription before running the supplied closure
-/// to create a publisher for the new subscriber.
+/// A publisher that awaits subscription before running the supplied closure to create a
+/// publisher for the new subscriber.
 public struct Deferred<DeferredPublisher: Publisher>: Publisher {
 
     /// The kind of values published by this publisher.
@@ -19,7 +19,8 @@ public struct Deferred<DeferredPublisher: Publisher>: Publisher {
 
     /// The closure to execute when this deferred publisher receives a subscription.
     ///
-    /// The publisher returned by this closure immediately receives the incoming subscription.
+    /// The publisher returned by this closure immediately receives the incoming
+    /// subscription.
     public let createPublisher: () -> DeferredPublisher
 
     /// Creates a deferred publisher.
@@ -29,8 +30,8 @@ public struct Deferred<DeferredPublisher: Publisher>: Publisher {
         self.createPublisher = createPublisher
     }
 
-    /// This function is called to attach the specified `Subscriber`
-    /// to this `Publisher` by `subscribe(_:)`
+    /// This function is called to attach the specified `Subscriber` to this `Publisher`
+    /// by `subscribe(_:)`
     ///
     /// - SeeAlso: `subscribe(_:)`
     /// - Parameters:

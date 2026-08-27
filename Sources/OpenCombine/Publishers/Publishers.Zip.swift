@@ -14,11 +14,19 @@
 extension Publisher {
     /// Combines elements from another publisher and deliver pairs of elements as tuples.
     ///
-    /// Use ``Publisher/zip(_:)`` to opencombine the latest elements from two publishers and emit a tuple to the downstream. The returned publisher waits until both publishers have emitted an event, then delivers the oldest unconsumed event from each publisher together as a tuple to the subscriber.
+    /// Use ``Publisher/zip(_:)`` to opencombine the latest elements from two publishers
+    /// and emit a tuple to the downstream. The returned publisher waits until both
+    /// publishers have emitted an event, then delivers the oldest unconsumed event from
+    /// each publisher together as a tuple to the subscriber.
     ///
-    /// Much like a zipper or zip fastener on a piece of clothing pulls together rows of teeth to link the two sides, ``Publisher/zip(_:)`` combines streams from two different publishers by linking pairs of elements from each side.
+    /// Much like a zipper or zip fastener on a piece of clothing pulls together rows of
+    /// teeth to link the two sides, ``Publisher/zip(_:)`` combines streams from two
+    /// different publishers by linking pairs of elements from each side.
     ///
-    /// In this example, `numbers` and `letters` are ``PassthroughSubject``s that emit values; once ``Publisher/zip(_:)`` receives one value from each, it publishes the pair as a tuple to the downstream subscriber. It then waits for the next pair of values.
+    /// In this example, `numbers` and `letters` are ``PassthroughSubject``s that emit
+    /// values; once ``Publisher/zip(_:)`` receives one value from each, it publishes the
+    /// pair as a tuple to the downstream subscriber. It then waits for the next pair of
+    /// values.
     ///
     ///      let numbersPub = PassthroughSubject<Int, Never>()
     ///      let lettersPub = PassthroughSubject<String, Never>()
@@ -36,17 +44,23 @@ extension Publisher {
     ///      //  (1, "A")
     ///      //  (2, "B")
     ///
-    /// If either upstream publisher finishes successfully or fails with an error, the zipped publisher does the same.
+    /// If either upstream publisher finishes successfully or fails with an error, the
+    /// zipped publisher does the same.
     ///
     /// - Parameter other: Another publisher.
-    /// - Returns: A publisher that emits pairs of elements from the upstream publishers as tuples.
+    /// - Returns: A publisher that emits pairs of elements from the upstream publishers
+    ///   as tuples.
     public func zip<P>(_ other: P) -> Publishers.Zip<Self, P> where P: Publisher, Self.Failure == P.Failure {
         Publishers.Zip(self, other)
     }
 
     /// Combines elements from another publisher and delivers a transformed output.
     ///
-    /// Use ``Publisher/zip(_:_:)-7ve7u`` to return a new publisher that combines the elements from two publishers using a transformation you specify to publish a new value to the downstream.  The returned publisher waits until both publishers have emitted an event, then delivers the oldest unconsumed event from each publisher together that the operator uses in the transformation.
+    /// Use ``Publisher/zip(_:_:)-7ve7u`` to return a new publisher that combines the
+    /// elements from two publishers using a transformation you specify to publish a new
+    /// value to the downstream. The returned publisher waits until both publishers have
+    /// emitted an event, then delivers the oldest unconsumed event from each publisher
+    /// together that the operator uses in the transformation.
     ///
     /// In this example, ``PassthroughSubject`` instances `numbersPub` and `lettersPub` emit values; ``Publisher/zip(_:_:)-7ve7u`` receives the oldest value from each publisher, uses the `Int` from `numbersPub` and publishes a string that repeats the [String](https://developer.apple.com/documentation/swift/string) from `lettersPub` that many times.
     ///
@@ -66,22 +80,32 @@ extension Publisher {
     ///     //  A
     ///     //  BB
     ///
-    /// If either upstream publisher finishes successfully or fails with an error, the zipped publisher does the same.
+    /// If either upstream publisher finishes successfully or fails with an error, the
+    /// zipped publisher does the same.
     ///
     /// - Parameters:
     ///   - other: Another publisher.
-    ///   - transform: A closure that receives the most-recent value from each publisher and returns a new value to publish.
-    /// - Returns: A publisher that uses the `transform` closure to emit new elements, produced by combining the most recent value from two upstream publishers.
+    ///   - transform: A closure that receives the most-recent value from each publisher
+    ///     and returns a new value to publish.
+    /// - Returns: A publisher that uses the `transform` closure to emit new elements,
+    ///   produced by combining the most recent value from two upstream publishers.
     public func zip<P, T>(_ other: P, _ transform: @escaping (Self.Output, P.Output) -> T) -> Publishers.Map<Publishers.Zip<Self, P>, T> where P: Publisher, Self.Failure == P.Failure {
         Publishers.Zip(self, other).map(transform)
     }
 
-    /// Combines elements from two other publishers and delivers groups of elements as tuples.
+    /// Combines elements from two other publishers and delivers groups of elements as
+    /// tuples.
     ///
-    /// Use ``Publisher/zip(_:_:)-2p498`` to return a new publisher that combines the elements from two additional publishers to publish a tuple to the downstream. The returned publisher waits until all three publishers have emitted an event, then delivers the oldest unconsumed event from each publisher as a tuple to the subscriber.
+    /// Use ``Publisher/zip(_:_:)-2p498`` to return a new publisher that combines the
+    /// elements from two additional publishers to publish a tuple to the downstream. The
+    /// returned publisher waits until all three publishers have emitted an event, then
+    /// delivers the oldest unconsumed event from each publisher as a tuple to the
+    /// subscriber.
     ///
-    /// In this example, `numbersPub`, `lettersPub` and `emojiPub` are each a ``PassthroughSubject``;
-    /// ``Publisher/zip(_:_:)-2p498`` receives the oldest unconsumed value from each publisher and combines them into a tuple that it republishes to the downstream:
+    /// In this example, `numbersPub`, `lettersPub` and `emojiPub` are each a
+    /// ``PassthroughSubject``; ``Publisher/zip(_:_:)-2p498`` receives the oldest
+    /// unconsumed value from each publisher and combines them into a tuple that it
+    /// republishes to the downstream:
     ///
     ///     let numbersPub = PassthroughSubject<Int, Never>()
     ///     let lettersPub = PassthroughSubject<String, Never>()
@@ -102,19 +126,25 @@ extension Publisher {
     ///     //  (1, "A", "😀")
     ///     //  (2, "B", "🥰")
     ///
-    /// If any upstream publisher finishes successfully or fails with an error, so too does the zipped publisher.
+    /// If any upstream publisher finishes successfully or fails with an error, so too
+    /// does the zipped publisher.
     ///
     /// - Parameters:
     ///   - publisher1: A second publisher.
     ///   - publisher2: A third publisher.
-    /// - Returns: A publisher that emits groups of elements from the upstream publishers as tuples.
+    /// - Returns: A publisher that emits groups of elements from the upstream publishers
+    ///   as tuples.
     public func zip<P, Q>(_ publisher1: P, _ publisher2: Q) -> Publishers.Zip3<Self, P, Q> where P: Publisher, Q: Publisher, Self.Failure == P.Failure, P.Failure == Q.Failure {
         Publishers.Zip3(self, publisher1, publisher2)
     }
 
     /// Combines elements from two other publishers and delivers a transformed output.
     ///
-    /// Use ``Publisher/zip(_:_:_:)-19jxo`` to return a new publisher that combines the elements from two other publishers using a transformation you specify to publish a new value to the downstream subscriber. The returned publisher waits until all three publishers have emitted an event, then delivers the oldest unconsumed event from each publisher together that the operator uses in the transformation.
+    /// Use ``Publisher/zip(_:_:_:)-19jxo`` to return a new publisher that combines the
+    /// elements from two other publishers using a transformation you specify to publish a
+    /// new value to the downstream subscriber. The returned publisher waits until all
+    /// three publishers have emitted an event, then delivers the oldest unconsumed event
+    /// from each publisher together that the operator uses in the transformation.
     ///
     /// In this example, `numbersPub`, `lettersPub` and `emojiPub` are each a ``PassthroughSubject`` that emit values; ``Publisher/zip(_:_:_:)-19jxo`` receives the oldest value from each publisher and uses the `Int` from `numbersPub` and publishes a string that repeats the [String](https://developer.apple.com/documentation/swift/string) from `lettersPub` and `emojiPub` that many times.
     ///
@@ -140,22 +170,32 @@ extension Publisher {
     ///     // 😀 A
     ///     // 🥰🥰 BB
     ///
-    /// If any upstream publisher finishes successfully or fails with an error, so too does the zipped publisher.
+    /// If any upstream publisher finishes successfully or fails with an error, so too
+    /// does the zipped publisher.
     ///
     /// - Parameters:
     ///   - publisher1: A second publisher.
     ///   - publisher2: A third publisher.
-    ///   - transform: A closure that receives the most-recent value from each publisher and returns a new value to publish.
-    /// - Returns: A publisher that uses the `transform` closure to emit new elements, produced by combining the most recent value from three upstream publishers.
+    ///   - transform: A closure that receives the most-recent value from each publisher
+    ///     and returns a new value to publish.
+    /// - Returns: A publisher that uses the `transform` closure to emit new elements,
+    ///   produced by combining the most recent value from three upstream publishers.
     public func zip<P, Q, T>(_ publisher1: P, _ publisher2: Q, _ transform: @escaping (Self.Output, P.Output, Q.Output) -> T) -> Publishers.Map<Publishers.Zip3<Self, P, Q>, T> where P: Publisher, Q: Publisher, Self.Failure == P.Failure, P.Failure == Q.Failure {
         Publishers.Zip3(self, publisher1, publisher2).map(transform)
     }
 
-    /// Combines elements from three other publishers and delivers groups of elements as tuples.
+    /// Combines elements from three other publishers and delivers groups of elements as
+    /// tuples.
     ///
-    /// Use ``Publisher/zip(_:_:_:)-67czn`` to return a new publisher that combines the elements from three other publishers to publish a tuple to the downstream subscriber. The returned publisher waits until all four publishers have emitted an event, then delivers the oldest unconsumed event from each publisher as a tuple to the subscriber.
+    /// Use ``Publisher/zip(_:_:_:)-67czn`` to return a new publisher that combines the
+    /// elements from three other publishers to publish a tuple to the downstream
+    /// subscriber. The returned publisher waits until all four publishers have emitted an
+    /// event, then delivers the oldest unconsumed event from each publisher as a tuple to
+    /// the subscriber.
     ///
-    /// In this example, several ``PassthroughSubject`` instances emit values; ``Publisher/zip(_:_:_:)-67czn`` receives the oldest unconsumed value from each publisher and combines them into a tuple that it republishes to the downstream:
+    /// In this example, several ``PassthroughSubject`` instances emit values;
+    /// ``Publisher/zip(_:_:_:)-67czn`` receives the oldest unconsumed value from each
+    /// publisher and combines them into a tuple that it republishes to the downstream:
     ///
     ///     let numbersPub = PassthroughSubject<Int, Never>()
     ///     let lettersPub = PassthroughSubject<String, Never>()
@@ -179,20 +219,26 @@ extension Publisher {
     ///     //  (2, "B", "🥰", 0.8)
     ///
     ///
-    /// If any upstream publisher finishes successfully or fails with an error, so too does the zipped publisher.
+    /// If any upstream publisher finishes successfully or fails with an error, so too
+    /// does the zipped publisher.
     ///
     /// - Parameters:
     ///   - publisher1: A second publisher.
     ///   - publisher2: A third publisher.
     ///   - publisher3: A fourth publisher.
-    /// - Returns: A publisher that emits groups of elements from the upstream publishers as tuples.
+    /// - Returns: A publisher that emits groups of elements from the upstream publishers
+    ///   as tuples.
     public func zip<P, Q, R>(_ publisher1: P, _ publisher2: Q, _ publisher3: R) -> Publishers.Zip4<Self, P, Q, R> where P: Publisher, Q: Publisher, R: Publisher, Self.Failure == P.Failure, P.Failure == Q.Failure, Q.Failure == R.Failure {
         Publishers.Zip4(self, publisher1, publisher2, publisher3)
     }
 
     /// Combines elements from three other publishers and delivers a transformed output.
     ///
-    /// Use ``Publisher/zip(_:_:_:_:)`` to return a new publisher that combines the elements from three other publishers using a transformation you specify to publish a new value to the downstream subscriber. The returned publisher waits until all four publishers have emitted an event, then delivers the oldest unconsumed event from each publisher together that the operator uses in the transformation.
+    /// Use ``Publisher/zip(_:_:_:_:)`` to return a new publisher that combines the
+    /// elements from three other publishers using a transformation you specify to publish
+    /// a new value to the downstream subscriber. The returned publisher waits until all
+    /// four publishers have emitted an event, then delivers the oldest unconsumed event
+    /// from each publisher together that the operator uses in the transformation.
     ///
     /// In this example, the ``PassthroughSubject`` publishers, `numbersPub`,
     /// `fractionsPub`, `lettersPub`, and `emojiPub` emit values. The ``Publisher/zip(_:_:_:_:)`` operator receives the oldest value from each publisher and uses the `Int` from `numbersPub` and publishes a string that repeats the [String](https://developer.apple.com/documentation/swift/string) from `lettersPub` and `emojiPub` that many times and prints out the value in `fractionsPub`.
@@ -221,14 +267,17 @@ extension Publisher {
     ///     //1 😀 A 0.1
     ///     //2 🥰🥰 BB 0.8
     ///
-    /// If any upstream publisher finishes successfully or fails with an error, so too does the zipped publisher.
+    /// If any upstream publisher finishes successfully or fails with an error, so too
+    /// does the zipped publisher.
     ///
     /// - Parameters:
     ///   - publisher1: A second publisher.
     ///   - publisher2: A third publisher.
     ///   - publisher3: A fourth publisher.
-    ///   - transform: A closure that receives the most-recent value from each publisher and returns a new value to publish.
-    /// - Returns: A publisher that uses the `transform` closure to emit new elements, produced by combining the most recent value from four upstream publishers.
+    ///   - transform: A closure that receives the most-recent value from each publisher
+    ///     and returns a new value to publish.
+    /// - Returns: A publisher that uses the `transform` closure to emit new elements,
+    ///   produced by combining the most recent value from four upstream publishers.
     public func zip<P, Q, R, T>(_ publisher1: P, _ publisher2: Q, _ publisher3: R, _ transform: @escaping (Self.Output, P.Output, Q.Output, R.Output) -> T) -> Publishers.Map<Publishers.Zip4<Self, P, Q, R>, T> where P: Publisher, Q: Publisher, R: Publisher, Self.Failure == P.Failure, P.Failure == Q.Failure, Q.Failure == R.Failure {
         Publishers.Zip4(self, publisher1, publisher2, publisher3).map(transform)
     }
@@ -239,15 +288,22 @@ extension Publisher {
 extension Publishers {
     /// A publisher created by applying the zip function to two upstream publishers.
     ///
-    /// Use `Publishers.Zip` to opencombine the latest elements from two publishers and emit a tuple to the downstream. The returned publisher waits until both publishers have emitted an event, then delivers the oldest unconsumed event from each publisher together as a tuple to the subscriber.
+    /// Use `Publishers.Zip` to opencombine the latest elements from two publishers and
+    /// emit a tuple to the downstream. The returned publisher waits until both publishers
+    /// have emitted an event, then delivers the oldest unconsumed event from each
+    /// publisher together as a tuple to the subscriber.
     ///
-    /// Much like a zipper or zip fastener on a piece of clothing pulls together rows of teeth to link the two sides, `Publishers.Zip` combines streams from two different publishers by linking pairs of elements from each side.
+    /// Much like a zipper or zip fastener on a piece of clothing pulls together rows of
+    /// teeth to link the two sides, `Publishers.Zip` combines streams from two different
+    /// publishers by linking pairs of elements from each side.
     ///
-    /// If either upstream publisher finishes successfully or fails with an error, so too does the zipped publisher.
+    /// If either upstream publisher finishes successfully or fails with an error, so too
+    /// does the zipped publisher.
     public struct Zip<A, B>: Publisher where A: Publisher, B: Publisher, A.Failure == B.Failure {
         /// The kind of values published by this publisher.
         ///
-        /// This publisher produces two-element tuples, whose members' types correspond to the types produced by the upstream publishers.
+        /// This publisher produces two-element tuples, whose members' types correspond to
+        /// the types produced by the upstream publishers.
         public typealias Output = (A.Output, B.Output)
 
         /// The kind of errors this publisher might publish.
@@ -280,13 +336,18 @@ extension Publishers {
 
     /// A publisher created by applying the zip function to three upstream publishers.
     ///
-    /// Use a `Publishers.Zip3` to opencombine the latest elements from three publishers and emit a tuple to the downstream. The returned publisher waits until all three publishers have emitted an event, then delivers the oldest unconsumed event from each publisher as a tuple to the subscriber.
+    /// Use a `Publishers.Zip3` to opencombine the latest elements from three publishers
+    /// and emit a tuple to the downstream. The returned publisher waits until all three
+    /// publishers have emitted an event, then delivers the oldest unconsumed event from
+    /// each publisher as a tuple to the subscriber.
     ///
-    /// If any upstream publisher finishes successfully or fails with an error, so too does the zipped publisher.
+    /// If any upstream publisher finishes successfully or fails with an error, so too
+    /// does the zipped publisher.
     public struct Zip3<A, B, C>: Publisher where A: Publisher, B: Publisher, C: Publisher, A.Failure == B.Failure, B.Failure == C.Failure {
         /// The kind of values published by this publisher.
         ///
-        /// This publisher produces three-element tuples, whose members' types correspond to the types produced by the upstream publishers.
+        /// This publisher produces three-element tuples, whose members' types correspond
+        /// to the types produced by the upstream publishers.
         public typealias Output = (A.Output, B.Output, C.Output)
 
         /// The kind of errors this publisher might publish.
@@ -303,7 +364,8 @@ extension Publishers {
         /// A third publisher to zip.
         public let c: C
 
-        /// Creates a publisher that applies the zip function to three upstream publishers.
+        /// Creates a publisher that applies the zip function to three upstream
+        /// publishers.
         /// - Parameters:
         ///   - a: A publisher to zip.
         ///   - b: A second publisher to zip.
@@ -325,13 +387,18 @@ extension Publishers {
 
     /// A publisher created by applying the zip function to four upstream publishers.
     ///
-    /// Use a `Publishers.Zip4` to opencombine the latest elements from four publishers and emit a tuple to the downstream. The returned publisher waits until all four publishers have emitted an event, then delivers the oldest unconsumed event from each publisher as a tuple to the subscriber.
+    /// Use a `Publishers.Zip4` to opencombine the latest elements from four publishers
+    /// and emit a tuple to the downstream. The returned publisher waits until all four
+    /// publishers have emitted an event, then delivers the oldest unconsumed event from
+    /// each publisher as a tuple to the subscriber.
     ///
-    /// If any upstream publisher finishes successfully or fails with an error, so too does the zipped publisher.
+    /// If any upstream publisher finishes successfully or fails with an error, so too
+    /// does the zipped publisher.
     public struct Zip4<A, B, C, D>: Publisher where A: Publisher, B: Publisher, C: Publisher, D: Publisher, A.Failure == B.Failure, B.Failure == C.Failure, C.Failure == D.Failure {
         /// The kind of values published by this publisher.
         ///
-        /// This publisher produces four-element tuples, whose members' types correspond to the types produced by the upstream publishers.
+        /// This publisher produces four-element tuples, whose members' types correspond
+        /// to the types produced by the upstream publishers.
         public typealias Output = (A.Output, B.Output, C.Output, D.Output)
 
         /// The kind of errors this publisher might publish.
@@ -351,7 +418,8 @@ extension Publishers {
         /// A fourth publisher to zip.
         public let d: D
 
-        /// Creates a publisher created by applying the zip function to four upstream publishers.
+        /// Creates a publisher created by applying the zip function to four upstream
+        /// publishers.
         /// - Parameters:
         ///   - a: A publisher to zip.
         ///   - b: A second publisher to zip.
@@ -383,7 +451,8 @@ extension Publishers.Zip: Equatable where A: Equatable, B: Equatable {
     /// - Parameters:
     ///   - lhs: A zip publisher to compare for equality.
     ///   - rhs: Another zip publisher to compare for equality.
-    /// - Returns: `true` if the corresponding upstream publishers of each zip publisher are equal; otherwise `false`.
+    /// - Returns: `true` if the corresponding upstream publishers of each zip publisher
+    ///   are equal; otherwise `false`.
     public static func == (lhs: Publishers.Zip<A, B>, rhs: Publishers.Zip<A, B>) -> Bool {
         lhs.a == rhs.a && lhs.b == rhs.b
     }
@@ -395,7 +464,8 @@ extension Publishers.Zip3: Equatable where A: Equatable, B: Equatable, C: Equata
     /// - Parameters:
     ///   - lhs: A zip publisher to compare for equality.
     ///   - rhs: Another zip publisher to compare for equality.
-    /// - Returns: `true` if the corresponding upstream publishers of each zip publisher are equal; otherwise `false`.
+    /// - Returns: `true` if the corresponding upstream publishers of each zip publisher
+    ///   are equal; otherwise `false`.
     public static func == (lhs: Publishers.Zip3<A, B, C>, rhs: Publishers.Zip3<A, B, C>) -> Bool {
         lhs.a == rhs.a && lhs.b == rhs.b && lhs.c == rhs.c
     }
@@ -407,7 +477,8 @@ extension Publishers.Zip4: Equatable where A: Equatable, B: Equatable, C: Equata
     /// - Parameters:
     ///   - lhs: A zip publisher to compare for equality.
     ///   - rhs: Another zip publisher to compare for equality.
-    /// - Returns: `true` if the corresponding upstream publishers of each zip publisher are equal; otherwise `false`.
+    /// - Returns: `true` if the corresponding upstream publishers of each zip publisher
+    ///   are equal; otherwise `false`.
     public static func == (lhs: Publishers.Zip4<A, B, C, D>, rhs: Publishers.Zip4<A, B, C, D>) -> Bool {
         lhs.a == rhs.a && lhs.b == rhs.b && lhs.c == rhs.c && lhs.d == rhs.d
     }

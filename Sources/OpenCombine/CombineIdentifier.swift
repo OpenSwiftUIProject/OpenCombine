@@ -20,8 +20,9 @@ internal func __nextCombineIdentifier() -> UInt64 {
 
 /// A unique identifier for identifying publisher streams.
 ///
-/// To conform to ``CustomCombineIdentifierConvertible`` in a
-/// ``Subscription`` or ``Subject`` that you implement as a structure, create an instance of ``CombineIdentifier`` as follows:
+/// To conform to ``CustomCombineIdentifierConvertible`` in a ``Subscription`` or
+/// ``Subject`` that you implement as a structure, create an instance of
+/// ``CombineIdentifier`` as follows:
 ///
 ///     let combineIdentifier = CombineIdentifier()
 public struct CombineIdentifier: Hashable, CustomStringConvertible {

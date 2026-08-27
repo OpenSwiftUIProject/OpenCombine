@@ -17,7 +17,12 @@ extension Publisher where Failure == Never {
     ///
     /// This property provides an ``AsyncPublisher``, which allows you to use the Swift `async`-`await` syntax to receive the publisher's elements. Because ``AsyncPublisher`` conforms to [AsyncSequence](https://developer.apple.com/documentation/swift/asyncsequence), you iterate over its elements with a `for`-`await`-`in` loop, rather than attaching a subscriber.
     ///
-    /// The following example shows how to use the `values` property to receive elements asynchronously. The example adapts a code snippet from the ``Publisher/filter(_:)`` operator's documentation, which filters a sequence to only emit even integers. This example replaces the ``Subscribers/Sink`` subscriber with a `for`-`await`-`in` loop that iterates over the ``AsyncPublisher`` provided by the `values` property.
+    /// The following example shows how to use the `values` property to receive elements
+    /// asynchronously. The example adapts a code snippet from the
+    /// ``Publisher/filter(_:)`` operator's documentation, which filters a sequence to
+    /// only emit even integers. This example replaces the ``Subscribers/Sink`` subscriber
+    /// with a `for`-`await`-`in` loop that iterates over the ``AsyncPublisher`` provided
+    /// by the `values` property.
     ///
     ///     let numbers: [Int] = [1, 2, 3, 4, 5]
     ///     let filtered = numbers.publisher
@@ -36,8 +41,8 @@ extension Publisher where Failure == Never {
 
 /// A publisher that exposes its elements as an asynchronous sequence.
 ///
-/// `AsyncPublisher` conforms to `AsyncSequence`, which allows callers to receive
-/// values with the `for`-`await`-`in` syntax, rather than attaching a `Subscriber`.
+/// `AsyncPublisher` conforms to `AsyncSequence`, which allows callers to receive values
+/// with the `for`-`await`-`in` syntax, rather than attaching a `Subscriber`.
 ///
 /// Use the `values` property of the `Publisher` protocol to wrap an existing publisher
 /// with an instance of this type.
@@ -67,14 +72,14 @@ public struct AsyncPublisher<Upstream: Publisher>: AsyncSequence
         }
     }
 
-    /// The type of asynchronous iterator that produces elements of this
-    /// asynchronous sequence.
+    /// The type of asynchronous iterator that produces elements of this asynchronous
+    /// sequence.
     public typealias AsyncIterator = Iterator
 
     private let publisher: Upstream
 
-    /// Creates a publisher that exposes elements received from an upstream publisher as
-    /// a throwing asynchronous sequence.
+    /// Creates a publisher that exposes elements received from an upstream publisher as a
+    /// throwing asynchronous sequence.
     ///
     /// - Parameter publisher: An upstream publisher. The asynchronous publisher converts
     ///   elements received from this publisher into an asynchronous sequence.
@@ -85,8 +90,8 @@ public struct AsyncPublisher<Upstream: Publisher>: AsyncSequence
     /// Creates the asynchronous iterator that produces elements of this asynchronous
     /// sequence.
     ///
-    /// - Returns: An instance of the `AsyncIterator` type used to produce elements of
-    ///   the asynchronous sequence.
+    /// - Returns: An instance of the `AsyncIterator` type used to produce elements of the
+    ///   asynchronous sequence.
     public func makeAsyncIterator() -> Iterator {
         let inner = Iterator.Inner()
         publisher.subscribe(inner)
@@ -196,7 +201,14 @@ extension Publisher {
     ///
     /// This property provides an ``AsyncThrowingPublisher``, which allows you to use the Swift `async`-`await` syntax to receive the publisher's elements. Because ``AsyncPublisher`` conforms to [AsyncSequence](https://developer.apple.com/documentation/swift/asyncsequence), you iterate over its elements with a `for`-`await`-`in` loop, rather than attaching a subscriber. If the publisher terminates with an error, the awaiting caller receives the error as a `throw`.
     ///
-    /// The following example shows how to use the `values` property to receive elements asynchronously. The example adapts a code snippet from the ``Publisher/tryFilter(_:)`` operator's documentation, which filters a sequence to only emit even integers, and terminate with an error on a `0`. This example replaces the ``Subscribers/Sink`` subscriber with a `for`-`await`-`in` loop that iterates over the ``AsyncPublisher`` provided by the `values` property. With this approach, the error handling previously provided in the sink subscriber's ``Subscribers/Sink/receiveCompletion`` closure goes instead in a `catch` block.
+    /// The following example shows how to use the `values` property to receive elements
+    /// asynchronously. The example adapts a code snippet from the
+    /// ``Publisher/tryFilter(_:)`` operator's documentation, which filters a sequence to
+    /// only emit even integers, and terminate with an error on a `0`. This example
+    /// replaces the ``Subscribers/Sink`` subscriber with a `for`-`await`-`in` loop that
+    /// iterates over the ``AsyncPublisher`` provided by the `values` property. With this
+    /// approach, the error handling previously provided in the sink subscriber's
+    /// ``Subscribers/Sink/receiveCompletion`` closure goes instead in a `catch` block.
     ///
     ///     let numbers: [Int] = [1, 2, 3, 4, 0, 5]
     ///     let filterPublisher = numbers.publisher
@@ -226,9 +238,9 @@ extension Publisher {
 /// A publisher that exposes its elements as a throwing asynchronous sequence.
 ///
 /// `AsyncThrowingPublisher` conforms to `AsyncSequence`, which allows callers to receive
-/// values with the `for`-`await`-`in` syntax, rather than attaching a `Subscriber`.
-/// If the upstream publisher terminates with an error, `AsyncThrowingPublisher` throws
-/// the error to the awaiting caller.
+/// values with the `for`-`await`-`in` syntax, rather than attaching a `Subscriber`. If
+/// the upstream publisher terminates with an error, `AsyncThrowingPublisher` throws the
+/// error to the awaiting caller.
 ///
 /// Use the `values` property of the `Publisher` protocol to wrap an existing publisher
 /// with an instance of this type.
@@ -248,8 +260,7 @@ public struct AsyncThrowingPublisher<Upstream: Publisher>: AsyncSequence
         /// Produces the next element in the prefix sequence.
         ///
         /// - Returns: The next published element, or `nil` if the publisher finishes
-        ///   normally.
-        ///   If the publisher terminates with an error, the call point receives
+        ///   normally. If the publisher terminates with an error, the call point receives
         ///   the error as a `throw`.
         public mutating func next() async throws -> Element? {
             return try await withTaskCancellationHandler(
@@ -259,8 +270,8 @@ public struct AsyncThrowingPublisher<Upstream: Publisher>: AsyncSequence
         }
     }
 
-    /// The type of asynchronous iterator that produces elements of this
-    /// asynchronous sequence.
+    /// The type of asynchronous iterator that produces elements of this asynchronous
+    /// sequence.
     public typealias AsyncIterator = Iterator
 
     private let publisher: Upstream
@@ -277,8 +288,8 @@ public struct AsyncThrowingPublisher<Upstream: Publisher>: AsyncSequence
     /// Creates the asynchronous iterator that produces elements of this asynchronous
     /// sequence.
     ///
-    /// - Returns: An instance of the `AsyncIterator` type used to produce elements of
-    ///   the asynchronous sequence.
+    /// - Returns: An instance of the `AsyncIterator` type used to produce elements of the
+    ///   asynchronous sequence.
     public func makeAsyncIterator() -> Iterator {
         let inner = Iterator.Inner()
         publisher.subscribe(inner)

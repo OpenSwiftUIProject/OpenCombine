@@ -121,13 +121,13 @@ extension Publisher {
 
     /// Attaches a subscriber with closure-based behavior.
     ///
-    /// Use `sink(receiveCompletion:receiveValue:)` to observe values received by
-    /// the publisher and process them using a closure you specify.
+    /// Use `sink(receiveCompletion:receiveValue:)` to observe values received by the
+    /// publisher and process them using a closure you specify.
     ///
-    /// In this example, a `Range` publisher publishes integers to
-    /// a `sink(receiveCompletion:receiveValue:)` operator’s `receiveValue` closure that
-    /// prints them to the console. Upon completion
-    /// the `sink(receiveCompletion:receiveValue:)` operator’s `receiveCompletion` closure
+    /// In this example, a `Range` publisher publishes integers to a
+    /// `sink(receiveCompletion:receiveValue:)` operator’s `receiveValue` closure that
+    /// prints them to the console. Upon completion the
+    /// `sink(receiveCompletion:receiveValue:)` operator’s `receiveCompletion` closure
     /// indicates the successful termination of the stream.
     ///
     ///     let myRange = (0...3)
@@ -142,14 +142,14 @@ extension Publisher {
     ///     //  value: 3
     ///     //  completion: finished
     ///
-    /// This method creates the subscriber and immediately requests an unlimited number
-    /// of values, prior to returning the subscriber.
-    /// The return value should be held, otherwise the stream will be canceled.
+    /// This method creates the subscriber and immediately requests an unlimited number of
+    /// values, prior to returning the subscriber. The return value should be held,
+    /// otherwise the stream will be canceled.
     ///
     /// - parameter receiveCompletion: The closure to execute on completion.
     /// - parameter receiveValue: The closure to execute on receipt of a value.
-    /// - Returns: A cancellable instance, which you use when you end assignment of
-    ///   the received value. Deallocation of the result will tear down the subscription
+    /// - Returns: A cancellable instance, which you use when you end assignment of the
+    ///   received value. Deallocation of the result will tear down the subscription
     ///   stream.
     public func sink(
         receiveCompletion: @escaping (Subscribers.Completion<Failure>) -> Void,
@@ -186,12 +186,12 @@ extension Publisher where Failure == Never {
     ///     //  Received 3
     ///
     /// This method creates the subscriber and immediately requests an unlimited number of
-    /// values, prior to returning the subscriber.
-    /// The return value should be held, otherwise the stream will be canceled.
+    /// values, prior to returning the subscriber. The return value should be held,
+    /// otherwise the stream will be canceled.
     ///
     /// - parameter receiveValue: The closure to execute on receipt of a value.
-    /// - Returns: A cancellable instance, which you use when you end assignment of
-    ///   the received value. Deallocation of the result will tear down the subscription
+    /// - Returns: A cancellable instance, which you use when you end assignment of the
+    ///   received value. Deallocation of the result will tear down the subscription
     ///   stream.
     public func sink(
         receiveValue: @escaping (Output) -> Void

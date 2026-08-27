@@ -7,7 +7,9 @@
 
 /// A scheduler for performing synchronous actions.
 ///
-/// You can only use this scheduler for immediate actions. If you attempt to schedule actions after a specific date, this scheduler ignores the date and performs them immediately.
+/// You can only use this scheduler for immediate actions. If you attempt to schedule
+/// actions after a specific date, this scheduler ignores the date and performs them
+/// immediately.
 public struct ImmediateScheduler: Scheduler {
 
     /// The time type used by the immediate scheduler.
@@ -126,8 +128,8 @@ public struct ImmediateScheduler: Scheduler {
 
     /// The shared instance of the immediate scheduler.
     ///
-    /// You cannot create instances of the immediate scheduler yourself. Use only
-    /// the shared instance.
+    /// You cannot create instances of the immediate scheduler yourself. Use only the
+    /// shared instance.
     public static let shared = ImmediateScheduler()
 
     /// Performs the action at the next possible opportunity.

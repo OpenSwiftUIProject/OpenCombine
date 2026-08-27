@@ -9,9 +9,13 @@ extension Publisher {
 
     /// Buffers elements received from an upstream publisher.
     ///
-    /// Use ``Publisher/buffer(size:prefetch:whenFull:)`` to collect a specific number of elements from an upstream publisher before republishing them to the downstream subscriber according to the ``Publishers/BufferingStrategy`` and ``Publishers/PrefetchStrategy`` strategy you specify.
+    /// Use ``Publisher/buffer(size:prefetch:whenFull:)`` to collect a specific number of
+    /// elements from an upstream publisher before republishing them to the downstream
+    /// subscriber according to the ``Publishers/BufferingStrategy`` and
+    /// ``Publishers/PrefetchStrategy`` strategy you specify.
     ///
-    /// If the publisher completes before reaching the `size` threshold, it buffers the elements and publishes them downstream prior to completion.
+    /// If the publisher completes before reaching the `size` threshold, it buffers the
+    /// elements and publishes them downstream prior to completion.
     ///
     /// - Parameters:
     ///   - size: The maximum number of elements to store.
@@ -38,9 +42,9 @@ extension Publishers {
         /// A strategy to fill the buffer at subscription time, and keep it full
         /// thereafter.
         ///
-        /// This strategy starts by making a demand equal to the buffer’s size from
-        /// the upstream when the subscriber first connects. Afterwards, it continues
-        /// to demand elements from the upstream to try to keep the buffer full.
+        /// This strategy starts by making a demand equal to the buffer’s size from the
+        /// upstream when the subscriber first connects. Afterwards, it continues to
+        /// demand elements from the upstream to try to keep the buffer full.
         case keepFull
 
         /// A strategy that avoids prefetching and instead performs requests on demand.

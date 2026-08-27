@@ -41,9 +41,12 @@ override func viewDidLoad() {
 }
 ```
 
-In this example, OpenCombine operators replace all the behavior inside the closure of the earlier example:
+In this example, OpenCombine operators replace all the behavior inside the closure of the
+earlier example:
 
-- The ``Publisher/receive(on:options:)`` operator ensures that its subsequent operators run on the specified dispatch queue. This replaces the `async()` call from before.
-- The ``Publisher/assign(to:on:)`` operator updates the data model, by using a key path to set the `lastUpdate` property.
+- The ``Publisher/receive(on:options:)`` operator ensures that its subsequent operators
+  run on the specified dispatch queue. This replaces the `async()` call from before.
+- The ``Publisher/assign(to:on:)`` operator updates the data model, by using a key path to
+  set the `lastUpdate` property.
 
 Another advantage you’ll find when using OpenCombine to simplify your code is that the [Timer.TimerPublisher](https://developer.apple.com/documentation/foundation/timer/timerpublisher) produces new [Date](https://developer.apple.com/documentation/foundation/date) instances as its output type. The first example’s closure receives the [Timer](https://developer.apple.com/documentation/foundation/timer) itself as its parameter, so it has to create new [Date](https://developer.apple.com/documentation/foundation/date) instances manually.

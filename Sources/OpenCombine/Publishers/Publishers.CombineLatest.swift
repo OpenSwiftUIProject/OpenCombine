@@ -8,15 +8,27 @@
 // MARK: - combineLatest methods on Publisher
 
 extension Publisher {
-    /// Subscribes to an additional publisher and publishes a tuple upon receiving output from either publisher.
+    /// Subscribes to an additional publisher and publishes a tuple upon receiving output
+    /// from either publisher.
     ///
-    /// Use ``Publisher/combineLatest(_:)`` when you want the downstream subscriber to receive a tuple of the most-recent element from multiple publishers when any of them emit a value. To pair elements from multiple publishers, use ``Publisher/zip(_:)`` instead. To receive just the most-recent element from multiple publishers rather than tuples, use ``Publisher/merge(with:)-394v9``.
+    /// Use ``Publisher/combineLatest(_:)`` when you want the downstream subscriber to
+    /// receive a tuple of the most-recent element from multiple publishers when any of
+    /// them emit a value. To pair elements from multiple publishers, use
+    /// ``Publisher/zip(_:)`` instead. To receive just the most-recent element from
+    /// multiple publishers rather than tuples, use ``Publisher/merge(with:)-394v9``.
     ///
-    /// > Tip: The combined publisher doesn't produce elements until each of its upstream publishers publishes at least one element.
+    /// > Tip: The combined publisher doesn't produce elements until each of its upstream
+    /// publishers publishes at least one element.
     ///
-    /// The combined publisher passes through any requests to *all* upstream publishers. However, it still obeys the demand-fulfilling rule of only sending the request amount downstream. If the demand isn’t ``Subscribers/Demand/unlimited``, it drops values from upstream publishers. It implements this by using a buffer size of 1 for each upstream, and holds the most-recent value in each buffer.
+    /// The combined publisher passes through any requests to *all* upstream publishers.
+    /// However, it still obeys the demand-fulfilling rule of only sending the request
+    /// amount downstream. If the demand isn’t ``Subscribers/Demand/unlimited``, it drops
+    /// values from upstream publishers. It implements this by using a buffer size of 1
+    /// for each upstream, and holds the most-recent value in each buffer.
     ///
-    /// In this example, ``PassthroughSubject`` `pub1` and also `pub2` emit values; as ``Publisher/combineLatest(_:)`` receives input from either upstream publisher, it combines the latest value from each publisher into a tuple and publishes it.
+    /// In this example, ``PassthroughSubject`` `pub1` and also `pub2` emit values; as
+    /// ``Publisher/combineLatest(_:)`` receives input from either upstream publisher, it
+    /// combines the latest value from each publisher into a tuple and publishes it.
     ///
     ///     let pub1 = PassthroughSubject<Int, Never>()
     ///     let pub2 = PassthroughSubject<Int, Never>()
@@ -38,23 +50,34 @@ extension Publisher {
     ///     //    Result: (45, 2).   // pub1 latest = 45, pub2 latest = 2
     ///     //    Result: (45, 22).  // pub1 latest = 45, pub2 latest = 22
     ///
-    /// When all upstream publishers finish, this publisher finishes. If an upstream publisher never publishes a value, this publisher never finishes.
+    /// When all upstream publishers finish, this publisher finishes. If an upstream
+    /// publisher never publishes a value, this publisher never finishes.
     ///
     /// - Parameter other: Another publisher to opencombine with this one.
-    /// - Returns: A publisher that receives and combines elements from this and another publisher.
+    /// - Returns: A publisher that receives and combines elements from this and another
+    ///   publisher.
     public func combineLatest<P>(_ other: P) -> Publishers.CombineLatest<Self, P> where P: Publisher, Self.Failure == P.Failure {
         Publishers.CombineLatest(self, other)
     }
     
-    /// Subscribes to an additional publisher and invokes a closure upon receiving output from either publisher.
+    /// Subscribes to an additional publisher and invokes a closure upon receiving output
+    /// from either publisher.
     ///
-    /// Use `combineLatest<P,T>(_:)` to opencombine the current and one additional publisher and transform them using a closure you specify to publish a new value to the downstream.
+    /// Use `combineLatest<P,T>(_:)` to opencombine the current and one additional
+    /// publisher and transform them using a closure you specify to publish a new value to
+    /// the downstream.
     ///
-    /// > Tip: The combined publisher doesn't produce elements until each of its upstream publishers publishes at least one element.
+    /// > Tip: The combined publisher doesn't produce elements until each of its upstream
+    /// publishers publishes at least one element.
     ///
-    /// The combined publisher passes through any requests to *all* upstream publishers. However, it still obeys the demand-fulfilling rule of only sending the request amount downstream. If the demand isn’t `.unlimited`, it drops values from upstream publishers. It implements this by using a buffer size of 1 for each upstream, and holds the most-recent value in each buffer.
+    /// The combined publisher passes through any requests to *all* upstream publishers.
+    /// However, it still obeys the demand-fulfilling rule of only sending the request
+    /// amount downstream. If the demand isn’t `.unlimited`, it drops values from upstream
+    /// publishers. It implements this by using a buffer size of 1 for each upstream, and
+    /// holds the most-recent value in each buffer.
     ///
-    /// In the example below, `combineLatest()` receives the most-recent values published by the two publishers, it multiplies them together, and republishes the result:
+    /// In the example below, `combineLatest()` receives the most-recent values published
+    /// by the two publishers, it multiplies them together, and republishes the result:
     ///
     ///     let pub1 = PassthroughSubject<Int, Never>()
     ///     let pub2 = PassthroughSubject<Int, Never>()
@@ -80,28 +103,45 @@ extension Publisher {
     ///     //Result: 36.   (pub1 latest = 3, pub2 latest = 12)
     ///     //Result: 156.  (pub1 latest = 13, pub2 latest = 12)
     ///
-    /// All upstream publishers need to finish for this publisher to finish. If an upstream publisher never publishes a value, this publisher never finishes.
-    /// If any of the combined publishers terminates with a failure, this publisher also fails.
+    /// All upstream publishers need to finish for this publisher to finish. If an
+    /// upstream publisher never publishes a value, this publisher never finishes. If any
+    /// of the combined publishers terminates with a failure, this publisher also fails.
     ///
     /// - Parameters:
     ///   - other: Another publisher to opencombine with this one.
-    ///   - transform: A closure that receives the most-recent value from each publisher and returns a new value to publish.
-    /// - Returns: A publisher that receives and combines elements from this and another publisher.
+    ///   - transform: A closure that receives the most-recent value from each publisher
+    ///     and returns a new value to publish.
+    /// - Returns: A publisher that receives and combines elements from this and another
+    ///   publisher.
     public func combineLatest<P, T>(_ other: P, _ transform: @escaping (Self.Output, P.Output) -> T) -> Publishers.Map<Publishers.CombineLatest<Self, P>, T> where P: Publisher, Self.Failure == P.Failure {
         Publishers.CombineLatest(self, other).map(transform)
     }
 
-    /// Subscribes to two additional publishers and publishes a tuple upon receiving output from any of the publishers.
+    /// Subscribes to two additional publishers and publishes a tuple upon receiving
+    /// output from any of the publishers.
     ///
-    /// Use ``Publisher/combineLatest(_:_:)-81vgd`` when you want the downstream subscriber to receive a tuple of the most-recent element from multiple publishers when any of them emit a value. To opencombine elements from multiple publishers, use ``Publisher/zip(_:_:)-2p498`` instead. To receive just the most-recent element from multiple publishers rather than tuples, use ``Publisher/merge(with:_:)``.
+    /// Use ``Publisher/combineLatest(_:_:)-81vgd`` when you want the downstream
+    /// subscriber to receive a tuple of the most-recent element from multiple publishers
+    /// when any of them emit a value. To opencombine elements from multiple publishers,
+    /// use ``Publisher/zip(_:_:)-2p498`` instead. To receive just the most-recent element
+    /// from multiple publishers rather than tuples, use ``Publisher/merge(with:_:)``.
     ///
-    /// > Tip: The combined publisher doesn't produce elements until each of its upstream publishers publishes at least one element.
+    /// > Tip: The combined publisher doesn't produce elements until each of its upstream
+    /// publishers publishes at least one element.
     ///
-    /// The combined publisher passes through any requests to *all* upstream publishers. However, it still obeys the demand-fulfilling rule of only sending the request amount downstream. If the demand isn’t ``Subscribers/Demand/unlimited``, it drops values from upstream publishers. It implements this by using a buffer size of 1 for each upstream, and holds the most-recent value in each buffer.
+    /// The combined publisher passes through any requests to *all* upstream publishers.
+    /// However, it still obeys the demand-fulfilling rule of only sending the request
+    /// amount downstream. If the demand isn’t ``Subscribers/Demand/unlimited``, it drops
+    /// values from upstream publishers. It implements this by using a buffer size of 1
+    /// for each upstream, and holds the most-recent value in each buffer.
     ///
-    /// All upstream publishers need to finish for this publisher to finish. If an upstream publisher never publishes a value, this publisher never finishes.
+    /// All upstream publishers need to finish for this publisher to finish. If an
+    /// upstream publisher never publishes a value, this publisher never finishes.
     ///
-    /// In this example, three instances of ``PassthroughSubject`` emit values; as ``Publisher/combineLatest(_:_:)-81vgd`` receives input from any of the upstream publishers, it combines the latest value from each publisher into a tuple and publishes it:
+    /// In this example, three instances of ``PassthroughSubject`` emit values; as
+    /// ``Publisher/combineLatest(_:_:)-81vgd`` receives input from any of the upstream
+    /// publishers, it combines the latest value from each publisher into a tuple and
+    /// publishes it:
     ///
     ///     let pub = PassthroughSubject<Int, Never>()
     ///     let pub2 = PassthroughSubject<Int, Never>()
@@ -128,26 +168,38 @@ extension Publisher {
     ///     //  Result: (13, 12, 9).
     ///     //  Result: (13, 12, 19).
     ///
-    /// If any of the combined publishers terminates with a failure, this publisher also fails.
+    /// If any of the combined publishers terminates with a failure, this publisher also
+    /// fails.
     /// - Parameters:
     ///   - publisher1: A second publisher to opencombine with the first publisher.
     ///   - publisher2: A third publisher to opencombine with the first publisher.
-    /// - Returns: A publisher that receives and combines elements from this publisher and two other publishers.
+    /// - Returns: A publisher that receives and combines elements from this publisher and
+    ///   two other publishers.
     public func combineLatest<P, Q>(_ publisher1: P, _ publisher2: Q) -> Publishers.CombineLatest3<Self, P, Q> where P: Publisher, Q: Publisher, Self.Failure == P.Failure, P.Failure == Q.Failure {
         Publishers.CombineLatest3(self, publisher1, publisher2)
     }
 
-    /// Subscribes to two additional publishers and invokes a closure upon receiving output from any of the publishers.
+    /// Subscribes to two additional publishers and invokes a closure upon receiving
+    /// output from any of the publishers.
     ///
-    /// Use `combineLatest<P, Q>(_:,_:)` to opencombine the current and two additional publishers and transform them using a closure you specify to publish a new value to the downstream.
+    /// Use `combineLatest<P, Q>(_:,_:)` to opencombine the current and two additional
+    /// publishers and transform them using a closure you specify to publish a new value
+    /// to the downstream.
     ///
-    /// > Tip: The combined publisher doesn't produce elements until each of its upstream publishers publishes at least one element.
+    /// > Tip: The combined publisher doesn't produce elements until each of its upstream
+    /// publishers publishes at least one element.
     ///
-    /// The combined publisher passes through any requests to *all* upstream publishers. However, it still obeys the demand-fulfilling rule of only sending the request amount downstream. If the demand isn’t `.unlimited`, it drops values from upstream publishers. It implements this by using a buffer size of 1 for each upstream, and holds the most-recent value in each buffer.
-    /// All upstream publishers need to finish for this publisher to finish. If an upstream publisher never publishes a value, this publisher never finishes.
-    /// If any of the combined publishers terminates with a failure, this publisher also fails.
+    /// The combined publisher passes through any requests to *all* upstream publishers.
+    /// However, it still obeys the demand-fulfilling rule of only sending the request
+    /// amount downstream. If the demand isn’t `.unlimited`, it drops values from upstream
+    /// publishers. It implements this by using a buffer size of 1 for each upstream, and
+    /// holds the most-recent value in each buffer. All upstream publishers need to finish
+    /// for this publisher to finish. If an upstream publisher never publishes a value,
+    /// this publisher never finishes. If any of the combined publishers terminates with a
+    /// failure, this publisher also fails.
     ///
-    /// In the example below, `combineLatest()` receives the most-recent values published by three publishers, multiplies them together, and republishes the result:
+    /// In the example below, `combineLatest()` receives the most-recent values published
+    /// by three publishers, multiplies them together, and republishes the result:
     ///
     ///     let pub = PassthroughSubject<Int, Never>()
     ///     let pub2 = PassthroughSubject<Int, Never>()
@@ -177,23 +229,39 @@ extension Publisher {
     /// - Parameters:
     ///   - publisher1: A second publisher to opencombine with the first publisher.
     ///   - publisher2: A third publisher to opencombine with the first publisher.
-    ///   - transform: A closure that receives the most-recent value from each publisher and returns a new value to publish.
-    /// - Returns: A publisher that receives and combines elements from this publisher and two other publishers.
+    ///   - transform: A closure that receives the most-recent value from each publisher
+    ///     and returns a new value to publish.
+    /// - Returns: A publisher that receives and combines elements from this publisher and
+    ///   two other publishers.
     public func combineLatest<P, Q, T>(_ publisher1: P, _ publisher2: Q, _ transform: @escaping (Self.Output, P.Output, Q.Output) -> T) -> Publishers.Map<Publishers.CombineLatest3<Self, P, Q>, T> where P: Publisher, Q: Publisher, Self.Failure == P.Failure, P.Failure == Q.Failure {
         Publishers.CombineLatest3(self, publisher1, publisher2).map(transform)
     }
 
-    /// Subscribes to three additional publishers and publishes a tuple upon receiving output from any of the publishers.
+    /// Subscribes to three additional publishers and publishes a tuple upon receiving
+    /// output from any of the publishers.
     ///
-    /// Use ``Publisher/combineLatest(_:_:_:)-7mt86`` when you want the downstream subscriber to receive a tuple of the most-recent element from multiple publishers when any of them emit a value. To opencombine elements from multiple publishers, use ``Publisher/zip(_:_:_:)-67czn`` instead. To receive just the most-recent element from multiple publishers rather than tuples, use ``Publisher/merge(with:_:_:)``.
+    /// Use ``Publisher/combineLatest(_:_:_:)-7mt86`` when you want the downstream
+    /// subscriber to receive a tuple of the most-recent element from multiple publishers
+    /// when any of them emit a value. To opencombine elements from multiple publishers,
+    /// use ``Publisher/zip(_:_:_:)-67czn`` instead. To receive just the most-recent
+    /// element from multiple publishers rather than tuples, use
+    /// ``Publisher/merge(with:_:_:)``.
     ///
-    /// > Tip: The combined publisher doesn't produce elements until each of its upstream publishers publishes at least one element.
+    /// > Tip: The combined publisher doesn't produce elements until each of its upstream
+    /// publishers publishes at least one element.
     ///
-    /// The combined publisher passes through any requests to *all* upstream publishers. However, it still obeys the demand-fulfilling rule of only sending the request amount downstream. If the demand isn’t ``Subscribers/Demand/unlimited``, it drops values from upstream publishers. It implements this by using a buffer size of 1 for each upstream, and holds the most-recent value in each buffer.
+    /// The combined publisher passes through any requests to *all* upstream publishers.
+    /// However, it still obeys the demand-fulfilling rule of only sending the request
+    /// amount downstream. If the demand isn’t ``Subscribers/Demand/unlimited``, it drops
+    /// values from upstream publishers. It implements this by using a buffer size of 1
+    /// for each upstream, and holds the most-recent value in each buffer.
     ///
-    /// All upstream publishers need to finish for this publisher to finish. If an upstream publisher never publishes a value, this publisher never finishes.
+    /// All upstream publishers need to finish for this publisher to finish. If an
+    /// upstream publisher never publishes a value, this publisher never finishes.
     ///
-    /// In the example below, ``Publisher/combineLatest(_:_:_:)-7mt86`` receives input from any of the publishers, combines the latest value from each publisher into a tuple and publishes it:
+    /// In the example below, ``Publisher/combineLatest(_:_:_:)-7mt86`` receives input
+    /// from any of the publishers, combines the latest value from each publisher into a
+    /// tuple and publishes it:
     ///
     ///     let pub = PassthroughSubject<Int, Never>()
     ///     let pub2 = PassthroughSubject<Int, Never>()
@@ -222,28 +290,41 @@ extension Publisher {
     ///     //  Result: (13, 12, 9, 1).
     ///     //  Result: (13, 12, 19, 1).
     ///
-    /// If any individual publisher of the combined set terminates with a failure, this publisher also fails.
+    /// If any individual publisher of the combined set terminates with a failure, this
+    /// publisher also fails.
     ///
     /// - Parameters:
     ///   - publisher1: A second publisher to opencombine with the first publisher.
     ///   - publisher2: A third publisher to opencombine with the first publisher.
     ///   - publisher3: A fourth publisher to opencombine with the first publisher.
-    /// - Returns: A publisher that receives and combines elements from this publisher and three other publishers.
+    /// - Returns: A publisher that receives and combines elements from this publisher and
+    ///   three other publishers.
     public func combineLatest<P, Q, R>(_ publisher1: P, _ publisher2: Q, _ publisher3: R) -> Publishers.CombineLatest4<Self, P, Q, R> where P: Publisher, Q: Publisher, R: Publisher, Self.Failure == P.Failure, P.Failure == Q.Failure, Q.Failure == R.Failure {
         Publishers.CombineLatest4(self, publisher1, publisher2, publisher3)
     }
 
-    /// Subscribes to three additional publishers and invokes a closure upon receiving output from any of the publishers.
+    /// Subscribes to three additional publishers and invokes a closure upon receiving
+    /// output from any of the publishers.
     ///
-    /// Use ``Publisher/combineLatest(_:_:_:_:)`` when you need to opencombine the current and 3 additional publishers and transform the values using a closure in which you specify the published elements, to publish a new element.
+    /// Use ``Publisher/combineLatest(_:_:_:_:)`` when you need to opencombine the current
+    /// and 3 additional publishers and transform the values using a closure in which you
+    /// specify the published elements, to publish a new element.
     ///
-    /// > Tip: The combined publisher doesn't produce elements until each of its upstream publishers publishes at least one element.
+    /// > Tip: The combined publisher doesn't produce elements until each of its upstream
+    /// publishers publishes at least one element.
     ///
-    /// The combined publisher passes through any requests to *all* upstream publishers. However, it still obeys the demand-fulfilling rule of only sending the request amount downstream. If the demand isn’t ``Subscribers/Demand/unlimited``, it drops values from upstream publishers. It implements this by using a buffer size of 1 for each upstream, and holds the most-recent value in each buffer.
+    /// The combined publisher passes through any requests to *all* upstream publishers.
+    /// However, it still obeys the demand-fulfilling rule of only sending the request
+    /// amount downstream. If the demand isn’t ``Subscribers/Demand/unlimited``, it drops
+    /// values from upstream publishers. It implements this by using a buffer size of 1
+    /// for each upstream, and holds the most-recent value in each buffer.
     ///
-    /// All upstream publishers need to finish for this publisher to finish. If an upstream publisher never publishes a value, this publisher never finishes.
+    /// All upstream publishers need to finish for this publisher to finish. If an
+    /// upstream publisher never publishes a value, this publisher never finishes.
     ///
-    /// In the example below, as ``Publisher/combineLatest(_:_:_:_:)`` receives the most-recent values published by four publishers, multiplies them together, and republishes the result:
+    /// In the example below, as ``Publisher/combineLatest(_:_:_:_:)`` receives the
+    /// most-recent values published by four publishers, multiplies them together, and
+    /// republishes the result:
     ///
     ///     let pub = PassthroughSubject<Int, Never>()
     ///     let pub2 = PassthroughSubject<Int, Never>()
@@ -278,8 +359,10 @@ extension Publisher {
     ///   - publisher1: A second publisher to opencombine with the first publisher.
     ///   - publisher2: A third publisher to opencombine with the first publisher.
     ///   - publisher3: A fourth publisher to opencombine with the first publisher.
-    ///   - transform: A closure that receives the most-recent value from each publisher and returns a new value to publish.
-    /// - Returns: A publisher that receives and combines elements from this publisher and three other publishers.
+    ///   - transform: A closure that receives the most-recent value from each publisher
+    ///     and returns a new value to publish.
+    /// - Returns: A publisher that receives and combines elements from this publisher and
+    ///   three other publishers.
     public func combineLatest<P, Q, R, T>(_ publisher1: P, _ publisher2: Q, _ publisher3: R, _ transform: @escaping (Self.Output, P.Output, Q.Output, R.Output) -> T) -> Publishers.Map<Publishers.CombineLatest4<Self, P, Q, R>, T> where P: Publisher, Q: Publisher, R: Publisher, Self.Failure == P.Failure, P.Failure == Q.Failure, Q.Failure == R.Failure {
         Publishers.CombineLatest4(self, publisher1, publisher2, publisher3).map(transform)
     }
@@ -292,7 +375,8 @@ extension Publishers {
     public struct CombineLatest<A, B>: Publisher where A: Publisher, B: Publisher, A.Failure == B.Failure {
         /// The kind of values published by this publisher.
         ///
-        /// This publisher produces two-element tuples of the upstream publishers' output types.
+        /// This publisher produces two-element tuples of the upstream publishers' output
+        /// types.
         public typealias Output = (A.Output, B.Output)
 
         /// The kind of errors this publisher might publish.
@@ -304,7 +388,8 @@ extension Publishers {
 
         public let b: B
 
-        /// Creates a publisher that receives and combines the latest elements from two publishers.
+        /// Creates a publisher that receives and combines the latest elements from two
+        /// publishers.
         /// - Parameters:
         ///   - a: The first upstream publisher.
         ///   - b: The second upstream publisher.
@@ -326,7 +411,8 @@ extension Publishers {
     public struct CombineLatest3<A, B, C>: Publisher where A: Publisher, B: Publisher, C: Publisher, A.Failure == B.Failure, B.Failure == C.Failure {
         /// The kind of values published by this publisher.
         ///
-        /// This publisher produces three-element tuples of the upstream publishers' output types.
+        /// This publisher produces three-element tuples of the upstream publishers'
+        /// output types.
         public typealias Output = (A.Output, B.Output, C.Output)
 
         /// The kind of errors this publisher might publish.
@@ -360,7 +446,8 @@ extension Publishers {
     public struct CombineLatest4<A, B, C, D>: Publisher where A: Publisher, B: Publisher, C: Publisher, D: Publisher, A.Failure == B.Failure, B.Failure == C.Failure, C.Failure == D.Failure {
         /// The kind of values published by this publisher.
         ///
-        /// This publisher produces four-element tuples of the upstream publishers' output types.
+        /// This publisher produces four-element tuples of the upstream publishers' output
+        /// types.
         public typealias Output = (A.Output, B.Output, C.Output, D.Output)
 
         /// The kind of errors this publisher might publish.
@@ -403,7 +490,8 @@ extension Publishers.CombineLatest: Equatable where A: Equatable, B: Equatable {
     /// - Parameters:
     ///   - lhs: A combineLatest publisher to compare for equality.
     ///   - rhs: Another combineLatest publisher to compare for equality.
-    /// - Returns: `true` if the corresponding upstream publishers of each combineLatest publisher are equal; otherwise `false`.
+    /// - Returns: `true` if the corresponding upstream publishers of each combineLatest
+    ///   publisher are equal; otherwise `false`.
     public static func == (lhs: Publishers.CombineLatest<A, B>, rhs: Publishers.CombineLatest<A, B>) -> Bool {
         lhs.a == rhs.a && lhs.b == rhs.b
     }
@@ -412,8 +500,8 @@ extension Publishers.CombineLatest: Equatable where A: Equatable, B: Equatable {
 extension Publishers.CombineLatest3: Equatable where A: Equatable, B: Equatable, C: Equatable {
     /// Returns a Boolean value indicating whether two values are equal.
     ///
-    /// Equality is the inverse of inequality. For any values `a` and `b`,
-    /// `a == b` implies that `a != b` is `false`.
+    /// Equality is the inverse of inequality. For any values `a` and `b`, `a == b`
+    /// implies that `a != b` is `false`.
     ///
     /// - Parameters:
     ///   - lhs: A value to compare.
@@ -426,8 +514,8 @@ extension Publishers.CombineLatest3: Equatable where A: Equatable, B: Equatable,
 extension Publishers.CombineLatest4: Equatable where A: Equatable, B: Equatable, C: Equatable, D: Equatable {
     /// Returns a Boolean value indicating whether two values are equal.
     ///
-    /// Equality is the inverse of inequality. For any values `a` and `b`,
-    /// `a == b` implies that `a != b` is `false`.
+    /// Equality is the inverse of inequality. For any values `a` and `b`, `a == b`
+    /// implies that `a != b` is `false`.
     ///
     /// - Parameters:
     ///   - lhs: A value to compare.

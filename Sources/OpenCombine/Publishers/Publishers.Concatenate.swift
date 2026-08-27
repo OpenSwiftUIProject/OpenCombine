@@ -9,9 +9,11 @@ extension Publisher {
 
     /// Prefixes a publisher’s output with the specified values.
     ///
-    /// Use ``Publisher/prepend(_:)-11i6j`` when you need to prepend specific elements before the output of a publisher.
+    /// Use ``Publisher/prepend(_:)-11i6j`` when you need to prepend specific elements
+    /// before the output of a publisher.
     ///
-    /// In the example below, the ``Publisher/prepend(_:)-11i6j`` operator publishes the provided elements before republishing all elements from `dataElements`:
+    /// In the example below, the ``Publisher/prepend(_:)-11i6j`` operator publishes the
+    /// provided elements before republishing all elements from `dataElements`:
     ///
     ///     let dataElements = (0...10)
     ///     cancellable = dataElements.publisher
@@ -21,7 +23,8 @@ extension Publisher {
     ///     // Prints: "0 1 255 0 1 2 3 4 5 6 7 8 9 10"
     ///
     /// - Parameter elements: The elements to publish before this publisher’s elements.
-    /// - Returns: A publisher that prefixes the specified elements prior to this publisher’s elements.
+    /// - Returns: A publisher that prefixes the specified elements prior to this
+    ///   publisher’s elements.
     public func prepend(
         _ elements: Output...
     ) -> Publishers.Concatenate<Publishers.Sequence<[Output], Failure>, Self> {
@@ -86,9 +89,11 @@ extension Publisher {
 
     /// Appends a publisher’s output with the specified elements.
     ///
-    /// Use ``Publisher/append(_:)-38410`` when you need to prepend specific elements after the output of a publisher.
+    /// Use ``Publisher/append(_:)-38410`` when you need to prepend specific elements
+    /// after the output of a publisher.
     ///
-    /// In the example below, the ``Publisher/append(_:)-38410`` operator publishes the provided elements after republishing all elements from `dataElements`:
+    /// In the example below, the ``Publisher/append(_:)-38410`` operator publishes the
+    /// provided elements after republishing all elements from `dataElements`:
     ///
     ///     let dataElements = (0...10)
     ///     cancellable = dataElements.publisher
@@ -99,7 +104,8 @@ extension Publisher {
     ///
     ///
     /// - Parameter elements: Elements to publish after this publisher’s elements.
-    /// - Returns: A publisher that appends the specifiecd elements after this publisher’s elements.
+    /// - Returns: A publisher that appends the specifiecd elements after this publisher’s
+    ///   elements.
     public func append(
         _ elements: Output...
     ) -> Publishers.Concatenate<Self, Publishers.Sequence<[Output], Failure>> {
@@ -108,8 +114,7 @@ extension Publisher {
 
     /// Appends a publisher’s output with the specified sequence.
     ///
-    /// Use `append(_:)` to append a sequence to the end of
-    /// a publisher’s output.
+    /// Use `append(_:)` to append a sequence to the end of a publisher’s output.
     ///
     /// In the example below, the `append(_:)` publisher republishes all elements from
     /// `groundTransport` until it finishes, then publishes the members of `airTransport`:
@@ -137,15 +142,15 @@ extension Publisher {
     /// Appends the output of this publisher with the elements emitted by the given
     /// publisher.
     ///
-    /// Use `append(_:)` to append the output of one publisher to another.
-    /// The `append(_:)` operator produces no elements until this publisher finishes.
-    /// It then produces this publisher’s elements, followed by the given publisher’s
-    /// elements. If this publisher fails with an error, the given publishers elements
-    /// aren’t published.
+    /// Use `append(_:)` to append the output of one publisher to another. The
+    /// `append(_:)` operator produces no elements until this publisher finishes. It then
+    /// produces this publisher’s elements, followed by the given publisher’s elements. If
+    /// this publisher fails with an error, the given publishers elements aren’t
+    /// published.
     ///
-    /// In the example below, the `append` publisher republishes all elements from
-    /// the `numbers` publisher until it finishes, then publishes all elements from
-    /// the `otherNumbers` publisher:
+    /// In the example below, the `append` publisher republishes all elements from the
+    /// `numbers` publisher until it finishes, then publishes all elements from the
+    /// `otherNumbers` publisher:
     ///
     ///     let numbers = (0...10)
     ///     let otherNumbers = (25...35)

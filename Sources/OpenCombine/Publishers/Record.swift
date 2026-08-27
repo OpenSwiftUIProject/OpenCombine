@@ -14,8 +14,8 @@ public struct Record<Output, Failure: Error>: Publisher {
 
     /// Creates a publisher to interactively record a series of outputs and a completion.
     ///
-    /// - Parameter record: A recording instance that can be retrieved after completion
-    ///   to create new record publishers to replay the recording.
+    /// - Parameter record: A recording instance that can be retrieved after completion to
+    ///   create new record publishers to replay the recording.
     public init(record: (inout Recording) -> Void) {
         var recording = Recording()
         record(&recording)
@@ -24,13 +24,14 @@ public struct Record<Output, Failure: Error>: Publisher {
 
     /// Creates a record publisher from an existing recording.
     ///
-    /// - Parameter recording: A previously-recorded recording of published elements
-    ///   and a completion.
+    /// - Parameter recording: A previously-recorded recording of published elements and a
+    ///   completion.
     public init(recording: Recording) {
         self.recording = recording
     }
 
-    /// Creates a record publisher to publish the provided elements, followed by the provided completion value.
+    /// Creates a record publisher to publish the provided elements, followed by the
+    /// provided completion value.
     ///
     /// - Parameters:
     ///   - output: An array of output elements to publish.

@@ -9,7 +9,12 @@ extension Publisher where Failure == Never {
 
     /// Creates a connectable wrapper around the publisher.
     ///
-    /// In the following example, ``Publisher/makeConnectable()`` wraps its upstream publisher (an instance of ``Publishers/Share``) with a ``ConnectablePublisher``. Without this, the first sink subscriber would receive all the elements from the sequence publisher and cause it to complete before the second subscriber attaches. By making the publisher connectable, the publisher doesn’t produce any elements until after the ``ConnectablePublisher/connect()`` call.
+    /// In the following example, ``Publisher/makeConnectable()`` wraps its upstream
+    /// publisher (an instance of ``Publishers/Share``) with a ``ConnectablePublisher``.
+    /// Without this, the first sink subscriber would receive all the elements from the
+    /// sequence publisher and cause it to complete before the second subscriber attaches.
+    /// By making the publisher connectable, the publisher doesn’t produce any elements
+    /// until after the ``ConnectablePublisher/connect()`` call.
     ///
     ///      let subject = Just<String>("Sent")
     ///      let pub = subject
@@ -29,7 +34,9 @@ extension Publisher where Failure == Never {
     ///      // Stream 2 received: Sent
     ///      // Stream 1 received: Sent
     ///
-    ///  > Note: The ``ConnectablePublisher/connect()`` operator returns a ``Cancellable`` instance that you must retain. You can also use this instance to cancel publishing.
+    /// > Note: The ``ConnectablePublisher/connect()`` operator returns a ``Cancellable``
+    /// instance that you must retain. You can also use this instance to cancel
+    /// publishing.
     ///
     /// - Returns: A ``ConnectablePublisher`` wrapping this publisher.
     public func makeConnectable() -> Publishers.MakeConnectable<Self> {
@@ -46,8 +53,8 @@ extension Publishers {
     /// publisher when you want to attach to its upstream publisher and start producing
     /// elements.
     ///
-    /// Use the `makeConnectable()` operator to wrap an upstream publisher with
-    /// an instance of this publisher.
+    /// Use the `makeConnectable()` operator to wrap an upstream publisher with an
+    /// instance of this publisher.
     public struct MakeConnectable<Upstream: Publisher>: ConnectablePublisher {
 
         public typealias Output = Upstream.Output
