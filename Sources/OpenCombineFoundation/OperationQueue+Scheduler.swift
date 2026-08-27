@@ -157,7 +157,7 @@ extension OperationQueue {
         public struct SchedulerOptions {
         }
 
-        private final class DelayReadyOperation: Operation, Cancellable {
+        private final class DelayReadyOperation: Operation, Cancellable, @unchecked Sendable {
 
             fileprivate final class CancellationContext: Cancellable {
                 let lock = UnfairLock.allocate()

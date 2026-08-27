@@ -6,7 +6,11 @@
 //  Audited for 2023 Release
 
 #if canImport(COpenCombineHelpers)
+#if compiler(>=6.0)
+internal import COpenCombineHelpers
+#else
 @_implementationOnly import COpenCombineHelpers
+#endif
 #endif
 
 // MARK: - zip methods on Publisher

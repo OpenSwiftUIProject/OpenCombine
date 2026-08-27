@@ -12,17 +12,15 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        swift_version: ["5.9.2"]
-        os: [ubuntu-20.04, ubuntu-22.04]
         include:
-          - os: ubuntu-20.04
-            os_name: focal
-          - os: ubuntu-22.04
-            os_name: jammy
-    runs-on: ${{ matrix.os }}
-    container: swift:${{ matrix.swift_version }}-${{ matrix.os_name }}
+          - swift_image: "5.9.2-jammy"   # Swift 5.9.2 (minimum supported)
+          - swift_image: "6.1-noble"     # Current Swift
+    runs-on: ubuntu-latest
+    container: swift:${{ matrix.swift_image }}
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
+      - name: Swift version
+        run: swift --version
       - name: Building and running tests in debug mode with coverage
         run: |
           swift test \
@@ -46,6 +44,6 @@ jobs:
             -c release \
             -Xswiftc -warnings-as-errors \
             --build-path .build-test-release
-      - uses: codecov/codecov-action@v3
+      - uses: codecov/codecov-action@v4
         with:
           verbose: true

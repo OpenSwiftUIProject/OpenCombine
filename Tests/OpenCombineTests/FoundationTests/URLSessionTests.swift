@@ -247,7 +247,7 @@ final class URLSessionTests: XCTestCase {
 
 /// A simple mock URLSession that records its history and allows executing
 /// callbacks synchronously
-private class TestURLSession: URLSession {
+private class TestURLSession: URLSession, @unchecked Sendable {
 
     enum Event: Equatable {
         case delegateQueue
@@ -527,7 +527,7 @@ private class TestURLSession: URLSession {
 #endif // canImport(Darwin) && !os(watchOS)
 }
 
-private final class TestURLSessionDataTask: URLSessionDataTask {
+private final class TestURLSessionDataTask: URLSessionDataTask, @unchecked Sendable {
 
     enum Event: Equatable {
         case taskIdentifier

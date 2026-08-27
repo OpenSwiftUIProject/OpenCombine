@@ -332,7 +332,7 @@ extension OperationQueueScheduler.SchedulerTimeType: DateBackedSchedulerTimeType
 @available(macOS 10.15, iOS 13.0, tvOS 13.0, watchOS 6.0, *)
 extension OperationQueueScheduler: RunLoopLikeScheduler {}
 
-private final class TestOperationQueue: OperationQueue {
+private final class TestOperationQueue: OperationQueue, @unchecked Sendable {
 
     enum Event {
         case progress

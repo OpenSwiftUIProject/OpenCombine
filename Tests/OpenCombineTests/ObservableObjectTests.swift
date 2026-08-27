@@ -343,13 +343,13 @@ private final class ObjCClassSubclass: NSObject, ObservableObject {
 }
 
 @available(macOS 10.15, iOS 13.0, tvOS 13.0, watchOS 6.0, *)
-private class ResilientClassSubclass: JSONDecoder, ObservableObject {
+private class ResilientClassSubclass: JSONDecoder, ObservableObject, @unchecked Sendable {
     @Published var published0 = 10
     @Published var published1 = "hello!"
 }
 
 @available(macOS 10.15, iOS 13.0, tvOS 13.0, watchOS 6.0, *)
-private final class ResilientClassSubclass2: ResilientClassSubclass {
+private final class ResilientClassSubclass2: ResilientClassSubclass, @unchecked Sendable {
     @Published var published3 = true
 }
 
@@ -388,7 +388,8 @@ private class NSObjectSubclass: NSObject, ObservableObject {
 @available(macOS 10.15, iOS 13.0, tvOS 13.0, watchOS 6.0, *)
 private class ResilientClassGenericSubclass<Value1, Value2>
     : JSONDecoder,
-      ObservableObject
+      ObservableObject,
+      @unchecked Sendable
 {
     @Published var value1: Value1
     @Published var value2: Value2
@@ -401,7 +402,7 @@ private class ResilientClassGenericSubclass<Value1, Value2>
 
 @available(macOS 10.15, iOS 13.0, tvOS 13.0, watchOS 6.0, *)
 private final class ResilientClassGenericSubclass2<Value1, Value2>
-    : ResilientClassGenericSubclass<Value1, Value2>
+    : ResilientClassGenericSubclass<Value1, Value2>, @unchecked Sendable
 {
     @Published var value3 = false
 }

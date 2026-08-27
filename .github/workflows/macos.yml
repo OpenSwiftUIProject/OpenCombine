@@ -13,8 +13,10 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - os: macos-13
-            xcode-version: "15.2"   # Swift 5.9.2
+          - os: macos-14
+            xcode-version: "15.2"   # Swift 5.9.2 (minimum supported)
+          - os: macos-15
+            xcode-version: "16.4"   # Current Swift
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v4
@@ -43,13 +45,12 @@ jobs:
           -Xswiftc -warnings-as-errors \
           --build-path .build-test-debug-sanitize-thread
       - name: Build and run tests in release mode
-        if: ${{ matrix.xcode-version != '14.3.1' }} # error: no input files specified. See llvm-profdata merge -help
         run: |
           swift test \
             -c release \
             -Xswiftc -warnings-as-errors \
             --enable-code-coverage \
             --build-path .build-test-release
-      - uses: codecov/codecov-action@v3
+      - uses: codecov/codecov-action@v4
         with:
           verbose: true

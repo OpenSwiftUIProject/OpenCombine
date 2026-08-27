@@ -476,7 +476,7 @@ private func makePublisher(
 
 /// A simple mock notification center that always sends notifications to **all**
 /// observers in non-thread safe manner.
-private final class TestNotificationCenter: NotificationCenter {
+private final class TestNotificationCenter: NotificationCenter, @unchecked Sendable {
 
     enum Event {
         case postNotificationWithName(Notification.Name, Any?, [AnyHashable : Any]?)
