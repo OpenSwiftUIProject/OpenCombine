@@ -7,11 +7,9 @@
 
 /// A publisher that emits an output to each subscriber just once, and then finishes.
 ///
-/// You can use a `Just` publisher to start a chain of publishers. A `Just` publisher is
-/// also useful when replacing a value with `Publishers.Catch`.
+/// You can use a ``Just`` publisher to start a chain of publishers. A ``Just`` publisher is also useful when replacing a value with ``Publishers/Catch``.
 ///
-/// In contrast with `Result.Publisher`, a `Just` publisher can’t fail with an error.
-/// And unlike `Optional.Publisher`, a `Just` publisher always produces a value.
+/// In contrast with [Result.publisher-swift.struct](https://developer.apple.com/documentation/swift/result/publisher-swift.struct), a ``Just`` publisher can’t fail with an error. And unlike [Optional.publisher-swift.struct](https://developer.apple.com/documentation/swift/optional/publisher-swift.struct), a ``Just`` publisher always produces a value.
 public struct Just<Output>: Publisher {
 
     public typealias Failure = Never

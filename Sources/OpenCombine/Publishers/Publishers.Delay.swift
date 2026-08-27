@@ -88,7 +88,7 @@ extension Publishers {
 
         public typealias Failure = Upstream.Failure
 
-        /// The publisher that this publisher receives elements from.
+        /// The publisher from which this publisher receives its elements.
         public let upstream: Upstream
 
         /// The amount of time to delay.

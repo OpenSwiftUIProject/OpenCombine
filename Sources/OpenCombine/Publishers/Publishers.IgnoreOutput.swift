@@ -6,17 +6,11 @@
 
 extension Publisher {
 
-    /// Ingores all upstream elements, but passes along a completion state (finished or
-    /// failed).
+    /// Ignores all upstream elements, but passes along the upstream publisher's completion state (finished or failed).
     ///
-    /// Use the `ignoreOutput(`` operator to determine if a publisher is able to complete
-    /// successfully or would fail.
+    /// Use the ``Publisher/ignoreOutput()`` operator to determine if a publisher is able to complete successfully or would fail.
     ///
-    /// In the example below, the array publisher (`numbers`) delivers the first five of
-    /// its elements successfully, as indicated by the `ignoreOutput()` operator.
-    /// The operator consumes, but doesn’t republish the elements downstream. However,
-    /// the sixth element, `0`, causes the error throwing closure to catch
-    /// a `NoZeroValuesAllowedError` that terminates the stream.
+    /// In the example below, the array publisher (`numbers`) delivers the first five of its elements successfully, as indicated by the ``Publisher/ignoreOutput()`` operator. The operator consumes, but doesn’t republish the elements downstream. However, the sixth element, `0`, causes the error throwing closure to catch a `NoZeroValuesAllowedError` that terminates the stream.
     ///
     ///     struct NoZeroValuesAllowedError: Error {}
     ///     let numbers = [1, 2, 3, 4, 5, 0, 6, 7, 8, 9]
@@ -31,7 +25,7 @@ extension Publisher {
     ///
     ///     // Prints: "completion: failure(NoZeroValuesAllowedError())"
     ///
-    /// The output type of this publisher is `Never`.
+    /// The output type of this publisher is [Never](https://developer.apple.com/documentation/swift/never).
     ///
     /// - Returns: A publisher that ignores all upstream elements.
     public func ignoreOutput() -> Publishers.IgnoreOutput<Self> {

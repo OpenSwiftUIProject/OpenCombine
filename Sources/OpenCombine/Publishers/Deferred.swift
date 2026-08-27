@@ -19,14 +19,12 @@ public struct Deferred<DeferredPublisher: Publisher>: Publisher {
 
     /// The closure to execute when this deferred publisher receives a subscription.
     ///
-    /// The publisher returned by this closure immediately
-    /// receives the incoming subscription.
+    /// The publisher returned by this closure immediately receives the incoming subscription.
     public let createPublisher: () -> DeferredPublisher
 
     /// Creates a deferred publisher.
     ///
-    /// - Parameter createPublisher: The closure to execute
-    /// when calling `subscribe(_:)`.
+    /// - Parameter createPublisher: The closure to execute when calling `subscribe(_:)`.
     public init(createPublisher: @escaping () -> DeferredPublisher) {
         self.createPublisher = createPublisher
     }

@@ -9,30 +9,13 @@ extension Publisher where Output: Publisher, Output.Failure == Failure {
 
     /// Republishes elements sent by the most recently received publisher.
     ///
-    /// This operator works with an upstream publisher of publishers, flattening
-    /// the stream of elements to appear as if they were coming from a single stream of
-    /// elements. It switches the inner publisher as new ones arrive but keeps the outer
-    /// publisher constant for downstream subscribers.
+    /// This operator works with an upstream publisher of publishers, flattening the stream of elements to appear as if they were coming from a single stream of elements. It switches the inner publisher as new ones arrive but keeps the outer publisher constant for downstream subscribers.
     ///
-    /// For example, given the type `AnyPublisher<URLSession.DataTaskPublisher, NSError>`,
-    /// calling `switchToLatest()` results in the type
-    /// `SwitchToLatest<(Data, URLResponse), URLError>`.
-    /// The downstream subscriber sees a continuous stream of `(Data, URLResponse)`
-    /// elements from what looks like a single `URLSession.DataTaskPublisher` even though
-    /// the elements are coming from different upstream publishers.
+    /// For example, given the type `AnyPublisher<URLSession.DataTaskPublisher, NSError>`, calling `switchToLatest()` results in the type `SwitchToLatest<(Data, URLResponse), URLError>`. The downstream subscriber sees a continuous stream of `(Data, URLResponse)` elements from what looks like a single [URLSession.DataTaskPublisher](https://developer.apple.com/documentation/foundation/urlsession/datataskpublisher) even though the elements are coming from different upstream publishers.
     ///
-    /// When this operator receives a new publisher from the upstream publisher, it
-    /// cancels its previous subscription. Use this feature to prevent earlier publishers
-    /// from performing unnecessary work, such as creating network request publishers from
-    /// frequently updating user interface publishers.
+    /// When this operator receives a new publisher from the upstream publisher, it cancels its previous subscription. Use this feature to prevent earlier publishers from performing unnecessary work, such as creating network request publishers from frequently updating user interface publishers.
     ///
-    /// The following example updates a `PassthroughSubject` with a new value every
-    /// `0.1` seconds. A `map(_:)` operator receives the new value and uses it to create
-    /// a new `URLSession.DataTaskPublisher`. By using the `switchToLatest()` operator,
-    /// the downstream sink subscriber receives the `(Data, URLResponse)` output type from
-    /// the data task publishers, rather than the `URLSession.DataTaskPublisher` type
-    /// produced by the `map(_:)` operator. Furthermore, creating each new data task
-    /// publisher cancels the previous data task publisher.
+    /// The following example updates a ``PassthroughSubject`` with a new value every `0.1` seconds. A ``Publisher/map(_:)-3bo47`` operator receives the new value and uses it to create a new [URLSession.DataTaskPublisher](https://developer.apple.com/documentation/foundation/urlsession/datataskpublisher). By using the `switchToLatest()` operator, the downstream sink subscriber receives the `(Data, URLResponse)` output type from the data task publishers, rather than the [URLSession.DataTaskPublisher](https://developer.apple.com/documentation/foundation/urlsession/datataskpublisher) type produced by the ``Publisher/map(_:)-3bo47`` operator. Furthermore, creating each new data task publisher cancels the previous data task publisher.
     ///
     ///     let subject = PassthroughSubject<Int, Never>()
     ///     cancellable = subject
@@ -59,11 +42,7 @@ extension Publisher where Output: Publisher, Output.Failure == Failure {
     ///
     ///     // Prints "URL: https://example.org/get?index=5"
     ///
-    /// The exact behavior of this example depends on the value of `asyncAfter` and
-    /// the speed of the network connection. If the delay value is longer, or the network
-    /// connection is fast, the earlier data tasks may complete before `switchToLatest()`
-    /// can cancel them. If this happens, the output includes multiple URLs whose tasks
-    /// complete before cancellation.
+    /// The exact behavior of this example depends on the value of `asyncAfter` and the speed of the network connection. If the delay value is longer, or the network connection is fast, the earlier data tasks may complete before `switchToLatest()` can cancel them. If this happens, the output includes multiple URLs whose tasks complete before cancellation.
     public func switchToLatest() -> Publishers.SwitchToLatest<Output, Self> {
         return .init(upstream: self)
     }

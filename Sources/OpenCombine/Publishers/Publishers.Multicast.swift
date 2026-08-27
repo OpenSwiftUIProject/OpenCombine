@@ -152,8 +152,10 @@ extension Publishers {
         /// Creates a multicast publisher that applies a closure to create a subject that
         /// delivers elements to subscribers.
         ///
-        /// - Parameter createSubject: A closure that returns a `Subject` each time
-        ///   a subscriber attaches to the multicast publisher.
+        /// - Parameters:
+        ///   - upstream: The publisher from which this publisher receives elements.
+        ///   - createSubject: A closure that returns a ``Subject`` each time
+        ///     a subscriber attaches to the multicast publisher.
         public init(upstream: Upstream, createSubject: @escaping () -> SubjectType) {
             self.upstream = upstream
             self.createSubject = createSubject

@@ -65,14 +65,9 @@ extension Publisher {
 
     /// Raises a debugger signal upon receiving a failure.
     ///
-    /// When the upstream publisher fails with an error, this publisher raises
-    /// the `SIGTRAP` signal, which stops the process in the debugger. Otherwise, this
-    /// publisher passes through values and completions as-is.
+    /// When the upstream publisher fails with an error, this publisher raises the `SIGTRAP` signal, which stops the process in the debugger. Otherwise, this publisher passes through values and completions as-is.
     ///
-    /// In this example a `PassthroughSubject` publishes strings, but its downstream
-    /// `Publisher/tryMap(_:)` operator throws an error. This sends the error downstream
-    /// as a `Subscribers.Completion.failure(_:)`. The `breakpointOnError()`
-    /// operator receives this completion and stops the app in the debugger.
+    /// In this example a ``PassthroughSubject`` publishes strings, but its downstream ``Publisher/tryMap(_:)`` operator throws an error. This sends the error downstream as a ``Subscribers/Completion/failure(_:)``. The ``Publisher/breakpointOnError()`` operator receives this completion and stops the app in the debugger.
     ///
     ///      struct CustomError : Error {}
     ///      let publisher = PassthroughSubject<String?, Error>()
@@ -82,12 +77,8 @@ extension Publisher {
     ///          }
     ///          .breakpointOnError()
     ///          .sink(
-    ///              receiveCompletion: { completion in
-    ///                  print("Completion: \(String(describing: completion))")
-    ///              },
-    ///              receiveValue: { aValue in
-    ///                  print("Result: \(String(describing: aValue))")
-    ///              }
+    ///              receiveCompletion: { completion in print("Completion: \(String(describing: completion))") },
+    ///              receiveValue: { aValue in print("Result: \(String(describing: aValue))") }
     ///          )
     ///
     ///      publisher.send("TEST DATA")
@@ -130,9 +121,7 @@ extension Publishers {
         /// raise a debugger signal by returning a `true` Boolean value.
         public let receiveSubscription: ((Subscription) -> Bool)?
 
-        /// A closure that executes when the publisher receives output from the upstream
-        /// publisher, and can raise a debugger signal by returning a `true` Boolean
-        /// value.
+        /// A closure that executes when the publisher receives output from the upstream publisher, and can raise a debugger signal by returning a true Boolean value.
         public let receiveOutput: ((Upstream.Output) -> Bool)?
 
         /// A closure that executes when the publisher receives completion, and can raise

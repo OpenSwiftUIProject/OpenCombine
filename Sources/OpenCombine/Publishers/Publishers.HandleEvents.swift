@@ -92,11 +92,10 @@ extension Publishers {
         public var receiveCompletion:
             ((Subscribers.Completion<Upstream.Failure>) -> Void)?
 
-        ///  A closure that executes when the downstream receiver cancels publishing.
+        /// A closure that executes when the downstream receiver cancels publishing.
         public var receiveCancel: (() -> Void)?
 
-        /// A closure that executes when the publisher receives a request for more
-        /// elements.
+        /// A closure that executes when the publisher receives a request for more elements.
         public var receiveRequest: ((Subscribers.Demand) -> Void)?
 
         public init(

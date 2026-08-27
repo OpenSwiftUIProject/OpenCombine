@@ -7,10 +7,9 @@
 
 /// A type of object with a publisher that emits before the object has changed.
 ///
-/// By default an `ObservableObject` synthesizes an `objectWillChange` publisher that
-/// emits the changed value before any of its `@Published` properties changes.
+/// By default an ``ObservableObject`` synthesizes an ``ObservableObject/objectWillChange-5rtyt`` publisher that emits the changed value before any of its `@Published` properties changes.
 ///
-///     class Contact : ObservableObject {
+///     class Contact: ObservableObject {
 ///         @Published var name: String
 ///         @Published var age: Int
 ///
@@ -21,6 +20,7 @@
 ///
 ///         func haveBirthday() -> Int {
 ///             age += 1
+///             return age
 ///         }
 ///     }
 ///
@@ -28,7 +28,7 @@
 ///     cancellable = john.objectWillChange
 ///         .sink { _ in
 ///             print("\(john.age) will change")
-///         }
+///     }
 ///     print(john.haveBirthday())
 ///     // Prints "24 will change"
 ///     // Prints "25"
@@ -50,7 +50,6 @@ extension Published: _ObservableObjectProperty {}
 
 extension ObservableObject where ObjectWillChangePublisher == ObservableObjectPublisher {
 
-    /// A publisher that emits before the object has changed.
     public var objectWillChange: ObservableObjectPublisher {
         var installedPublisher: ObservableObjectPublisher?
         var reflection: Mirror? = Mirror(reflecting: self)

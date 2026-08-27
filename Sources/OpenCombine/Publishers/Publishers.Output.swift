@@ -9,11 +9,9 @@ extension Publisher {
 
     /// Republishes elements up to the specified maximum count.
     ///
-    /// Use `prefix(_:)` to limit the number of elements republished to the downstream
-    /// subscriber.
+    /// Use ``Publisher/prefix(_:)`` to limit the number of elements republished to the downstream subscriber.
     ///
-    /// In the example below, the `prefix(_:)` operator limits its output to the first
-    /// two elements before finishing normally:
+    /// In the example below, the ``Publisher/prefix(_:)`` operator limits its output to the first two elements before finishing normally:
     ///
     ///     let numbers = (0...10)
     ///     cancellable = numbers.publisher
@@ -23,8 +21,7 @@ extension Publisher {
     ///     // Prints: "0 1"
     ///
     /// - Parameter maxLength: The maximum number of elements to republish.
-    /// - Returns: A publisher that publishes up to the specified number of elements
-    ///   before completing.
+    /// - Returns: A publisher that publishes up to the specified number of elements.
     public func prefix(_ maxLength: Int) -> Publishers.Output<Self> {
         return output(in: ..<maxLength)
     }
@@ -32,16 +29,11 @@ extension Publisher {
 
 extension Publisher {
 
-    /// Publishes a specific element, indicated by its index in the sequence of published
-    /// elements.
+    /// Publishes a specific element, indicated by its index in the sequence of published elements.
     ///
-    /// Use `output(at:)` when you need to republish a specific element specified by
-    /// its position in the stream. If the publisher completes normally or with an error
-    /// before publishing the specified element, then the publisher doesn’t produce any
-    /// elements.
+    /// Use ``Publisher/output(at:)`` when you need to republish a specific element specified by its position in the stream. If the publisher completes normally or with an error before publishing the specified element, then the publisher doesn’t produce any elements.
     ///
-    /// In the example below, the array publisher emits the fifth element in the sequence
-    /// of published elements:
+    /// In the example below, the array publisher emits the fifth element in the sequence of published elements:
     ///
     ///     let numbers = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
     ///     numbers.publisher
@@ -101,7 +93,7 @@ extension Publishers {
         /// Creates a publisher that publishes elements specified by a range.
         ///
         /// - Parameters:
-        ///   - upstream: The publisher that this publisher receives elements from.
+        ///   - upstream: The publisher from which this publisher receives its elements.
         ///   - range: The range of elements to publish.
         public init(upstream: Upstream, range: CountableRange<Int>) {
             precondition(range.lowerBound >= 0, "lowerBound must not be negative")

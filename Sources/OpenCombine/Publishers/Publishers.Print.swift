@@ -68,6 +68,8 @@ extension Publishers {
         /// - Parameters:
         ///   - upstream: The publisher from which this publisher receives elements.
         ///   - prefix: A string with which to prefix all log messages.
+        ///   - stream: A stream for text output that receives messages, and which you
+        ///     provide directly to the publisher, or `nil` to print to the console.
         public init(upstream: Upstream,
                     prefix: String,
                     to stream: TextOutputStream? = nil) {

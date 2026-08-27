@@ -36,19 +36,11 @@ extension Publisher {
         return .init(upstream: self, predicate: predicate)
     }
 
-    /// Omits elements from the upstream publisher until an error-throwing closure returns
-    /// false, before republishing all remaining elements.
+    /// Omits elements from the upstream publisher until an error-throwing closure returns false, before republishing all remaining elements.
     ///
-    /// Use `Publisher/tryDrop(while:)` to omit elements from an upstream until
-    /// an error-throwing closure you provide returns false, after which the remaining
-    /// items in the stream are published. If the closure throws, no elements are emitted
-    /// and the publisher fails with an error.
+    /// Use ``Publisher/tryDrop(while:)`` to omit elements from an upstream until an error-throwing closure you provide returns false, after which the remaining items in the stream are published. If the closure throws, no elements are emitted and the publisher fails with an error.
     ///
-    /// In the example below, elements are ignored until `-1` is encountered in the stream
-    /// and the closure returns `false`. The publisher then republishes the remaining
-    /// elements and finishes normally. Conversely, if the `guard` value in the closure
-    /// had been encountered, the closure would throw and the publisher would fail with
-    /// an error.
+    /// In the example below, elements are ignored until `-1` is encountered in the stream and the closure returns `false`. The publisher then republishes the remaining elements and finishes normally. Conversely, if the `guard` value in the closure had been encountered, the closure would throw and the publisher would fail with an error.
     ///
     ///     struct RangeError: Error {}
     ///     var numbers = [1, 2, 3, 4, 5, 6, -1, 7, 8, 9, 10]
@@ -64,15 +56,10 @@ extension Publisher {
     ///         )
     ///
     ///     // Prints: "-1 7 8 9 10 completion: finished"
-    ///     // If instead numbers was [1, 2, 3, 4, 5, 6, 0, -1, 7, 8, 9, 10],
-    ///     // tryDrop(while:) would fail with a RangeError.
+    ///     // If instead numbers was [1, 2, 3, 4, 5, 6, 0, -1, 7, 8, 9, 10], tryDrop(while:) would fail with a RangeError.
     ///
-    /// - Parameter predicate: A closure that takes an element as a parameter and returns
-    ///   a Boolean value indicating whether to drop the element from the publisher’s
-    ///   output.
-    /// - Returns: A publisher that skips over elements until the provided closure returns
-    ///   `false`, and then republishes all remaining elements. If the predicate closure
-    ///   throws, the publisher fails with an error.
+    /// - Parameter predicate: A closure that takes an element as a parameter and returns a Boolean value indicating whether to drop the element from the publisher’s output.
+    /// - Returns: A publisher that skips over elements until the provided closure returns `false`, and then republishes all remaining elements. If the predicate closure throws, the publisher fails with an error.
     public func tryDrop(
         while predicate: @escaping (Output) throws -> Bool
     ) -> Publishers.TryDropWhile<Self> {

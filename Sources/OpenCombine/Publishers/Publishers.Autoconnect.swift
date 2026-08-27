@@ -7,25 +7,19 @@
 
 extension ConnectablePublisher {
 
-    /// Automates the process of connecting or disconnecting from this connectable
-    /// publisher.
+    /// Automates the process of connecting or disconnecting from this connectable publisher.
     ///
-    /// Use `autoconnect()` to simplify working with `ConnectablePublisher` instances,
-    /// such as `TimerPublisher` in `OpenCombineFoundation`.
+    /// Use ``ConnectablePublisher/autoconnect()`` to simplify working with ``ConnectablePublisher`` instances, such as [Timer.TimerPublisher](https://developer.apple.com/documentation/foundation/timer/timerpublisher) in the Foundation framework.
     ///
-    /// In the following example, the `Timer.publish()` operator creates
-    /// a `TimerPublisher`, which is a `ConnectablePublisher`. As a result, subscribers
-    /// don’t receive any values until after a call to `connect()`.
-    /// For convenience when working with a single subscriber, the `.autoconnect()`
-    /// operator performs the `connect()` call when attached to by the subscriber.
+    /// In the following example, the [Timer.3329589](https://developer.apple.com/documentation/foundation/timer/3329589-publish) operator creates a [Timer.TimerPublisher](https://developer.apple.com/documentation/foundation/timer/timerpublisher), which is a ``ConnectablePublisher``. As a result, subscribers don’t receive any values until after a call to ``ConnectablePublisher/connect()``.
+    /// For convenience when working with a single subscriber, the ``ConnectablePublisher/autoconnect()`` operator performs the ``ConnectablePublisher/connect()`` call when attached to by the subscriber.
     ///
     ///     cancellable = Timer.publish(every: 1, on: .main, in: .default)
     ///         .autoconnect()
     ///         .sink { date in
     ///             print ("Date now: \(date)")
     ///         }
-    /// - Returns: A publisher which automatically connects to its upstream connectable
-    ///   publisher.
+    /// - Returns: A publisher which automatically connects to its upstream connectable publisher.
     public func autoconnect() -> Publishers.Autoconnect<Self> {
         return .init(upstream: self)
     }

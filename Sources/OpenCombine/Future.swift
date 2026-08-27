@@ -8,11 +8,9 @@
 /// A publisher that eventually produces a single value and then finishes or fails.
 public final class Future<Output, Failure: Error>: Publisher {
 
-    /// A type that represents a closure to invoke in the future, when an element or error
-    /// is available.
+    /// A type that represents a closure to invoke in the future, when an element or error is available.
     ///
-    /// The promise closure receives one parameter: a `Result` that contains either
-    /// a single element published by a `Future`, or an error.
+    /// The promise closure receives one parameter: a `Result` that contains either a single element published by a ``Future``, or an error.
     public typealias Promise = (Result<Output, Failure>) -> Void
 
     private let lock = UnfairLock.allocate()

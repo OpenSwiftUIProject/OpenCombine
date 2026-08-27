@@ -9,11 +9,9 @@ extension Publisher {
 
     /// Prefixes a publisher’s output with the specified values.
     ///
-    /// Use `prepend(_:)` when you need to prepend specific elements before the output
-    /// of a publisher.
+    /// Use ``Publisher/prepend(_:)-11i6j`` when you need to prepend specific elements before the output of a publisher.
     ///
-    /// In the example below, the `prepend(_:)` operator publishes the provided elements
-    /// before republishing all elements from `dataElements`:
+    /// In the example below, the ``Publisher/prepend(_:)-11i6j`` operator publishes the provided elements before republishing all elements from `dataElements`:
     ///
     ///     let dataElements = (0...10)
     ///     cancellable = dataElements.publisher
@@ -23,8 +21,7 @@ extension Publisher {
     ///     // Prints: "0 1 255 0 1 2 3 4 5 6 7 8 9 10"
     ///
     /// - Parameter elements: The elements to publish before this publisher’s elements.
-    /// - Returns: A publisher that prefixes the specified elements prior to this
-    ///   publisher’s elements.
+    /// - Returns: A publisher that prefixes the specified elements prior to this publisher’s elements.
     public func prepend(
         _ elements: Output...
     ) -> Publishers.Concatenate<Publishers.Sequence<[Output], Failure>, Self> {
@@ -89,11 +86,9 @@ extension Publisher {
 
     /// Appends a publisher’s output with the specified elements.
     ///
-    /// Use `append(_:)` when you need to prepend specific elements after the output of
-    /// a publisher.
+    /// Use ``Publisher/append(_:)-38410`` when you need to prepend specific elements after the output of a publisher.
     ///
-    /// In the example below, the `append(_:)` operator publishes the provided elements
-    /// after republishing all elements from `dataElements`:
+    /// In the example below, the ``Publisher/append(_:)-38410`` operator publishes the provided elements after republishing all elements from `dataElements`:
     ///
     ///     let dataElements = (0...10)
     ///     cancellable = dataElements.publisher
@@ -104,8 +99,7 @@ extension Publisher {
     ///
     ///
     /// - Parameter elements: Elements to publish after this publisher’s elements.
-    /// - Returns: A publisher that appends the specifiecd elements after this publisher’s
-    ///   elements.
+    /// - Returns: A publisher that appends the specifiecd elements after this publisher’s elements.
     public func append(
         _ elements: Output...
     ) -> Publishers.Concatenate<Self, Publishers.Sequence<[Output], Failure>> {

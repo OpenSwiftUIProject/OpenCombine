@@ -8,8 +8,7 @@
 extension Publisher {
     /// Omits the specified number of elements before republishing subsequent elements.
     ///
-    /// Use `dropFirst(_:)` when you want to drop the first `n` elements from the upstream
-    /// publisher, and republish the remaining elements.
+    /// Use ``Publisher/dropFirst(_:)`` when you want to drop the first `n` elements from the upstream publisher, and republish the remaining elements.
     ///
     /// The example below drops the first five elements from the stream:
     ///

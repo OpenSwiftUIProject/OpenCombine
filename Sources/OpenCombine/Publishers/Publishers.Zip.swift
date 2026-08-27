@@ -14,7 +14,7 @@
 extension Publisher {
     /// Combines elements from another publisher and deliver pairs of elements as tuples.
     ///
-    /// Use ``Publisher/zip(_:)`` to combine the latest elements from two publishers and emit a tuple to the downstream. The returned publisher waits until both publishers have emitted an event, then delivers the oldest unconsumed event from each publisher together as a tuple to the subscriber.
+    /// Use ``Publisher/zip(_:)`` to opencombine the latest elements from two publishers and emit a tuple to the downstream. The returned publisher waits until both publishers have emitted an event, then delivers the oldest unconsumed event from each publisher together as a tuple to the subscriber.
     ///
     /// Much like a zipper or zip fastener on a piece of clothing pulls together rows of teeth to link the two sides, ``Publisher/zip(_:)`` combines streams from two different publishers by linking pairs of elements from each side.
     ///
@@ -28,9 +28,9 @@ extension Publisher {
     ///          .sink { print("\($0)") }
     ///      numbersPub.send(1)    // numbersPub: 1      lettersPub:        zip output: <none>
     ///      numbersPub.send(2)    // numbersPub: 1,2    lettersPub:        zip output: <none>
-    ///      lettersPub.send("A")  // numbers: 1,2       letters:"A"        zip output: <none>
-    ///      numbersPub.send(3)    // numbers: 1,2,3     letters:           zip output: (1,"A")
-    ///      lettersPub.send("B")  // numbers: 1,2,3     letters: "B"       zip output: (2,"B")
+    ///      letters.send("A")     // numbers: 1,2       letters:"A"        zip output: <none>
+    ///      numbers.send(3)       // numbers: 1,2,3     letters:           zip output: (1,"A")
+    ///      letters.send("B")     // numbers: 1,2,3     letters: "B"       zip output: (2,"B")
     ///
     ///      // Prints:
     ///      //  (1, "A")
@@ -239,7 +239,7 @@ extension Publisher {
 extension Publishers {
     /// A publisher created by applying the zip function to two upstream publishers.
     ///
-    /// Use `Publishers.Zip` to combine the latest elements from two publishers and emit a tuple to the downstream. The returned publisher waits until both publishers have emitted an event, then delivers the oldest unconsumed event from each publisher together as a tuple to the subscriber.
+    /// Use `Publishers.Zip` to opencombine the latest elements from two publishers and emit a tuple to the downstream. The returned publisher waits until both publishers have emitted an event, then delivers the oldest unconsumed event from each publisher together as a tuple to the subscriber.
     ///
     /// Much like a zipper or zip fastener on a piece of clothing pulls together rows of teeth to link the two sides, `Publishers.Zip` combines streams from two different publishers by linking pairs of elements from each side.
     ///
@@ -280,7 +280,7 @@ extension Publishers {
 
     /// A publisher created by applying the zip function to three upstream publishers.
     ///
-    /// Use a `Publishers.Zip3` to combine the latest elements from three publishers and emit a tuple to the downstream. The returned publisher waits until all three publishers have emitted an event, then delivers the oldest unconsumed event from each publisher as a tuple to the subscriber.
+    /// Use a `Publishers.Zip3` to opencombine the latest elements from three publishers and emit a tuple to the downstream. The returned publisher waits until all three publishers have emitted an event, then delivers the oldest unconsumed event from each publisher as a tuple to the subscriber.
     ///
     /// If any upstream publisher finishes successfully or fails with an error, so too does the zipped publisher.
     public struct Zip3<A, B, C>: Publisher where A: Publisher, B: Publisher, C: Publisher, A.Failure == B.Failure, B.Failure == C.Failure {
@@ -325,7 +325,7 @@ extension Publishers {
 
     /// A publisher created by applying the zip function to four upstream publishers.
     ///
-    /// Use a `Publishers.Zip4` to combine the latest elements from four publishers and emit a tuple to the downstream. The returned publisher waits until all four publishers have emitted an event, then delivers the oldest unconsumed event from each publisher as a tuple to the subscriber.
+    /// Use a `Publishers.Zip4` to opencombine the latest elements from four publishers and emit a tuple to the downstream. The returned publisher waits until all four publishers have emitted an event, then delivers the oldest unconsumed event from each publisher as a tuple to the subscriber.
     ///
     /// If any upstream publisher finishes successfully or fails with an error, so too does the zipped publisher.
     public struct Zip4<A, B, C, D>: Publisher where A: Publisher, B: Publisher, C: Publisher, D: Publisher, A.Failure == B.Failure, B.Failure == C.Failure, C.Failure == D.Failure {

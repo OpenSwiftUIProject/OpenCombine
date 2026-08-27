@@ -1,0 +1,56 @@
+# Performing Key-Value Observing with OpenCombine
+
+Expose KVO changes with an OpenCombine publisher.
+
+## Overview
+
+Several frameworks use key-value observing to notify your app of asynchronous changes. By converting your use of KVO from callbacks and closures to OpenCombine, you can make your code more elegant and maintainable.
+
+### Monitoring Changes with KVO
+
+In the following example, the type `UserInfo` supports KVO for its `lastLogin` property, as described in [Using Key-Value Observing in Swift](https://developer.apple.com/documentation/swift/using-key-value-observing-in-swift). The [viewDidLoad()](https://developer.apple.com/documentation/uikit/uiviewcontroller/viewdidload()) method uses the `observe(_:options:changeHandler:)` method to set up a closure that handles any change to the property. The closure receives an [NSKeyValueObservedChange](https://developer.apple.com/documentation/foundation/nskeyvalueobservedchange) object that describes the change event, retrieves the [newValue](https://developer.apple.com/documentation/foundation/nskeyvalueobservedchange/newvalue) property, and prints it. The [viewDidAppear(_:)](https://developer.apple.com/documentation/uikit/uiviewcontroller/viewdidappear(_:)) method changes the value, which calls the closure and prints the message.
+
+```swift
+class UserInfo: NSObject {
+    @objc dynamic var lastLogin: Date = Date(timeIntervalSince1970: 0)
+}
+@objc var userInfo = UserInfo()
+var observation: NSKeyValueObservation?
+
+override func viewDidLoad() {
+    super.viewDidLoad()
+    observation = observe(\.userInfo.lastLogin, options: [.new]) { object, change in
+        print ("lastLogin now \(change.newValue!).")
+    }
+}
+
+override func viewDidAppear(_ animated: Bool) {
+    super.viewDidAppear(animated)
+    userInfo.lastLogin = Date()
+}
+```
+
+### Converting KVO Code to Use OpenCombine
+
+To convert KVO code to OpenCombine, replace the `observe(_:options:changeHandler:)` method with an [NSObject.KeyValueObservingPublisher](https://developer.apple.com/documentation/objectivec/nsobject-swift.class/keyvalueobservingpublisher). You get an instance of this publisher by calling `publisher(for:)` on the parent object, as shown in the following example’s [viewDidLoad()](https://developer.apple.com/documentation/uikit/uiviewcontroller/viewdidload()) method:
+
+```swift
+class UserInfo: NSObject {
+    @objc dynamic var lastLogin: Date = Date(timeIntervalSince1970: 0)
+}
+@objc var userInfo = UserInfo()
+var cancellable: Cancellable?
+
+override func viewDidLoad() {
+    super.viewDidLoad()
+    cancellable = userInfo.publisher(for: \.lastLogin)
+        .sink() { date in print ("lastLogin now \(date).") }
+}
+
+override func viewDidAppear(_ animated: Bool) {
+    super.viewDidAppear(animated)
+    userInfo.lastLogin = Date()
+}
+```
+
+The KVO publisher produces elements of the observed type — in this case, [Date](https://developer.apple.com/documentation/foundation/date) — rather than [NSKeyValueObservedChange](https://developer.apple.com/documentation/foundation/nskeyvalueobservedchange). This saves you a step, because you don’t have to unpack the [newValue](https://developer.apple.com/documentation/foundation/nskeyvalueobservedchange/newvalue) from the change object, as in the first example.

@@ -9,15 +9,9 @@ extension Publisher where Output: Equatable {
 
     /// Publishes a Boolean value upon receiving an element equal to the argument.
     ///
-    /// Use `contains(_:)` to find the first element in an upstream that’s equal to
-    /// the supplied argument. The `Publishers.Contains` publisher consumes all received
-    /// elements until the upstream publisher produces a matching element. Upon finding
-    /// the first match, it emits `true` and finishes normally. If the upstream finishes
-    /// normally without producing a matching element, this publisher emits `false` and
-    /// finishes.
+    /// Use ``Publisher/contains(_:)`` to find the first element in an upstream that’s equal to the supplied argument. The contains publisher consumes all received elements until the upstream publisher produces a matching element. Upon finding the first match, it emits `true` and finishes normally. If the upstream finishes normally without producing a matching element, this publisher emits `false` and finishes.
     ///
-    /// In the example below, the `contains(_:)` operator emits `true` the first time it
-    /// receives the value `5` from the `numbers.publisher`, and then finishes normally.
+    /// In the example below, the ``Publisher/contains(_:)`` operator emits `true` the first time it receives the value `5` from the `numbers.publisher`, and then finishes normally.
     ///
     ///     let numbers = [-1, 5, 10, 5]
     ///     numbers.publisher
@@ -27,8 +21,7 @@ extension Publisher where Output: Equatable {
     ///     // Prints: "true"
     ///
     /// - Parameter output: An element to match against.
-    /// - Returns: A publisher that emits the Boolean value `true` when the upstream
-    ///   publisher emits a matching value.
+    /// - Returns: A publisher that emits the Boolean value `true` when the upstream publisher emits a matching value.
     public func contains(_ output: Output) -> Publishers.Contains<Self> {
         return .init(upstream: self, output: output)
     }
@@ -68,26 +61,18 @@ extension Publisher {
         return .init(upstream: self, predicate: predicate)
     }
 
-    /// Publishes a Boolean value upon receiving an element that satisfies the throwing
-    /// predicate closure.
+    /// Publishes a Boolean value upon receiving an element that satisfies the throwing predicate closure.
     ///
-    /// Use `tryContains(where:)` to find the first element in an upstream that satisfies
-    /// the error-throwing closure you provide.
+    /// Use ``Publisher/tryContains(where:)`` to find the first element in an upstream that satisfies the error-throwing closure you provide.
     ///
-    /// This operator consumes elements produced from the upstream publisher until
-    /// the upstream publisher either:
+    /// This operator consumes elements produced from the upstream publisher until the upstream publisher either:
     ///
-    /// - Produces a matching element, after which it emits `true` and the publisher
-    ///   finishes normally.
-    /// - Emits `false` if no matching element is found and the publisher finishes
-    ///   normally.
+    /// - Produces a matching element, after which it emits `true` and the publisher finishes normally.
+    /// - Emits `false` if no matching element is found and the publisher finishes normally.
     ///
-    /// If the predicate throws an error, the publisher fails, passing the error to its
-    /// downstream.
+    /// If the predicate throws an error, the publisher fails, passing the error to its downstream.
     ///
-    /// In the example below, the `tryContains(where:)` operator tests values to find
-    /// an element less than `10`; when the closure finds an odd number, like `3`,
-    /// the publisher terminates with an `IllegalValueError`.
+    /// In the example below, the ``Publisher/tryContains(where:)`` operator tests values to find an element less than `10`; when the closure finds an odd number, like `3`, the publisher terminates with an `IllegalValueError`.
     ///
     ///     struct IllegalValueError: Error {}
     ///
@@ -106,11 +91,8 @@ extension Publisher {
     ///
     ///     // Prints: "completion: failure(IllegalValueError())"
     ///
-    /// - Parameter predicate: A closure that takes an element as its parameter and
-    ///   returns a Boolean value that indicates whether the element satisfies
-    ///   the closure’s comparison logic.
-    /// - Returns: A publisher that emits the Boolean value `true` when the upstream
-    ///   publisher emits a matching value.
+    /// - Parameter predicate: A closure that takes an element as its parameter and returns a Boolean value that indicates whether the element satisfies the closure’s comparison logic.
+    /// - Returns: A publisher that emits the Boolean value `true` when the upstream publisher emits a matching value.
     public func tryContains(
         where predicate: @escaping (Output) throws -> Bool
     ) -> Publishers.TryContainsWhere<Self> {
@@ -158,8 +140,7 @@ extension Publishers {
         /// The publisher from which this publisher receives elements.
         public let upstream: Upstream
 
-        /// The closure that determines whether the publisher should consider an element
-        /// as a match.
+        /// The closure that determines whether the publisher should consider an element as a match.
         public let predicate: (Upstream.Output) -> Bool
 
         public init(upstream: Upstream, predicate: @escaping (Upstream.Output) -> Bool) {

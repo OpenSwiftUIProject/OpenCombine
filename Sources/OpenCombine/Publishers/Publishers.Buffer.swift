@@ -9,13 +9,9 @@ extension Publisher {
 
     /// Buffers elements received from an upstream publisher.
     ///
-    /// Use `buffer(size:prefetch:whenFull:)` to collect a specific number of elements
-    /// from an upstream publisher before republishing them to the downstream subscriber
-    /// according to the `Publishers.BufferingStrategy` and `Publishers.PrefetchStrategy`
-    /// strategy you specify.
+    /// Use ``Publisher/buffer(size:prefetch:whenFull:)`` to collect a specific number of elements from an upstream publisher before republishing them to the downstream subscriber according to the ``Publishers/BufferingStrategy`` and ``Publishers/PrefetchStrategy`` strategy you specify.
     ///
-    /// If the publisher completes before reaching the `size` threshold, it buffers
-    /// the elements and publishes them downstream prior to completion.
+    /// If the publisher completes before reaching the `size` threshold, it buffers the elements and publishes them downstream prior to completion.
     ///
     /// - Parameters:
     ///   - size: The maximum number of elements to store.

@@ -9,8 +9,7 @@ extension Publisher {
 
     /// Publishes the number of elements received from the upstream publisher.
     ///
-    /// Use `count(`` to determine the number of elements received from the upstream
-    /// publisher before it completes:
+    /// Use ``Publisher/count()`` to determine the number of elements received from the upstream publisher before it completes:
     ///
     ///     let numbers = (0...10)
     ///     cancellable = numbers.publisher
@@ -19,8 +18,7 @@ extension Publisher {
     ///
     ///     // Prints: "11"
     ///
-    /// - Returns: A publisher that consumes all elements until the upstream publisher
-    ///   finishes, then emits a single value with the total number of elements received.
+    /// - Returns: A publisher that consumes all elements until the upstream publisher finishes, then emits a single value with the total number of elements received.
     public func count() -> Publishers.Count<Self> {
         return Publishers.Count(upstream: self)
     }

@@ -7,20 +7,11 @@
 
 extension Publisher {
 
-    /// Attempts to recreate a failed subscription with the upstream publisher up to
-    /// the number of times you specify.
+    /// Attempts to recreate a failed subscription with the upstream publisher up to the number of times you specify.
     ///
-    /// Use `retry(_:)` to try connecting to an upstream publisher after a failed
-    /// connection attempt.
+    /// Use ``Publisher/retry(_:)`` to try a connecting to an upstream publisher after a failed connection attempt.
     ///
-    /// In the example below, a `URLSession.DataTaskPublisher` attempts to connect to
-    /// a remote URL. If the connection attempt succeeds, it publishes the remote
-    /// service’s HTML to the downstream publisher and completes normally. Otherwise,
-    /// the retry operator attempts to reestablish the connection. If after three attempts
-    /// the publisher still can’t connect to the remote URL, the `catch(_:)` operator
-    /// replaces the error with a new publisher that publishes a “connection timed out”
-    /// HTML page. After the downstream subscriber receives the timed out message,
-    /// the stream completes normally.
+    /// In the example below, a [URLSession.DataTaskPublisher](https://developer.apple.com/documentation/foundation/urlsession/datataskpublisher) attempts to connect to a remote URL. If the connection attempt succeeds, it publishes the remote service’s HTML to the downstream publisher and completes normally. Otherwise, the retry operator attempts to reestablish the connection. If after three attempts the publisher still can’t connect to the remote URL, the ``Publisher/catch(_:)`` operator replaces the error with a new publisher that publishes a “connection timed out” HTML page. After the downstream subscriber receives the timed out message, the stream completes normally.
     ///
     ///     struct WebSiteData: Codable {
     ///         var rawHTML: String
@@ -30,28 +21,22 @@ extension Publisher {
     ///
     ///     cancellable = URLSession.shared.dataTaskPublisher(for: myURL!)
     ///         .retry(3)
-    ///         .map { page -> WebSiteData in
-    ///             WebSiteData(rawHTML: String(decoding: page.data, as: UTF8.self))
-    ///         }
+    ///         .map({ (page) -> WebSiteData in
+    ///             return WebSiteData(rawHTML: String(decoding: page.data, as: UTF8.self))
+    ///         })
     ///         .catch { error in
-    ///             Just(
-    ///                 WebSiteData(
-    ///                     rawHTML: "<HTML>Unable to load page - timed out.</HTML>"
-    ///                 )
-    ///             )
-    ///         }
-    ///         .sink(receiveCompletion: { print ("completion: \($0)") },
-    ///               receiveValue: { print ("value: \($0)") })
+    ///             return Just(WebSiteData(rawHTML: "<HTML>Unable to load page - timed out.</HTML>"))
+    ///     }
+    ///     .sink(receiveCompletion: { print ("completion: \($0)") },
+    ///           receiveValue: { print ("value: \($0)") }
+    ///      )
     ///
     ///     // Prints: The HTML content from the remote URL upon a successful connection,
-    ///     //         or returns "<HTML>Unable to load page - timed out.</HTML>" if
-    ///     //         the number of retries exceeds the specified value.
+    ///     //         or returns "<HTML>Unable to load page - timed out.</HTML>" if the number of retries exceeds the specified value.
     ///
-    /// After exceeding the specified number of retries, the publisher passes the failure
-    /// to the downstream receiver.
+    /// After exceeding the specified number of retries, the publisher passes the failure to the downstream receiver.
     /// - Parameter retries: The number of times to attempt to recreate the subscription.
-    /// - Returns: A publisher that attempts to recreate its subscription to a failed
-    ///   upstream publisher.
+    /// - Returns: A publisher that attempts to recreate its subscription to a failed upstream publisher.
     public func retry(_ retries: Int) -> Publishers.Retry<Self> {
         return .init(upstream: self, retries: retries)
     }
@@ -76,14 +61,11 @@ extension Publishers {
         /// an unlimited number of times.
         public let retries: Int?
 
-        /// Creates a publisher that attempts to recreate its subscription to a failed
-        /// upstream publisher.
+        /// Creates a publisher that attempts to recreate its subscription to a failed upstream publisher.
         ///
         /// - Parameters:
         ///   - upstream: The publisher from which this publisher receives its elements.
-        ///   - retries: The maximum number of retry attempts to perform. If `nil`, this
-        ///     publisher attempts to reconnect with the upstream publisher an unlimited
-        ///     number of times.
+        ///   - retries: The maximum number of retry attempts to perform. If `nil`, this publisher attempts to reconnect with the upstream publisher an unlimited number of times.
         public init(upstream: Upstream, retries: Int?) {
             self.upstream = upstream
             self.retries = retries

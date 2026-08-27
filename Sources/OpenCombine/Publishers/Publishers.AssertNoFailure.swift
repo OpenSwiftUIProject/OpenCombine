@@ -7,17 +7,11 @@
 
 extension Publisher {
 
-    /// Raises a fatal error when its upstream publisher fails, and otherwise republishes
-    /// all received input.
+    /// Raises a fatal error when its upstream publisher fails, and otherwise republishes all received input.
     ///
-    /// Use `assertNoFailure()` for internal integrity checks that are active during
-    /// testing. However, it is important to note that, like its Swift counterpart
-    /// `fatalError(_:)`, the `assertNoFailure()` operator asserts a fatal exception when
-    /// triggered during development and testing, _and_ in shipping versions of code.
+    /// Use `assertNoFailure()` for internal integrity checks that are active during testing. However, it is important to note that, like its Swift counterpart `fatalError(_:)`, the `assertNoFailure()` operator asserts a fatal exception when triggered during development and testing, _and_ in shipping versions of code.
     ///
-    /// In the example below, a `CurrentValueSubject` publishes the initial and second
-    /// values successfully. The third value, containing a `genericSubjectError`, causes
-    /// the `assertNoFailure()` operator to assert a fatal exception stopping the process:
+    /// In the example below, a `CurrentValueSubject` publishes the initial and second values successfully. The third value, containing a `genericSubjectError`, causes the `assertNoFailure()` operator to assert a fatal exception stopping the process:
     ///
     ///     public enum SubjectError: Error {
     ///         case genericSubjectError
@@ -31,20 +25,18 @@ extension Publisher {
     ///         )
     ///
     ///     subject.send("second value")
-    ///     subject.send(completion: .failure(SubjectError.genericSubjectError))
+    ///     subject.send(completion: Subscribers.Completion<Error>.failure(SubjectError.genericSubjectError))
     ///
     ///     // Prints:
     ///     //  value: initial value.
     ///     //  value: second value.
-    ///     // The process then terminates in the debugger as the assertNoFailure
-    ///     // operator catches the genericSubjectError.
+    ///     //  The process then terminates in the debugger as the assertNoFailure operator catches the genericSubjectError.
     ///
     /// - Parameters:
     ///   - prefix: A string used at the beginning of the fatal error message.
     ///   - file: A filename used in the error message. This defaults to `#file`.
     ///   - line: A line number used in the error message. This defaults to `#line`.
-    /// - Returns: A publisher that raises a fatal error when its upstream publisher
-    ///   fails.
+    /// - Returns: A publisher that raises a fatal error when its upstream publisher fails.
     public func assertNoFailure(_ prefix: String = "",
                                 file: StaticString = #file,
                                 line: UInt = #line) -> Publishers.AssertNoFailure<Self> {

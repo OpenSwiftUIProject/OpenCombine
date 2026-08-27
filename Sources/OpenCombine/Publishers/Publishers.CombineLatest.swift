@@ -40,7 +40,7 @@ extension Publisher {
     ///
     /// When all upstream publishers finish, this publisher finishes. If an upstream publisher never publishes a value, this publisher never finishes.
     ///
-    /// - Parameter other: Another publisher to combine with this one.
+    /// - Parameter other: Another publisher to opencombine with this one.
     /// - Returns: A publisher that receives and combines elements from this and another publisher.
     public func combineLatest<P>(_ other: P) -> Publishers.CombineLatest<Self, P> where P: Publisher, Self.Failure == P.Failure {
         Publishers.CombineLatest(self, other)
@@ -48,7 +48,7 @@ extension Publisher {
     
     /// Subscribes to an additional publisher and invokes a closure upon receiving output from either publisher.
     ///
-    /// Use `combineLatest<P,T>(_:)` to combine the current and one additional publisher and transform them using a closure you specify to publish a new value to the downstream.
+    /// Use `combineLatest<P,T>(_:)` to opencombine the current and one additional publisher and transform them using a closure you specify to publish a new value to the downstream.
     ///
     /// > Tip: The combined publisher doesn't produce elements until each of its upstream publishers publishes at least one element.
     ///
@@ -84,7 +84,7 @@ extension Publisher {
     /// If any of the combined publishers terminates with a failure, this publisher also fails.
     ///
     /// - Parameters:
-    ///   - other: Another publisher to combine with this one.
+    ///   - other: Another publisher to opencombine with this one.
     ///   - transform: A closure that receives the most-recent value from each publisher and returns a new value to publish.
     /// - Returns: A publisher that receives and combines elements from this and another publisher.
     public func combineLatest<P, T>(_ other: P, _ transform: @escaping (Self.Output, P.Output) -> T) -> Publishers.Map<Publishers.CombineLatest<Self, P>, T> where P: Publisher, Self.Failure == P.Failure {
@@ -93,7 +93,7 @@ extension Publisher {
 
     /// Subscribes to two additional publishers and publishes a tuple upon receiving output from any of the publishers.
     ///
-    /// Use ``Publisher/combineLatest(_:_:)-81vgd`` when you want the downstream subscriber to receive a tuple of the most-recent element from multiple publishers when any of them emit a value. To combine elements from multiple publishers, use ``Publisher/zip(_:_:)-2p498`` instead. To receive just the most-recent element from multiple publishers rather than tuples, use ``Publisher/merge(with:_:)``.
+    /// Use ``Publisher/combineLatest(_:_:)-81vgd`` when you want the downstream subscriber to receive a tuple of the most-recent element from multiple publishers when any of them emit a value. To opencombine elements from multiple publishers, use ``Publisher/zip(_:_:)-2p498`` instead. To receive just the most-recent element from multiple publishers rather than tuples, use ``Publisher/merge(with:_:)``.
     ///
     /// > Tip: The combined publisher doesn't produce elements until each of its upstream publishers publishes at least one element.
     ///
@@ -130,8 +130,8 @@ extension Publisher {
     ///
     /// If any of the combined publishers terminates with a failure, this publisher also fails.
     /// - Parameters:
-    ///   - publisher1: A second publisher to combine with the first publisher.
-    ///   - publisher2: A third publisher to combine with the first publisher.
+    ///   - publisher1: A second publisher to opencombine with the first publisher.
+    ///   - publisher2: A third publisher to opencombine with the first publisher.
     /// - Returns: A publisher that receives and combines elements from this publisher and two other publishers.
     public func combineLatest<P, Q>(_ publisher1: P, _ publisher2: Q) -> Publishers.CombineLatest3<Self, P, Q> where P: Publisher, Q: Publisher, Self.Failure == P.Failure, P.Failure == Q.Failure {
         Publishers.CombineLatest3(self, publisher1, publisher2)
@@ -139,7 +139,7 @@ extension Publisher {
 
     /// Subscribes to two additional publishers and invokes a closure upon receiving output from any of the publishers.
     ///
-    /// Use `combineLatest<P, Q>(_:,_:)` to combine the current and two additional publishers and transform them using a closure you specify to publish a new value to the downstream.
+    /// Use `combineLatest<P, Q>(_:,_:)` to opencombine the current and two additional publishers and transform them using a closure you specify to publish a new value to the downstream.
     ///
     /// > Tip: The combined publisher doesn't produce elements until each of its upstream publishers publishes at least one element.
     ///
@@ -175,8 +175,8 @@ extension Publisher {
     ///     //  Result: 432.    // pub = 9, pub2 = 12, pub3 = 4
     ///
     /// - Parameters:
-    ///   - publisher1: A second publisher to combine with the first publisher.
-    ///   - publisher2: A third publisher to combine with the first publisher.
+    ///   - publisher1: A second publisher to opencombine with the first publisher.
+    ///   - publisher2: A third publisher to opencombine with the first publisher.
     ///   - transform: A closure that receives the most-recent value from each publisher and returns a new value to publish.
     /// - Returns: A publisher that receives and combines elements from this publisher and two other publishers.
     public func combineLatest<P, Q, T>(_ publisher1: P, _ publisher2: Q, _ transform: @escaping (Self.Output, P.Output, Q.Output) -> T) -> Publishers.Map<Publishers.CombineLatest3<Self, P, Q>, T> where P: Publisher, Q: Publisher, Self.Failure == P.Failure, P.Failure == Q.Failure {
@@ -185,7 +185,7 @@ extension Publisher {
 
     /// Subscribes to three additional publishers and publishes a tuple upon receiving output from any of the publishers.
     ///
-    /// Use ``Publisher/combineLatest(_:_:_:)-7mt86`` when you want the downstream subscriber to receive a tuple of the most-recent element from multiple publishers when any of them emit a value. To combine elements from multiple publishers, use ``Publisher/zip(_:_:_:)-67czn`` instead. To receive just the most-recent element from multiple publishers rather than tuples, use ``Publisher/merge(with:_:_:)``.
+    /// Use ``Publisher/combineLatest(_:_:_:)-7mt86`` when you want the downstream subscriber to receive a tuple of the most-recent element from multiple publishers when any of them emit a value. To opencombine elements from multiple publishers, use ``Publisher/zip(_:_:_:)-67czn`` instead. To receive just the most-recent element from multiple publishers rather than tuples, use ``Publisher/merge(with:_:_:)``.
     ///
     /// > Tip: The combined publisher doesn't produce elements until each of its upstream publishers publishes at least one element.
     ///
@@ -225,9 +225,9 @@ extension Publisher {
     /// If any individual publisher of the combined set terminates with a failure, this publisher also fails.
     ///
     /// - Parameters:
-    ///   - publisher1: A second publisher to combine with the first publisher.
-    ///   - publisher2: A third publisher to combine with the first publisher.
-    ///   - publisher3: A fourth publisher to combine with the first publisher.
+    ///   - publisher1: A second publisher to opencombine with the first publisher.
+    ///   - publisher2: A third publisher to opencombine with the first publisher.
+    ///   - publisher3: A fourth publisher to opencombine with the first publisher.
     /// - Returns: A publisher that receives and combines elements from this publisher and three other publishers.
     public func combineLatest<P, Q, R>(_ publisher1: P, _ publisher2: Q, _ publisher3: R) -> Publishers.CombineLatest4<Self, P, Q, R> where P: Publisher, Q: Publisher, R: Publisher, Self.Failure == P.Failure, P.Failure == Q.Failure, Q.Failure == R.Failure {
         Publishers.CombineLatest4(self, publisher1, publisher2, publisher3)
@@ -235,7 +235,7 @@ extension Publisher {
 
     /// Subscribes to three additional publishers and invokes a closure upon receiving output from any of the publishers.
     ///
-    /// Use ``Publisher/combineLatest(_:_:_:_:)`` when you need to combine the current and 3 additional publishers and transform the values using a closure in which you specify the published elements, to publish a new element.
+    /// Use ``Publisher/combineLatest(_:_:_:_:)`` when you need to opencombine the current and 3 additional publishers and transform the values using a closure in which you specify the published elements, to publish a new element.
     ///
     /// > Tip: The combined publisher doesn't produce elements until each of its upstream publishers publishes at least one element.
     ///
@@ -275,9 +275,9 @@ extension Publisher {
     ///     //  Result: 2964.   // pub = 13, pub2 = 12,  pub3 = 19, pub4 = 1
     ///
     /// - Parameters:
-    ///   - publisher1: A second publisher to combine with the first publisher.
-    ///   - publisher2: A third publisher to combine with the first publisher.
-    ///   - publisher3: A fourth publisher to combine with the first publisher.
+    ///   - publisher1: A second publisher to opencombine with the first publisher.
+    ///   - publisher2: A third publisher to opencombine with the first publisher.
+    ///   - publisher3: A fourth publisher to opencombine with the first publisher.
     ///   - transform: A closure that receives the most-recent value from each publisher and returns a new value to publish.
     /// - Returns: A publisher that receives and combines elements from this publisher and three other publishers.
     public func combineLatest<P, Q, R, T>(_ publisher1: P, _ publisher2: Q, _ publisher3: R, _ transform: @escaping (Self.Output, P.Output, Q.Output, R.Output) -> T) -> Publishers.Map<Publishers.CombineLatest4<Self, P, Q, R>, T> where P: Publisher, Q: Publisher, R: Publisher, Self.Failure == P.Failure, P.Failure == Q.Failure, Q.Failure == R.Failure {
@@ -410,24 +410,28 @@ extension Publishers.CombineLatest: Equatable where A: Equatable, B: Equatable {
 }
 
 extension Publishers.CombineLatest3: Equatable where A: Equatable, B: Equatable, C: Equatable {
-    /// Returns a Boolean value that indicates whether two publishers are equivalent.
+    /// Returns a Boolean value indicating whether two values are equal.
+    ///
+    /// Equality is the inverse of inequality. For any values `a` and `b`,
+    /// `a == b` implies that `a != b` is `false`.
     ///
     /// - Parameters:
-    ///   - lhs: A combineLatest publisher to compare for equality.
-    ///   - rhs: Another combineLatest publisher to compare for equality.
-    /// - Returns: `true` if the corresponding upstream publishers of each combineLatest publisher are equal; otherwise `false`.
+    ///   - lhs: A value to compare.
+    ///   - rhs: Another value to compare.
     public static func == (lhs: Publishers.CombineLatest3<A, B, C>, rhs: Publishers.CombineLatest3<A, B, C>) -> Bool {
         lhs.a == rhs.a && lhs.b == rhs.b && lhs.c == rhs.c
     }
 }
 
 extension Publishers.CombineLatest4: Equatable where A: Equatable, B: Equatable, C: Equatable, D: Equatable {
-    /// Returns a Boolean value that indicates whether two publishers are equivalent.
+    /// Returns a Boolean value indicating whether two values are equal.
+    ///
+    /// Equality is the inverse of inequality. For any values `a` and `b`,
+    /// `a == b` implies that `a != b` is `false`.
     ///
     /// - Parameters:
-    ///   - lhs: A combineLatest publisher to compare for equality.
-    ///   - rhs: Another combineLatest publisher to compare for equality.
-    /// - Returns: `true` if the corresponding upstream publishers of each combineLatest publisher are equal; otherwise `false`.
+    ///   - lhs: A value to compare.
+    ///   - rhs: Another value to compare.
     public static func == (lhs: Publishers.CombineLatest4<A, B, C, D>, rhs: Publishers.CombineLatest4<A, B, C, D>) -> Bool {
         lhs.a == rhs.a && lhs.b == rhs.b && lhs.c == rhs.c && lhs.d == rhs.d
     }

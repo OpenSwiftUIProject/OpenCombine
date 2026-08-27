@@ -15,10 +15,19 @@ extension Publisher where Failure == Never {
 
     /// The elements produced by the publisher, as an asynchronous sequence.
     ///
-    /// This property provides an `AsyncPublisher`, which allows you to use
-    /// the Swift `async`-`await` syntax to receive the publisher's elements.
-    /// Because `AsyncPublisher` conforms to `AsyncSequence`, you iterate over its
-    /// elements with a `for`-`await`-`in` loop, rather than attaching a subscriber.
+    /// This property provides an ``AsyncPublisher``, which allows you to use the Swift `async`-`await` syntax to receive the publisher's elements. Because ``AsyncPublisher`` conforms to [AsyncSequence](https://developer.apple.com/documentation/swift/asyncsequence), you iterate over its elements with a `for`-`await`-`in` loop, rather than attaching a subscriber.
+    ///
+    /// The following example shows how to use the `values` property to receive elements asynchronously. The example adapts a code snippet from the ``Publisher/filter(_:)`` operator's documentation, which filters a sequence to only emit even integers. This example replaces the ``Subscribers/Sink`` subscriber with a `for`-`await`-`in` loop that iterates over the ``AsyncPublisher`` provided by the `values` property.
+    ///
+    ///     let numbers: [Int] = [1, 2, 3, 4, 5]
+    ///     let filtered = numbers.publisher
+    ///         .filter { $0 % 2 == 0 }
+    ///
+    ///     for await number in filtered.values
+    ///     {
+    ///         print("\(number)", terminator: " ")
+    ///     }
+    ///
     @available(macOS 10.15, iOS 13.0, watchOS 6.0, tvOS 13.0, *)
     public var values: AsyncPublisher<Self> {
         return .init(self)
@@ -185,12 +194,29 @@ extension Publisher {
 
     /// The elements produced by the publisher, as a throwing asynchronous sequence.
     ///
-    /// This property provides an `AsyncThrowingPublisher`, which allows you to use
-    /// the Swift `async`-`await` syntax to receive the publisher's elements.
-    /// Because `AsyncPublisher` conforms to `AsyncSequence`, you iterate over its
-    /// elements with a `for`-`await`-`in` loop, rather than attaching a subscriber.
-    /// If the publisher terminates with an error, the awaiting caller receives the error
-    /// as a `throw`.
+    /// This property provides an ``AsyncThrowingPublisher``, which allows you to use the Swift `async`-`await` syntax to receive the publisher's elements. Because ``AsyncPublisher`` conforms to [AsyncSequence](https://developer.apple.com/documentation/swift/asyncsequence), you iterate over its elements with a `for`-`await`-`in` loop, rather than attaching a subscriber. If the publisher terminates with an error, the awaiting caller receives the error as a `throw`.
+    ///
+    /// The following example shows how to use the `values` property to receive elements asynchronously. The example adapts a code snippet from the ``Publisher/tryFilter(_:)`` operator's documentation, which filters a sequence to only emit even integers, and terminate with an error on a `0`. This example replaces the ``Subscribers/Sink`` subscriber with a `for`-`await`-`in` loop that iterates over the ``AsyncPublisher`` provided by the `values` property. With this approach, the error handling previously provided in the sink subscriber's ``Subscribers/Sink/receiveCompletion`` closure goes instead in a `catch` block.
+    ///
+    ///     let numbers: [Int] = [1, 2, 3, 4, 0, 5]
+    ///     let filterPublisher = numbers.publisher
+    ///         .tryFilter{
+    ///             if $0 == 0 {
+    ///                 throw ZeroError()
+    ///             } else {
+    ///                 return $0 % 2 == 0
+    ///             }
+    ///         }
+    ///
+    ///     do {
+    ///         for try await number in filterPublisher.values {
+    ///             print ("\(number)", terminator: " ")
+    ///         }
+    ///     } catch {
+    ///         print ("\(error)")
+    ///     }
+    ///
+    ///
     @available(macOS 10.15, iOS 13.0, watchOS 6.0, tvOS 13.0, *)
     public var values: AsyncThrowingPublisher<Self> {
         return .init(self)

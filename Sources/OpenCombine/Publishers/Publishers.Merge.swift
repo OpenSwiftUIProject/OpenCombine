@@ -14,9 +14,9 @@
 extension Publisher {
     /// Combines elements from this publisher with those from another publisher, delivering an interleaved sequence of elements.
     ///
-    /// Use ``Publisher/merge(with:)-394v9`` when you want to receive a new element whenever any of the upstream publishers emits an element. To receive tuples of the most-recent value from all the upstream publishers whenever any of them emit a value, use ``Publisher/combineLatest(_:)``. To combine elements from multiple upstream publishers, use ``Publisher/zip(_:)``.
+    /// Use ``Publisher/merge(with:)-9qb5x`` when you want to receive a new element whenever any of the upstream publishers emits an element. To receive tuples of the most-recent value from all the upstream publishers whenever any of them emit a value, use ``Publisher/combineLatest(_:)``. To opencombine elements from multiple upstream publishers, use ``Publisher/zip(_:)``.
     ///
-    /// In this example, as ``Publisher/merge(with:)-394v9`` receives input from either upstream publisher, it republishes it to the downstream:
+    /// In this example, as ``Publisher/merge(with:)-9qb5x`` receives input from either upstream publisher, it republishes it to the downstream:
     ///
     ///     let publisher = PassthroughSubject<Int, Never>()
     ///     let pub2 = PassthroughSubject<Int, Never>()
@@ -48,7 +48,7 @@ extension Publisher {
     /// Combines elements from this publisher with those from two other publishers, delivering an interleaved sequence of elements.
     ///
     /// Use ``Publisher/merge(with:_:)`` when you want to receive a new element whenever any of the upstream publishers emits an element. To receive tuples of the most-recent value from all the upstream publishers whenever any of them emit a value, use ``Publisher/combineLatest(_:_:)-81vgd``.
-    /// To combine elements from multiple upstream publishers, use ``Publisher/zip(_:_:)-2p498``.
+    /// To opencombine elements from multiple upstream publishers, use ``Publisher/zip(_:_:)-2p498``.
     ///
     /// In this example, as ``Publisher/merge(with:_:)`` receives input from the upstream publishers, it republishes the interleaved elements to the downstream:
     ///
@@ -83,7 +83,7 @@ extension Publisher {
     /// Combines elements from this publisher with those from three other publishers, delivering an interleaved sequence of elements.
     ///
     /// Use ``Publisher/merge(with:_:_:)`` when you want to receive a new element whenever any of the upstream publishers emits an element. To receive tuples of the most-recent value from all the upstream publishers whenever any of them emit a value, use ``Publisher/combineLatest(_:_:_:)-7mt86``.
-    /// To combine elements from multiple upstream publishers, use ``Publisher/zip(_:_:_:)-67czn``.
+    /// To opencombine elements from multiple upstream publishers, use ``Publisher/zip(_:_:_:)-67czn``.
     ///
     /// In this example, as ``Publisher/merge(with:_:_:)`` receives input from the upstream publishers, it republishes the interleaved elements to the downstream:
     ///
@@ -122,7 +122,7 @@ extension Publisher {
     /// Combines elements from this publisher with those from four other publishers, delivering an interleaved sequence of elements.
     ///
     /// Use ``Publisher/merge(with:_:_:_:)`` when you want to receive a new element whenever any of the upstream publishers emits an element. To receive tuples of the most-recent value from all the upstream publishers whenever any of them emit a value, use ``Publisher/combineLatest(_:_:_:)-7mt86``.
-    /// To combine elements from multiple upstream publishers, use ``Publisher/zip(_:_:_:)-67czn``.
+    /// To opencombine elements from multiple upstream publishers, use ``Publisher/zip(_:_:_:)-67czn``.
     ///
     /// In this example, as ``Publisher/merge(with:_:_:_:)`` receives input from the upstream publishers, it republishes the interleaved elements to the downstream:
     ///
@@ -166,7 +166,7 @@ extension Publisher {
     /// Combines elements from this publisher with those from five other publishers, delivering an interleaved sequence of elements.
     ///
     /// Use ``Publisher/merge(with:_:_:_:_:_:)`` when you want to receive a new element whenever any of the upstream publishers emits an element. To receive tuples of the most-recent value from all the upstream publishers whenever any of them emit a value, use ``Publisher/combineLatest(_:_:_:)-7mt86``.
-    /// To combine elements from multiple upstream publishers, use ``Publisher/zip(_:_:_:)-67czn``.
+    /// To opencombine elements from multiple upstream publishers, use ``Publisher/zip(_:_:_:)-67czn``.
     ///
     /// In this example, as ``Publisher/merge(with:_:_:_:_:_:)`` receives input from the upstream publishers, it republishes the interleaved elements to the downstream:
     ///
@@ -214,7 +214,7 @@ extension Publisher {
     /// Combines elements from this publisher with those from six other publishers, delivering an interleaved sequence of elements.
     ///
     /// Use ``Publisher/merge(with:_:_:_:_:_:)`` when you want to receive a new element whenever any of the upstream publishers emits an element. To receive tuples of the most-recent value from all the upstream publishers whenever any of them emit a value, use ``Publisher/combineLatest(_:_:_:)-7mt86``.
-    /// To combine elements from multiple upstream publishers, use ``Publisher/zip(_:_:_:)-67czn``.
+    /// To opencombine elements from multiple upstream publishers, use ``Publisher/zip(_:_:_:)-67czn``.
     ///
     /// In this example, as ``Publisher/merge(with:_:_:_:_:_:)`` receives input from the upstream publishers; it republishes the interleaved elements to the downstream:
     ///
@@ -267,7 +267,7 @@ extension Publisher {
     /// Combines elements from this publisher with those from seven other publishers, delivering an interleaved sequence of elements.
     ///
     /// Use ``Publisher/merge(with:_:_:_:_:_:_:)`` when you want to receive a new element whenever any of the upstream publishers emits an element. To receive tuples of the most-recent value from all the upstream publishers whenever any of them emit a value, use ``Publisher/combineLatest(_:_:_:)-7mt86``.
-    /// To combine elements from multiple upstream publishers, use ``Publisher/zip(_:_:_:)-67czn``.
+    /// To opencombine elements from multiple upstream publishers, use ``Publisher/zip(_:_:_:)-67czn``.
     ///
     /// In this example, as ``Publisher/merge(with:_:_:_:_:_:_:)`` receives input from the upstream publishers, it republishes the interleaved elements to the downstream:
     ///

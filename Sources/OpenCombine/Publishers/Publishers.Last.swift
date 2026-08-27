@@ -9,11 +9,9 @@ extension Publisher {
 
     /// Publishes the last element of a stream, after the stream finishes.
     ///
-    /// Use `last()` when you need to emit only the last element from an upstream
-    /// publisher.
+    /// Use ``Publisher/last()`` when you need to emit only the last element from an upstream publisher.
     ///
-    /// In the example below, the range publisher only emits the last element from
-    /// the sequence publisher, `10`, then finishes normally.
+    /// In the example below, the range publisher only emits the last element from the sequence publisher, `10`, then finishes normally.
     ///
     ///     let numbers = (-10...10)
     ///     cancellable = numbers.publisher
@@ -53,15 +51,11 @@ extension Publisher {
         return .init(upstream: self, predicate: predicate)
     }
 
-    /// Publishes the last element of a stream that satisfies an error-throwing predicate
-    /// closure, after the stream finishes.
+    /// Publishes the last element of a stream that satisfies an error-throwing predicate closure, after the stream finishes.
     ///
-    /// Use `tryLast(where:)` when you need to republish the last element that satisfies
-    /// an error-throwing closure you specify. If the predicate closure throws an error,
-    /// the publisher fails.
+    /// Use ``Publisher/tryLast(where:)`` when you need to republish the last element that satisfies an error-throwing closure you specify. If the predicate closure throws an error, the publisher fails.
     ///
-    /// In the example below, a publisher emits the last element that satisfies
-    /// the error-throwing closure, then finishes normally:
+    /// In the example below, a publisher emits the last element that satisfies the error-throwing closure, then finishes normally:
     ///
     ///     struct RangeError: Error {}
     ///
@@ -76,13 +70,10 @@ extension Publisher {
     ///             receiveValue: { print ("\($0)", terminator: " ") }
     ///         )
     ///     // Prints: "5 completion: finished"
-    ///     // If instead the numbers array had contained a `0`, the `tryLast` operator
-    ///     // would terminate publishing with a RangeError."
+    ///     // If instead the numbers array had contained a `0`, the `tryLast` operator would terminate publishing with a RangeError."
     ///
-    /// - Parameter predicate: A closure that takes an element as its parameter and
-    ///   returns a Boolean value that indicates whether to publish the element.
-    /// - Returns: A publisher that only publishes the last element satisfying the given
-    ///   predicate.
+    /// - Parameter predicate: A closure that takes an element as its parameter and returns a Boolean value that indicates whether to publish the element.
+    /// - Returns: A publisher that only publishes the last element satisfying the given predicate.
     public func tryLast(
         where predicate: @escaping (Output) throws -> Bool
     ) -> Publishers.TryLastWhere<Self> {

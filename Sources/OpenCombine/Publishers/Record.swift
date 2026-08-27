@@ -30,8 +30,7 @@ public struct Record<Output, Failure: Error>: Publisher {
         self.recording = recording
     }
 
-    /// Creates a record publisher to publish the provided elements, followed by
-    /// the provided completion value.
+    /// Creates a record publisher to publish the provided elements, followed by the provided completion value.
     ///
     /// - Parameters:
     ///   - output: An array of output elements to publish.

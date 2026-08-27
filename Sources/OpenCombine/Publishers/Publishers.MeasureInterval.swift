@@ -61,8 +61,7 @@ extension Publishers {
         /// The scheduler used for tracking the timing of events.
         public let scheduler: Context
 
-        /// Creates a publisher that measures and emits the time interval between events
-        /// received from an upstream publisher.
+        /// Creates a publisher that measures and emits the time interval between events received from an upstream publisher.
         ///
         /// - Parameters:
         ///   - upstream: The publisher from which this publisher receives elements.

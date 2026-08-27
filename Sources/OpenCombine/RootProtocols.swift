@@ -21,13 +21,13 @@
 /// Extensions on `Publisher` define a wide variety of _operators_ that you compose to create sophisticated event-processing chains.
 /// Each operator returns a type that implements the ``Publisher`` protocol
 /// Most of these types exist as extensions on the ``Publishers`` enumeration.
-/// For example, the ``Publisher/map(_:)-676yd`` operator returns an instance of ``Publishers/Map``.
+/// For example, the ``Publisher/map(_:)-3bo47`` operator returns an instance of ``Publishers/Map``.
 ///
 /// > Tip: An OpenCombine publisher fills a role similar to, but distinct from, the
-/// [AsyncSequence](https://developer.apple.com/documentation/Swift/AsyncSequence) in the
+/// [AsyncSequence](https://developer.apple.com/documentation/swift/asyncsequence) in the
 /// Swift standard library. A `Publisher` and an
 /// `AsyncSequence` both produce elements over time. However, the pull model in OpenCombine
-/// uses a ``OpenCombine/Subscriber`` to request elements from a publisher, while Swift
+/// uses a ``Subscriber`` to request elements from a publisher, while Swift
 /// concurrency uses the `for`-`await`-`in` syntax to iterate over elements
 /// published by an `AsyncSequence`. Both APIs offer methods to modify the sequence
 /// by mapping or filtering elements, while only OpenCombine provides time-based
@@ -95,7 +95,7 @@ public protocol Subject<Output, Failure>: AnyObject, Publisher {
 ///
 /// This publisher doesn’t produce any elements until you call its ``ConnectablePublisher/connect()`` method.
 ///
-/// Use ``Publisher/makeConnectable()`` to create a ``ConnectablePublisher`` from any publisher whose failure type is [Never](https://developer.apple.com/documentation/Swift/Never)
+/// Use ``Publisher/makeConnectable()`` to create a ``ConnectablePublisher`` from any publisher whose failure type is [Never](https://developer.apple.com/documentation/swift/never).
 public protocol ConnectablePublisher<Output, Failure>: Publisher {
 
     /// Connects to the publisher, allowing it to produce elements, and returns an instance with which to cancel publishing.

@@ -146,7 +146,7 @@ extension Publisher {
     /// of values, prior to returning the subscriber.
     /// The return value should be held, otherwise the stream will be canceled.
     ///
-    /// - parameter receiveComplete: The closure to execute on completion.
+    /// - parameter receiveCompletion: The closure to execute on completion.
     /// - parameter receiveValue: The closure to execute on receipt of a value.
     /// - Returns: A cancellable instance, which you use when you end assignment of
     ///   the received value. Deallocation of the result will tear down the subscription

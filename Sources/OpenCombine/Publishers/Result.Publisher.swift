@@ -69,8 +69,7 @@ extension Result {
                 self.init(.success(output))
             }
 
-            /// Creates a publisher that immediately terminates upon subscription with
-            /// the given failure.
+            /// Creates a publisher that immediately terminates upon subscription with the given failure.
             ///
             /// - Parameter failure: The failure to send when terminating.
             public init(_ failure: Failure) {

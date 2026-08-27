@@ -13,21 +13,17 @@ public struct Empty<Output, Failure: Error>: Publisher, Equatable {
 
     /// Creates an empty publisher.
     ///
-    /// - Parameter completeImmediately: A Boolean value that indicates whether
-    ///   the publisher should immediately finish.
+    /// - Parameter completeImmediately: A Boolean value that indicates whether the publisher should immediately finish.
     public init(completeImmediately: Bool = true) {
         self.completeImmediately = completeImmediately
     }
 
-    /// Creates an empty publisher with the given completion behavior and output and
-    /// failure types.
+    /// Creates an empty publisher with the given completion behavior and output and failure types.
     ///
-    /// Use this initializer to connect the empty publisher to subscribers or other
-    /// publishers that have specific output and failure types.
-    /// 
+    /// Use this initializer to connect the empty publisher to subscribers or other publishers that have specific output and failure types.
+    ///
     /// - Parameters:
-    ///   - completeImmediately: A Boolean value that indicates whether the publisher
-    ///     should immediately finish.
+    ///   - completeImmediately: A Boolean value that indicates whether the publisher should immediately finish.
     ///   - outputType: The output type exposed by this publisher.
     ///   - failureType: The failure type exposed by this publisher.
     public init(completeImmediately: Bool = true,

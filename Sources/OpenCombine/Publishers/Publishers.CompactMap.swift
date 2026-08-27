@@ -125,8 +125,7 @@ extension Publishers {
         /// The publisher from which this publisher receives elements.
         public let upstream: Upstream
 
-        /// A closure that receives values from the upstream publisher
-        /// and returns optional values.
+        /// A closure that receives values from the upstream publisher and returns optional values.
         public let transform: (Upstream.Output) -> Output?
 
         public init(upstream: Upstream,
@@ -151,8 +150,7 @@ extension Publishers {
         /// The publisher from which this publisher receives elements.
         public let upstream: Upstream
 
-        /// An error-throwing closure that receives values from the upstream publisher
-        /// and returns optional values.
+        /// An error-throwing closure that receives values from the upstream publisher and returns optional values.
         ///
         /// If this closure throws an error, the publisher fails.
         public let transform: (Upstream.Output) throws -> Output?

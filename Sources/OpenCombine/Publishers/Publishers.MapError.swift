@@ -12,6 +12,8 @@ extension Publishers {
     public struct MapError<Upstream: Publisher, Failure: Error>: Publisher {
 
         /// The kind of values published by this publisher.
+        ///
+        /// This publisher uses its upstream publisher's output type.
         public typealias Output = Upstream.Output
 
         /// The publisher from which this publisher receives elements.

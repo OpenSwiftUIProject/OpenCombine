@@ -34,20 +34,17 @@ extension Publisher {
 
     /// Republishes all elements that match a provided error-throwing closure.
     ///
-    /// Use `tryFilter(_:)` to filter elements evaluated in an error-throwing closure.
-    /// If the `isIncluded` closure throws an error, the publisher fails with that error.
+    /// Use ``Publisher/tryFilter(_:)`` to filter elements evaluated in an error-throwing closure. If the `isIncluded` closure throws an error, the publisher fails with that error.
     ///
-    /// In the example below, `tryFilter(_:)` checks to see if the divisor provided by
-    /// the publisher is zero, and throws a `DivisionByZeroError` and then terminates
-    /// the publisher with the thrown error:
+    /// In the example below, ``Publisher/tryFilter(_:)`` checks to see if the element provided by the publisher is zero, and throws a `ZeroError` before terminating the publisher with the thrown error. Otherwise, it republishes the element only if it's even:
     ///
-    ///     struct DivisionByZeroError: Error {}
+    ///     struct ZeroError: Error {}
     ///
     ///     let numbers: [Int] = [1, 2, 3, 4, 0, 5]
     ///     cancellable = numbers.publisher
-    ///         .tryFilter {
+    ///         .tryFilter{
     ///             if $0 == 0 {
-    ///                 throw DivisionByZeroError()
+    ///                 throw ZeroError()
     ///             } else {
     ///                 return $0 % 2 == 0
     ///             }
@@ -59,8 +56,7 @@ extension Publisher {
     ///
     ///     // Prints: "2 4 failure(DivisionByZeroError())".
     ///
-    /// - Parameter isIncluded: A closure that takes one element and returns a Boolean
-    ///   value that indicated whether to republish the element or throws an error.
+    /// - Parameter isIncluded: A closure that takes one element and returns a Boolean value that indicated whether to republish the element or throws an error.
     /// - Returns: A publisher that republishes all elements that satisfy the closure.
     public func tryFilter(
         _ isIncluded: @escaping (Output) throws -> Bool
@@ -109,7 +105,7 @@ extension Publishers {
 
         /// The kind of errors this publisher might publish.
         ///
-        /// Use `Never` if this `Publisher` does not publish errors.
+        /// This publisher uses its upstream publisher's failure type.
         public typealias Failure = Upstream.Failure
 
         /// The publisher from which this publisher receives elements.
@@ -138,8 +134,7 @@ extension Publishers {
         }
     }
 
-    /// A publisher that republishes all elements that match
-    /// a provided error-throwing closure.
+    /// A publisher that republishes all elements that match a provided error-throwing closure.
     public struct TryFilter<Upstream>: Publisher where Upstream: Publisher {
 
         /// The kind of values published by this publisher.
