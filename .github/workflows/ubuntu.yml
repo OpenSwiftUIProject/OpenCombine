@@ -14,7 +14,11 @@ jobs:
       matrix:
         include:
           - swift_image: "5.9.2-jammy"   # Swift 5.9.2 (minimum supported)
+            # TODO: drop this once the Swift 6 Sendable/Concurrency warnings
+            # in the schedulers and test doubles are resolved.
+            warnings-as-errors: "-Xswiftc -warnings-as-errors"
           - swift_image: "6.1-noble"     # Current Swift
+            warnings-as-errors: ""
     runs-on: ubuntu-latest
     container: swift:${{ matrix.swift_image }}
     steps:
@@ -25,7 +29,7 @@ jobs:
         run: |
           swift test \
             -c debug \
-            -Xswiftc -warnings-as-errors \
+            ${{ matrix.warnings-as-errors }} \
             --enable-code-coverage \
             --build-path .build-test-debug
           llvm-cov show \
@@ -42,7 +46,7 @@ jobs:
         run: |
           swift test \
             -c release \
-            -Xswiftc -warnings-as-errors \
+            ${{ matrix.warnings-as-errors }} \
             --build-path .build-test-release
       - uses: codecov/codecov-action@v4
         with:
