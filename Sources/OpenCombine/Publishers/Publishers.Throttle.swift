@@ -147,6 +147,7 @@ extension Publishers.Throttle {
         private var lastEmissionTime: Context.SchedulerTimeType?
 
         private var pendingInput: Input?
+        private var heldInput: Input?
         private var pendingCompletion: Subscribers.Completion<Failure>?
 
         private var demand: Subscribers.Demand = .none
@@ -200,6 +201,9 @@ extension Publishers.Throttle {
             self.lastTime = lastTime
 
             guard demand > .none else {
+                if latest || heldInput == nil {
+                    heldInput = input
+                }
                 lock.unlock()
                 return .none
             }
@@ -210,31 +214,36 @@ extension Publishers.Throttle {
                 pendingInput = input
                 lock.unlock()
             } else if !hasScheduledOutput {
-                let minimumEmissionTime =
-                    lastEmissionTime.map { $0.advanced(by: interval) }
-
-                let emissionTime =
-                    minimumEmissionTime.map { Swift.max(lastTime, $0) } ?? lastTime
-
-                demand -= 1
-
-                pendingInput = input
-                lock.unlock()
-
-                let action: () -> Void = { [weak self] in
-                    self?.scheduledEmission()
-                }
-
-                if emissionTime == lastTime {
-                    scheduler.schedule(action)
-                } else {
-                    scheduler.schedule(after: emissionTime, action)
-                }
+                scheduleEmissionAndUnlock(input, now: lastTime)
             } else {
                 lock.unlock()
             }
 
             return .none
+        }
+
+        private func scheduleEmissionAndUnlock(_ input: Input,
+                                               now: Context.SchedulerTimeType) {
+            let minimumEmissionTime =
+                lastEmissionTime.map { $0.advanced(by: interval) }
+
+            let emissionTime =
+                minimumEmissionTime.map { Swift.max(now, $0) } ?? now
+
+            demand -= 1
+
+            pendingInput = input
+            lock.unlock()
+
+            let action: () -> Void = { [weak self] in
+                self?.scheduledEmission()
+            }
+
+            if emissionTime == now {
+                scheduler.schedule(action)
+            } else {
+                scheduler.schedule(after: emissionTime, action)
+            }
         }
 
         func receive(completion: Subscribers.Completion<Failure>) {
@@ -319,7 +328,12 @@ extension Publishers.Throttle {
                 return
             }
             self.demand += demand
-            lock.unlock()
+            guard pendingInput == nil, pendingCompletion == nil,
+                  let input = heldInput.take() else {
+                lock.unlock()
+                return
+            }
+            scheduleEmissionAndUnlock(input, now: scheduler.now)
         }
 
         func cancel() {

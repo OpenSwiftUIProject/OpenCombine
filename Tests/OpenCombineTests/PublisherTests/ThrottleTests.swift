@@ -519,6 +519,34 @@ final class ThrottleTests: XCTestCase {
         XCTAssertEqual(subscription.history, [.requested(.unlimited)])
     }
 
+    func testInputWithoutDemandIsHeldUntilDemand() throws {
+        for latest in [true, false] {
+            let scheduler = VirtualTimeScheduler()
+            let helper = OperatorTestHelper(publisherType: CustomPublisher.self,
+                                            initialDemand: nil,
+                                            receiveValueDemand: .none) {
+                $0.throttle(for: .seconds(1), scheduler: scheduler, latest: latest)
+            }
+
+            XCTAssertEqual(helper.publisher.send(1), .none)
+            XCTAssertEqual(helper.publisher.send(2), .none)
+            scheduler.executeScheduledActions()
+            XCTAssertEqual(helper.tracking.history, [.subscription("Throttle")])
+
+            try XCTUnwrap(helper.downstreamSubscription).request(.max(1))
+            scheduler.executeScheduledActions()
+            XCTAssertEqual(helper.tracking.history,
+                           [.subscription("Throttle"), .value(latest ? 2 : 1)])
+
+            XCTAssertEqual(helper.publisher.send(3), .none)
+            scheduler.executeScheduledActions()
+            try XCTUnwrap(helper.downstreamSubscription).request(.max(1))
+            scheduler.executeScheduledActions()
+            XCTAssertEqual(helper.tracking.history,
+                           [.subscription("Throttle"), .value(latest ? 2 : 1), .value(3)])
+        }
+    }
+
     func testCancelWhileReceivingInput() throws {
         let scheduler = VirtualTimeScheduler()
         let subscription = CustomSubscription()
