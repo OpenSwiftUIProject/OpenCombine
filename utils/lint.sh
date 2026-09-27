@@ -32,8 +32,20 @@ baseline_path = baseline_dir / "baseline.json"
 violations = json.loads(baseline_path.read_text())
 for violation in violations:
     location = violation["violation"]["location"]
-    file_path = Path(unquote(urlsplit(location["file"]).path)).resolve()
-    location["file"] = (repo_root / file_path.relative_to(baseline_dir)).as_uri()
+    file = location["file"]
+    file_url = urlsplit(file)
+    if file_url.scheme == "file":
+        file_path = Path(unquote(file_url.path))
+    else:
+        file_path = baseline_dir / file
+        if not file_path.is_file():
+            # SwiftLint can omit the leading slash when temporary paths use aliases.
+            file_path = Path("/") / file
+    relative_file = file_path.resolve().relative_to(baseline_dir)
+    location["file"] = (
+        (repo_root / relative_file).as_uri()
+        if file_url.scheme == "file" else str(relative_file)
+    )
 baseline_path.write_text(json.dumps(violations))
 PY
 
