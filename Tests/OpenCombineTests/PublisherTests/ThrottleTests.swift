@@ -781,7 +781,15 @@ final class ThrottleTests: XCTestCase {
     }
 
     func testCancelReleasesBufferedInput() throws {
-        final class Input {}
+        final class Input {
+            let onDeinit: () -> Void
+
+            init(onDeinit: @escaping () -> Void) {
+                self.onDeinit = onDeinit
+            }
+
+            deinit { onDeinit() }
+        }
 
         for demand in [Subscribers.Demand.none, .max(1)] {
             let scheduler = VirtualTimeScheduler()
@@ -793,14 +801,15 @@ final class ThrottleTests: XCTestCase {
                 $0.throttle(for: .seconds(1), scheduler: scheduler, latest: true)
             }
             let subscription = try XCTUnwrap(helper.downstreamSubscription)
-            var input: Input? = Input()
-            weak var weakInput = input
-            XCTAssertEqual(helper.publisher.send(try XCTUnwrap(input)), .none)
-            input = nil
-            XCTAssertNotNil(weakInput)
+            var inputReleased = false
+            do {
+                let input = Input(onDeinit: { inputReleased = true })
+                XCTAssertEqual(helper.publisher.send(input), .none)
+            }
+            XCTAssertFalse(inputReleased)
 
             subscription.cancel()
-            XCTAssertNil(weakInput)
+            XCTAssertTrue(inputReleased)
             subscription.request(.max(1))
             scheduler.executeScheduledActions()
             XCTAssertTrue(helper.tracking.inputs.isEmpty)
