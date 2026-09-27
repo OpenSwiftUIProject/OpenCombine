@@ -20,6 +20,8 @@ jobs:
         uses: OpenSwiftUIProject/setup-xcode@v2
         with:
           xcode-version: "26.6"
+      - name: Install SwiftLint
+        run: brew install swiftlint
       - name: Check new SwiftLint violations
         env:
           BASE_SHA: ${{ github.event.pull_request.base.sha }}
