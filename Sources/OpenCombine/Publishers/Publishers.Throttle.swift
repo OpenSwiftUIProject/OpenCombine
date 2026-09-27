@@ -144,14 +144,13 @@ extension Publishers.Throttle {
         private var state: State
         private let downstreamLock = UnfairRecursiveLock.allocate()
 
-        private var lastEmissionTime: Context.SchedulerTimeType?
+        private var nextEmissionTime: Context.SchedulerTimeType
+        private var hasScheduledOutput = false
 
         private var pendingInput: Input?
         private var pendingCompletion: Subscribers.Completion<Failure>?
 
         private var demand: Subscribers.Demand = .none
-
-        private var lastTime: Context.SchedulerTimeType
 
         init(interval: Context.SchedulerTimeType.Stride,
              scheduler: Context,
@@ -162,7 +161,7 @@ extension Publishers.Throttle {
             self.scheduler = scheduler
             self.latest = latest
 
-            self.lastTime = scheduler.now
+            self.nextEmissionTime = scheduler.now
         }
 
         deinit {
@@ -177,16 +176,16 @@ extension Publishers.Throttle {
                 subscription.cancel()
                 return
             }
-            self.lastTime = scheduler.now
+            self.nextEmissionTime = scheduler.now
 
             state = .subscribed(subscription, downstream)
             lock.unlock()
 
-            subscription.request(.unlimited)
-
             downstreamLock.lock()
             downstream.receive(subscription: self)
             downstreamLock.unlock()
+
+            subscription.request(.unlimited)
         }
 
         func receive(_ input: Input) -> Subscribers.Demand {
@@ -196,42 +195,36 @@ extension Publishers.Throttle {
                 return .none
             }
 
-            let lastTime = scheduler.now
-            self.lastTime = lastTime
+            let now = scheduler.now
+            let emitImmediately = now >= nextEmissionTime
 
-            guard demand > .none else {
+            if latest {
+                pendingInput = input
+            } else if emitImmediately {
+                // Each new window selects its first input, even without demand.
+                nextEmissionTime = now.advanced(by: interval)
+                pendingInput = input
+            } else if pendingInput == nil {
+                pendingInput = input
+            }
+
+            guard !hasScheduledOutput, demand > .none else {
                 lock.unlock()
                 return .none
             }
 
-            let hasScheduledOutput = (pendingInput != nil || pendingCompletion != nil)
+            hasScheduledOutput = true
+            let emissionTime = nextEmissionTime
+            lock.unlock()
 
-            if hasScheduledOutput && latest {
-                pendingInput = input
-                lock.unlock()
-            } else if !hasScheduledOutput {
-                let minimumEmissionTime =
-                    lastEmissionTime.map { $0.advanced(by: interval) }
-
-                let emissionTime =
-                    minimumEmissionTime.map { Swift.max(lastTime, $0) } ?? lastTime
-
-                demand -= 1
-
-                pendingInput = input
-                lock.unlock()
-
-                let action: () -> Void = { [weak self] in
-                    self?.scheduledEmission()
-                }
-
-                if emissionTime == lastTime {
-                    scheduler.schedule(action)
-                } else {
-                    scheduler.schedule(after: emissionTime, action)
+            if emitImmediately {
+                scheduler.schedule {
+                    self.scheduledEmission()
                 }
             } else {
-                lock.unlock()
+                scheduler.schedule(after: emissionTime) {
+                    self.scheduledEmission()
+                }
             }
 
             return .none
@@ -240,27 +233,25 @@ extension Publishers.Throttle {
         func receive(completion: Subscribers.Completion<Failure>) {
             lock.lock()
             guard case let .subscribed(subscription, downstream) = state else {
+                if !hasScheduledOutput {
+                    state = .terminal
+                }
                 lock.unlock()
                 return
             }
-            let lastTime = scheduler.now
-            self.lastTime = lastTime
+            nextEmissionTime = scheduler.now
             state = .pendingTerminal(subscription, downstream)
+            pendingCompletion = completion
 
-            let hasScheduledOutput = (pendingInput != nil || pendingCompletion != nil)
-
-            if hasScheduledOutput && pendingCompletion == nil {
-                pendingCompletion = completion
+            if hasScheduledOutput {
                 lock.unlock()
-            } else if !hasScheduledOutput {
-                pendingCompletion = completion
-                lock.unlock()
-
-                scheduler.schedule { [weak self] in
-                    self?.scheduledEmission()
-                }
             } else {
+                hasScheduledOutput = true
                 lock.unlock()
+
+                scheduler.schedule {
+                    self.scheduledEmission()
+                }
             }
         }
 
@@ -278,15 +269,27 @@ extension Publishers.Throttle {
                 downstream = foundDownstream
             }
 
-            if self.pendingInput != nil && self.pendingCompletion == nil {
-                lastEmissionTime = scheduler.now
+            guard hasScheduledOutput else {
+                lock.unlock()
+                return
             }
 
-            let pendingInput = self.pendingInput.take()
+            let pendingInput: Input?
+            if self.pendingInput != nil && demand > .none {
+                // Scheduled input can change until demand is consumed here.
+                demand -= 1
+                pendingInput = self.pendingInput.take()
+            } else {
+                pendingInput = nil
+            }
+
+            hasScheduledOutput = false
             let pendingCompletion = self.pendingCompletion.take()
 
             if pendingCompletion != nil {
                 state = .terminal
+            } else {
+                nextEmissionTime = scheduler.now.advanced(by: interval)
             }
 
             lock.unlock()
@@ -305,21 +308,37 @@ extension Publishers.Throttle {
             }
             downstreamLock.unlock()
 
-            guard newDemand > 0 else { return }
+            guard newDemand > 0, pendingCompletion == nil else { return }
             self.lock.lock()
             demand += newDemand
             self.lock.unlock()
         }
 
         func request(_ demand: Subscribers.Demand) {
-            guard demand > 0 else { return }
             lock.lock()
             guard case .subscribed = state else {
                 lock.unlock()
                 return
             }
             self.demand += demand
+            guard pendingInput != nil, !hasScheduledOutput else {
+                lock.unlock()
+                return
+            }
+            hasScheduledOutput = true
+            let now = scheduler.now
+            let emissionTime = nextEmissionTime
             lock.unlock()
+
+            if now >= emissionTime {
+                scheduler.schedule {
+                    self.scheduledEmission()
+                }
+            } else {
+                scheduler.schedule(after: emissionTime) {
+                    self.scheduledEmission()
+                }
+            }
         }
 
         func cancel() {
@@ -330,6 +349,9 @@ extension Publishers.Throttle {
             case let .subscribed(existingSubscription, _),
                  let .pendingTerminal(existingSubscription, _):
                 subscription = existingSubscription
+                pendingInput = nil
+                pendingCompletion = nil
+                demand = .none
             case .awaitingSubscription, .terminal:
                 subscription = nil
             }

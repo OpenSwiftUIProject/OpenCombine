@@ -519,6 +519,362 @@ final class ThrottleTests: XCTestCase {
         XCTAssertEqual(subscription.history, [.requested(.unlimited)])
     }
 
+    func testInputWithoutDemandIsHeld() throws {
+        for latest in [false, true] {
+            let scheduler = VirtualTimeScheduler()
+            let helper = OperatorTestHelper(publisherType: CustomPublisher.self,
+                                            initialDemand: nil,
+                                            receiveValueDemand: .none) {
+                $0.throttle(for: .seconds(1), scheduler: scheduler, latest: latest)
+            }
+            let subscription = try XCTUnwrap(helper.downstreamSubscription)
+
+            XCTAssertEqual(helper.publisher.send(1), .none)
+            XCTAssertEqual(helper.publisher.send(2), .none)
+            XCTAssertEqual(helper.publisher.send(3), .none)
+            XCTAssertEqual(scheduler.scheduledDates, [])
+
+            subscription.request(.max(1))
+            scheduler.executeScheduledActions()
+            let first = latest ? 3 : 1
+            XCTAssertEqual(Array(helper.tracking.inputs), [first])
+
+            XCTAssertEqual(helper.publisher.send(4), .none)
+            XCTAssertEqual(helper.publisher.send(5), .none)
+            XCTAssertEqual(scheduler.scheduledDates, [])
+
+            subscription.request(.max(1))
+            scheduler.executeScheduledActions()
+            XCTAssertEqual(Array(helper.tracking.inputs), [first, latest ? 5 : 4])
+            XCTAssertEqual(helper.subscription.history, [.requested(.unlimited)])
+        }
+    }
+
+    func testFiniteDemandCoalescesScheduledInput() throws {
+        for latest in [false, true] {
+            for demand in [Subscribers.Demand.max(1), .max(2)] {
+                let scheduler = VirtualTimeScheduler()
+                let helper = OperatorTestHelper(publisherType: CustomPublisher.self,
+                                                initialDemand: demand,
+                                                receiveValueDemand: .none) {
+                    $0.throttle(for: .seconds(1), scheduler: scheduler, latest: latest)
+                }
+
+                XCTAssertEqual(helper.publisher.send(1), .none)
+                XCTAssertEqual(helper.publisher.send(2), .none)
+                XCTAssertEqual(helper.publisher.send(3), .none)
+                XCTAssertEqual(scheduler.scheduledDates, [.seconds(0)])
+                scheduler.executeScheduledActions()
+
+                let expected = [latest ? 3 : 1]
+                XCTAssertEqual(Array(helper.tracking.inputs), expected)
+                try XCTUnwrap(helper.downstreamSubscription).request(.max(1))
+                XCTAssertEqual(scheduler.scheduledDates, [])
+                scheduler.executeScheduledActions()
+                XCTAssertEqual(Array(helper.tracking.inputs), expected)
+            }
+        }
+    }
+
+    func testRequestWhileOutputIsScheduledDoesNotKeepStaleInput() throws {
+        for latest in [false, true] {
+            let scheduler = VirtualTimeScheduler()
+            let helper = OperatorTestHelper(publisherType: CustomPublisher.self,
+                                            initialDemand: .max(1),
+                                            receiveValueDemand: .none) {
+                $0.throttle(for: .seconds(1), scheduler: scheduler, latest: latest)
+            }
+            let subscription = try XCTUnwrap(helper.downstreamSubscription)
+
+            XCTAssertEqual(helper.publisher.send(1), .none)
+            XCTAssertEqual(helper.publisher.send(2), .none)
+            subscription.request(.max(1))
+            XCTAssertEqual(scheduler.scheduledDates, [.seconds(0)])
+            scheduler.executeScheduledActions()
+            let first = latest ? 2 : 1
+            XCTAssertEqual(Array(helper.tracking.inputs), [first])
+
+            XCTAssertEqual(helper.publisher.send(3), .none)
+            scheduler.executeScheduledActions()
+            XCTAssertEqual(Array(helper.tracking.inputs), [first, 3])
+
+            subscription.request(.max(1))
+            XCTAssertEqual(scheduler.scheduledDates, [])
+            scheduler.executeScheduledActions()
+            XCTAssertEqual(Array(helper.tracking.inputs), [first, 3])
+        }
+    }
+
+    func testHeldInputRespectsWindowWhenDemandArrives() throws {
+        for latest in [false, true] {
+            let scheduler = VirtualTimeScheduler()
+            let helper = OperatorTestHelper(publisherType: CustomPublisher.self,
+                                            initialDemand: nil,
+                                            receiveValueDemand: .none) {
+                $0.throttle(for: .seconds(1), scheduler: scheduler, latest: latest)
+            }
+
+            XCTAssertEqual(helper.publisher.send(1), .none)
+            try XCTUnwrap(helper.downstreamSubscription).request(.max(1))
+            XCTAssertEqual(scheduler.scheduledDates, [.seconds(latest ? 0 : 1)])
+
+            scheduler.executeScheduledActions(until: .milliseconds(999))
+            XCTAssertEqual(Array(helper.tracking.inputs), latest ? [1] : [])
+            scheduler.executeScheduledActions(until: .seconds(1))
+            XCTAssertEqual(Array(helper.tracking.inputs), [1])
+        }
+    }
+
+    func testInputAfterDemandReplacesScheduledInput() throws {
+        for latest in [false, true] {
+            let scheduler = VirtualTimeScheduler()
+            let helper = OperatorTestHelper(publisherType: CustomPublisher.self,
+                                            initialDemand: nil,
+                                            receiveValueDemand: .none) {
+                $0.throttle(for: .seconds(1), scheduler: scheduler, latest: latest)
+            }
+            let subscription = try XCTUnwrap(helper.downstreamSubscription)
+
+            XCTAssertEqual(helper.publisher.send(1), .none)
+            XCTAssertEqual(helper.publisher.send(2), .none)
+            subscription.request(.max(1))
+            XCTAssertEqual(helper.publisher.send(3), .none)
+            scheduler.executeScheduledActions()
+            let expected = [latest ? 3 : 1]
+            XCTAssertEqual(Array(helper.tracking.inputs), expected)
+
+            subscription.request(.max(1))
+            XCTAssertEqual(scheduler.scheduledDates, [])
+            scheduler.executeScheduledActions()
+            XCTAssertEqual(Array(helper.tracking.inputs), expected)
+        }
+    }
+
+    func testInputWithoutDemandStartsNewWindow() throws {
+        for latest in [false, true] {
+            let scheduler = VirtualTimeScheduler()
+            let helper = OperatorTestHelper(publisherType: CustomPublisher.self,
+                                            initialDemand: nil,
+                                            receiveValueDemand: .none) {
+                $0.throttle(for: .seconds(1), scheduler: scheduler, latest: latest)
+            }
+
+            XCTAssertEqual(helper.publisher.send(1), .none)
+            scheduler.rewind(to: .milliseconds(200))
+            XCTAssertEqual(helper.publisher.send(2), .none)
+            scheduler.rewind(to: .milliseconds(1200))
+            XCTAssertEqual(helper.publisher.send(3), .none)
+            XCTAssertEqual(scheduler.scheduledDates, [])
+
+            try XCTUnwrap(helper.downstreamSubscription).request(.max(1))
+            XCTAssertEqual(scheduler.scheduledDates,
+                           [.milliseconds(latest ? 1200 : 2200)])
+            scheduler.executeScheduledActions()
+            XCTAssertEqual(Array(helper.tracking.inputs), [3])
+        }
+    }
+
+    func testReturnedDemandDoesNotScheduleReentrantInput() throws {
+        for latest in [false, true] {
+            let scheduler = VirtualTimeScheduler()
+            let helper = OperatorTestHelper(publisherType: CustomPublisher.self,
+                                            initialDemand: .max(1),
+                                            receiveValueDemand: .max(1)) {
+                $0.throttle(for: .seconds(1), scheduler: scheduler, latest: latest)
+            }
+            helper.tracking.onValue = { _ in
+                XCTAssertEqual(helper.publisher.send(3), .none)
+            }
+
+            XCTAssertEqual(helper.publisher.send(1), .none)
+            XCTAssertEqual(helper.publisher.send(2), .none)
+            scheduler.executeScheduledActions()
+            helper.tracking.onValue = nil
+            let first = latest ? 2 : 1
+            XCTAssertEqual(Array(helper.tracking.inputs), [first])
+            XCTAssertEqual(scheduler.scheduledDates, [])
+
+            try XCTUnwrap(helper.downstreamSubscription).request(.max(1))
+            scheduler.executeScheduledActions()
+            XCTAssertEqual(Array(helper.tracking.inputs), [first, 3])
+        }
+    }
+
+    func testCompletionWithBufferedInput() throws {
+        for latest in [false, true] {
+            for demand in [Subscribers.Demand.none, .max(1)] {
+                for completion in [Subscribers.Completion<TestingError>.finished,
+                                   .failure(.oops)] {
+                    let scheduler = VirtualTimeScheduler()
+                    let helper = OperatorTestHelper(publisherType: CustomPublisher.self,
+                                                    initialDemand: demand,
+                                                    receiveValueDemand: .max(1)) {
+                        $0.throttle(for: .seconds(1),
+                                    scheduler: scheduler,
+                                    latest: latest)
+                    }
+
+                    XCTAssertEqual(helper.publisher.send(1), .none)
+                    XCTAssertEqual(helper.publisher.send(2), .none)
+                    helper.publisher.send(completion: completion)
+                    try XCTUnwrap(helper.downstreamSubscription).request(.max(1))
+                    scheduler.executeScheduledActions()
+
+                    let expected = demand == .none ? [] : [latest ? 2 : 1]
+                    XCTAssertEqual(Array(helper.tracking.inputs), expected)
+                    XCTAssertEqual(Array(helper.tracking.completions), [completion])
+                    XCTAssertEqual(helper.publisher.send(3), .none)
+                    XCTAssertEqual(scheduler.scheduledDates, [])
+                }
+            }
+        }
+    }
+
+    func testSubscriptionIsDeliveredBeforeUpstreamRequest() {
+        for latest in [false, true] {
+            let scheduler = VirtualTimeScheduler()
+            let subscription = CustomSubscription()
+            let publisher = CustomPublisher(subscription: subscription)
+            let tracking = TrackingSubscriber(
+                receiveSubscription: { $0.request(.max(1)) }
+            )
+            subscription.onRequest = { demand in
+                XCTAssertEqual(demand, .unlimited)
+                XCTAssertEqual(tracking.history, [.subscription("Throttle")])
+                XCTAssertEqual(publisher.send(1), .none)
+                XCTAssertEqual(publisher.send(2), .none)
+            }
+
+            publisher.throttle(for: .seconds(1), scheduler: scheduler, latest: latest)
+                .subscribe(tracking)
+            subscription.onRequest = nil
+            XCTAssertEqual(scheduler.scheduledDates, [.seconds(0)])
+            scheduler.executeScheduledActions()
+            XCTAssertEqual(Array(tracking.inputs), [latest ? 2 : 1])
+            tracking.cancel()
+        }
+    }
+
+    func testOptionalInputWithoutDemand() throws {
+        for latest in [false, true] {
+            let scheduler = VirtualTimeScheduler()
+            let helper = OperatorTestHelper(
+                publisherType: CustomPublisherBase<Int?, TestingError>.self,
+                initialDemand: nil,
+                receiveValueDemand: .none
+            ) {
+                $0.throttle(for: .seconds(1), scheduler: scheduler, latest: latest)
+            }
+            let subscription = try XCTUnwrap(helper.downstreamSubscription)
+
+            XCTAssertEqual(helper.publisher.send(nil), .none)
+            subscription.request(.max(1))
+            scheduler.executeScheduledActions()
+            XCTAssertEqual(Array(helper.tracking.inputs), [nil])
+
+            XCTAssertEqual(helper.publisher.send(1), .none)
+            XCTAssertEqual(helper.publisher.send(nil), .none)
+            subscription.request(.max(1))
+            scheduler.executeScheduledActions()
+            XCTAssertEqual(Array(helper.tracking.inputs), [nil, latest ? nil : 1])
+        }
+    }
+
+    func testCancelReleasesBufferedInput() throws {
+        final class Input {
+            let onDeinit: () -> Void
+
+            init(onDeinit: @escaping () -> Void) {
+                self.onDeinit = onDeinit
+            }
+
+            deinit { onDeinit() }
+        }
+
+        for demand in [Subscribers.Demand.none, .max(1)] {
+            let scheduler = VirtualTimeScheduler()
+            let helper = OperatorTestHelper(
+                publisherType: CustomPublisherBase<Input, TestingError>.self,
+                initialDemand: demand,
+                receiveValueDemand: .none
+            ) {
+                $0.throttle(for: .seconds(1), scheduler: scheduler, latest: true)
+            }
+            let subscription = try XCTUnwrap(helper.downstreamSubscription)
+            var inputReleased = false
+            do {
+                let input = Input(onDeinit: { inputReleased = true })
+                XCTAssertEqual(helper.publisher.send(input), .none)
+            }
+            XCTAssertFalse(inputReleased)
+
+            subscription.cancel()
+            XCTAssertTrue(inputReleased)
+            subscription.request(.max(1))
+            scheduler.executeScheduledActions()
+            XCTAssertTrue(helper.tracking.inputs.isEmpty)
+            XCTAssertEqual(helper.subscription.history, [.requested(.unlimited),
+                                                         .cancelled])
+        }
+    }
+
+    func testZeroDemandRequestDoesNotConsumeInput() throws {
+        for latest in [false, true] {
+            let scheduler = VirtualTimeScheduler()
+            let helper = OperatorTestHelper(publisherType: CustomPublisher.self,
+                                            initialDemand: nil,
+                                            receiveValueDemand: .none) {
+                $0.throttle(for: .seconds(1), scheduler: scheduler, latest: latest)
+            }
+            let subscription = try XCTUnwrap(helper.downstreamSubscription)
+
+            XCTAssertEqual(helper.publisher.send(1), .none)
+            XCTAssertEqual(helper.publisher.send(2), .none)
+            subscription.request(.none)
+            XCTAssertEqual(scheduler.scheduledDates, [.seconds(latest ? 0 : 1)])
+            scheduler.executeScheduledActions()
+            XCTAssertTrue(helper.tracking.inputs.isEmpty)
+
+            subscription.request(.max(1))
+            XCTAssertEqual(scheduler.scheduledDates, [.seconds(latest ? 1 : 2)])
+            scheduler.executeScheduledActions()
+            XCTAssertEqual(Array(helper.tracking.inputs), [latest ? 2 : 1])
+        }
+    }
+
+    func testScheduledOutputRetainsSubscription() {
+        for sendCompletion in [false, true] {
+            let scheduler = VirtualTimeScheduler()
+            var value: Int?
+            var completion: Subscribers.Completion<TestingError>?
+            var subscriberReleased = false
+            do {
+                let publisher = CustomPublisher(subscription: CustomSubscription())
+                let tracking = TrackingSubscriber(
+                    receiveSubscription: { $0.request(.max(1)) },
+                    receiveValue: { value = $0; return .none },
+                    receiveCompletion: { completion = $0 },
+                    onDeinit: { subscriberReleased = true }
+                )
+                publisher.throttle(for: .seconds(1), scheduler: scheduler, latest: true)
+                    .subscribe(tracking)
+                if sendCompletion {
+                    publisher.send(completion: .finished)
+                } else {
+                    XCTAssertEqual(publisher.send(42), .none)
+                }
+                tracking.clearHistory()
+                publisher.cancel()
+            }
+
+            XCTAssertFalse(subscriberReleased)
+            scheduler.executeScheduledActions()
+            XCTAssertEqual(value, sendCompletion ? nil : 42)
+            XCTAssertEqual(completion, sendCompletion ? .finished : nil)
+            XCTAssertTrue(subscriberReleased)
+        }
+    }
+
     func testCancelWhileReceivingInput() throws {
         let scheduler = VirtualTimeScheduler()
         let subscription = CustomSubscription()
@@ -704,7 +1060,7 @@ final class ThrottleTests: XCTestCase {
         helper.publisher.send(completion: .finished)
     }
 
-    func testWeakCaptureWhenSchedulingValue() {
+    func testCancelReleasesSubscriberWhenValueIsScheduled() {
         let scheduler = VirtualTimeScheduler()
         var value: Int?
         var subscriberReleased = false
@@ -730,7 +1086,7 @@ final class ThrottleTests: XCTestCase {
         XCTAssertNil(value)
     }
 
-    func testWeakCaptureWhenSchedulingCompletion() {
+    func testCancelReleasesSubscriberWhenCompletionIsScheduled() {
         let scheduler = VirtualTimeScheduler()
         var completion: Subscribers.Completion<TestingError>?
         var subscriberReleased = false
