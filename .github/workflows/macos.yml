@@ -9,6 +9,9 @@ on:
 jobs:
   macos_test:
     name: Execute tests
+    permissions:
+      contents: read
+      id-token: write
     strategy:
       fail-fast: false
       matrix:
@@ -51,4 +54,6 @@ jobs:
             --build-path .build-test-release
       - uses: codecov/codecov-action@v7
         with:
+          use_oidc: true
+          fail_ci_if_error: true
           verbose: true
