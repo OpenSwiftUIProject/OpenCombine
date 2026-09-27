@@ -20,7 +20,8 @@ final class FutureTests: XCTestCase {
     private typealias Sut = Future<Int, TestingError>
 
     private func assertParent(of futureSubscription: Subscription, isNil: Bool) {
-
+#if !OPENCOMBINE_COMPATIBILITY_TEST
+        // Combine does not guarantee the layout of its private subscription types.
         let parent: Mirror.Child
         do {
             parent = try XCTUnwrap(
@@ -33,19 +34,13 @@ final class FutureTests: XCTestCase {
             return
         }
 
-
-        // FIXME: This will fail on compatibility test when env is macOS 13 + Xcode 15.1. Can't reproduce this on macOS 12 and macOS 14
-        #if OPENCOMBINE_COMPATIBILITY_TEST && os(macOS)
-        guard ProcessInfo().operatingSystemVersion.majorVersion != 13 else {
-            return
-        }
-        #endif
         let parentAsSut = parent.value as? Sut
         if isNil {
             XCTAssertNil(parentAsSut)
         } else {
             XCTAssertNotNil(parentAsSut)
         }
+#endif
     }
 
     func testFutureSuccess() throws {

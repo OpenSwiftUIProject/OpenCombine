@@ -12,17 +12,21 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        swift_version: ["5.9.2"]
-        os: [ubuntu-20.04, ubuntu-22.04]
+        swift_version: ["6.3.3"]
+        os: [ubuntu-22.04, ubuntu-24.04]
         include:
-          - os: ubuntu-20.04
-            os_name: focal
           - os: ubuntu-22.04
             os_name: jammy
+          - os: ubuntu-24.04
+            os_name: noble
     runs-on: ${{ matrix.os }}
     container: swift:${{ matrix.swift_version }}-${{ matrix.os_name }}
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v6
+      - name: Install coverage upload dependencies
+        run: |
+          apt-get update
+          apt-get install -y --no-install-recommends curl
       - name: Building and running tests in debug mode with coverage
         run: |
           swift test \
@@ -46,6 +50,6 @@ jobs:
             -c release \
             -Xswiftc -warnings-as-errors \
             --build-path .build-test-release
-      - uses: codecov/codecov-action@v3
+      - uses: codecov/codecov-action@v7
         with:
           verbose: true

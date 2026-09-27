@@ -8,7 +8,7 @@
 #if !os(WASI)
 
 #if canImport(COpenCombineHelpers)
-@_implementationOnly import COpenCombineHelpers
+internal import COpenCombineHelpers
 #endif
 
 extension Publisher {

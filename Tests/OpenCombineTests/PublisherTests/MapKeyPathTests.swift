@@ -154,7 +154,7 @@ final class MapKeyPathTests: XCTestCase {
                            { $0.map(\.doubled, \.tripled, \.quadrupled) })
     }
     #else
-    // on Swift 5.8 + non-Xcode env, the result will sometimes be "\Int.<computed 0x00007ff62fe3b2c0 (Int)>" and sometimes be "\Int.doubled"
+    // Non-Xcode toolchains don't guarantee a stable reflected key-path spelling.
     func testMapKeyPathReflection() throws {
         try testReflection(parentInput: Int.self,
                            parentFailure: Never.self,

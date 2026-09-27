@@ -13,8 +13,7 @@ import Combine
 import OpenCombine
 #endif
 
-// swiftlint:disable:next line_length
-#if !os(Windows) && !os(WASI) // TEST_DISCOVERY_CONDITION
+#if !os(Windows) && !os(WASI)
 @available(macOS 12.0, iOS 15.0, tvOS 15.0, watchOS 8.0, *)
 final class PublisherConcurrencyTests: XCTestCase {
 
@@ -939,9 +938,6 @@ final class PublisherConcurrencyTests: XCTestCase {
 
         let numberOfTasksFinished = Atomic<Int>(0)
 
-        var deinitCount = 0
-        let onDeinit = { deinitCount += 1 }
-
         try await withThrowingTaskGroup(of: Void.self) { group in
             group.addTask {
                 defer { numberOfTasksFinished += 1 }
@@ -961,7 +957,7 @@ final class PublisherConcurrencyTests: XCTestCase {
             group.addTask {
                 // Send completion _after_ we request some values.
                 try await Task.sleep(nanoseconds: 20_000_000)
-                publisher.send(completion: .failure(RefError(onDeinit: onDeinit)))
+                publisher.send(completion: .failure(RefError()))
                 numberOfTasksFinished += 1
             }
             try await group.waitForAll()
@@ -971,11 +967,6 @@ final class PublisherConcurrencyTests: XCTestCase {
         // FIXME: This test case will sometimes fail on Xcode 15.0.1 / 14.3.1 / 14.2
         #if !canImport(Darwin)
         XCTAssertEqual(subscription.history, [.requested(.max(1)), .requested(.max(1))])
-        #endif
-        
-        // FIXME: onDeinit will be called after this function and `defer { XCTAssertEqual(deinitCount, 1) }` is also not working
-        #if swift(<5.8)
-        XCTAssertEqual(deinitCount, 1)
         #endif
 
         withExtendedLifetime(publisher.erasedSubscriber) {}
@@ -990,10 +981,7 @@ final class PublisherConcurrencyTests: XCTestCase {
         let asyncPublisher = publisher.values
         let asyncIterator = IteratorWrapper(asyncPublisher.makeAsyncIterator())
 
-        var deinitCount = 0
-        let onDeinit = { deinitCount += 1 }
-
-        publisher.send(completion: .failure(RefError(onDeinit: onDeinit)))
+        publisher.send(completion: .failure(RefError()))
 
         do {
             let value = try await asyncIterator.next()
@@ -1002,10 +990,6 @@ final class PublisherConcurrencyTests: XCTestCase {
         }
 
         XCTAssertEqual(subscription.history, [])
-        #if swift(<5.8)
-        // FIXME: onDeinit will be called after this function and `defer { XCTAssertEqual(deinitCount, 1) }` is also not working
-        XCTAssertEqual(deinitCount, 1)
-        #endif
 
         let value = try await asyncIterator.next()
         XCTAssertNil(value)
@@ -1035,18 +1019,7 @@ private actor IteratorWrapper<Iterator: AsyncIteratorProtocol> {
     }
 }
 
-private final class RefError: Error {
-
-    private let onDeinit: () -> Void
-
-    init(onDeinit: @escaping () -> Void) {
-        self.onDeinit = onDeinit
-    }
-
-    deinit {
-        onDeinit()
-    }
-}
+private final class RefError: Error {}
 
 @available(macOS 12.0, iOS 15.0, tvOS 15.0, watchOS 8.0, *)
 extension Task where Success == Never, Failure == Never {

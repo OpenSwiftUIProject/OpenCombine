@@ -167,8 +167,9 @@ extension URLSession.OCombine.DataTaskPublisher {
                 return
             }
             if self.task == nil {
-                task = parent.session.dataTask(with: parent.request,
-                                               completionHandler: handleResponse)
+                task = parent.session.dataTask(with: parent.request) {
+                    self.handleResponse(data: $0, response: $1, error: $2)
+                }
             }
             self.demand += demand
             let task = self.task

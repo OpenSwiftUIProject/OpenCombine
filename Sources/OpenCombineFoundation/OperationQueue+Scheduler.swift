@@ -157,7 +157,9 @@ extension OperationQueue {
         public struct SchedulerOptions {
         }
 
-        private final class DelayReadyOperation: Operation, Cancellable {
+        private final class DelayReadyOperation
+            : Operation, Cancellable, @unchecked Sendable
+        {
 
             fileprivate final class CancellationContext: Cancellable {
                 let lock = UnfairLock.allocate()
@@ -268,10 +270,9 @@ extension OperationQueue {
             }
 
             private func becomeReady() {
-// Smart key paths don't work with NSOperation in swift-corelibs-foundation prior to
-// Swift 5.1 and on OS version prior to iOS 11.
+// Smart key paths don't work with NSOperation on OS versions prior to iOS 11.
 // The string key paths work fine everywhere on Darwin platforms.
-#if canImport(Darwin) || swift(<5.1)
+#if canImport(Darwin)
                 willChangeValue(forKey: "isReady")
 #else
                 willChangeValue(for: \.isReady)
@@ -281,10 +282,9 @@ extension OperationQueue {
                 readyFromAfter = true
                 readyFromAfterLock.unlock()
 
-// Smart key paths don't work with NSOperation in swift-corelibs-foundation prior to
-// Swift 5.1 and on OS version prior to iOS 11.
+// Smart key paths don't work with NSOperation on OS versions prior to iOS 11.
 // The string key paths work fine everywhere on Darwin platforms.
-#if canImport(Darwin) || swift(<5.1)
+#if canImport(Darwin)
                 didChangeValue(forKey: "isReady")
 #else
                 didChangeValue(for: \.isReady)
@@ -301,7 +301,7 @@ extension OperationQueue {
 
         public func schedule(options: SchedulerOptions?,
                              _ action: @escaping () -> Void) {
-            let op = BlockOperation(block: action)
+            let op = BlockOperation { action() }
             queue.addOperation(op)
         }
 

@@ -1,12 +1,13 @@
 # Contributing
 
-In order to work on this project you will need Xcode 10.2 and Swift 5.0 or later.
+Use Swift 6.3 or later. On Apple platforms, use Xcode 26.6 or later.
+The package uses Swift 5 language mode.
 
 Please refer to the [issue #1](https://github.com/OpenCombine/OpenCombine/issues/1) for the list of operators that remain unimplemented, as well as the [RemainingCombineInterface.swift](https://github.com/OpenCombine/OpenCombine/blob/master/RemainingCombineInterface.swift) file. The latter contains the generated interface of Apple's Combine from the latest Xcode version. When the functionality is implemented in OpenCombine, it should be removed from the RemainingCombineInterface.swift file.
 
 You can refer to [this repo](https://github.com/OpenCombine/combine-interfaces) to observe Apple's Combine API and documentation changes between different Xcode (beta) versions.
 
-You can run compatibility tests against Apple's Combine. In order to do that you will need either macOS 10.14 with iOS 13 simulator installed (since the only way we can get Apple's Combine on macOS 10.14 is using the simulator), or macOS 10.15 (Apple's Combine is bundled with the OS). Execute the following command from the root of the package:
+You can run compatibility tests against Apple's Combine on macOS with Xcode 26.6 or later. Execute the following command from the root of the package:
 
 ```
 $ make test-compatibility
@@ -15,6 +16,9 @@ $ make test-compatibility
 Or enable the `-DOPENCOMBINE_COMPATIBILITY_TEST` compiler flag in Xcode's build settings. Note that on iOS only the latter will work.
 
 > NOTE: Before starting to work on some feature, please consult the [GitHub project](https://github.com/OpenCombine/OpenCombine/projects/2) to make sure that nobody's already making progress on the same feature! If not, then please create a draft PR to indicate that you're beginning your work.
+
+Run `bash utils/lint.sh origin/main` to check SwiftLint violations introduced by your changes.
+The script uses the base revision as a temporary baseline for existing violations.
 
 #### Releasing a new version
 

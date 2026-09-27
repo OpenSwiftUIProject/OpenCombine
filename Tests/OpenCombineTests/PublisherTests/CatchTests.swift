@@ -8,7 +8,7 @@
 import XCTest
 
 #if canImport(COpenCombineHelpers)
-@_implementationOnly import COpenCombineHelpers
+internal import COpenCombineHelpers
 #endif
 
 #if OPENCOMBINE_COMPATIBILITY_TEST

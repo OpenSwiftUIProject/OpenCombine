@@ -2,7 +2,7 @@
 //  KeyValueObservingPublisherTests.swift
 //
 
-#if canImport(ObjectiveC) // TEST_DISCOVERY_CONDITION
+#if canImport(ObjectiveC)
 
 import Foundation
 import XCTest

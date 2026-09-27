@@ -64,10 +64,12 @@ opt_in_rules:
   - toggle_bool
   - unneeded_parentheses_in_closure_argument
   - untyped_error_in_catch
-  - unused_import
   - vertical_parameter_alignment_on_call
   - vertical_whitespace_closing_braces
   - yoda_condition
+
+analyzer_rules:
+  - unused_import
 
 implicit_return:
   included: 

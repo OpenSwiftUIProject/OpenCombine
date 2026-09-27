@@ -5,7 +5,7 @@
 //  Created by Sergej Jaskiewicz on 28.10.2020.
 //
 
-#if canImport(CoreFoundation)
+#if canImport(Darwin)
 import CoreFoundation
 #endif
 
@@ -19,8 +19,6 @@ import Foundation
 ///
 /// We could use CoreFoundation everywhere, but the `RunLoop.getCFRunloop()` method
 /// is marked deprecated on the swift-corelibs-foundation main branch.
-///
-/// Also, there are sume bugs in swift-corelibs-foundation in earlier Swift version.
 internal struct Timer {
 
 #if canImport(Darwin)
@@ -96,36 +94,16 @@ internal struct Timer {
 #endif
     }
 
-#if canImport(CoreFoundation)
-    fileprivate func getCFRunLoopTimer() -> CFRunLoopTimer? {
 #if canImport(Darwin)
+    fileprivate func getCFRunLoopTimer() -> CFRunLoopTimer? {
         return underlyingTimer
-#elseif swift(<5.2)
-        // Here we use the fact that in the specified version of swift-corelibs-foundation
-        // the memory layout of Foundation.Timer is as follows:
-        // https://github.com/apple/swift-corelibs-foundation/blob/4cd3bf083b4705d25ac76ef8d038a06bc586265a/Foundation/Timer.swift#L18-L29
-
-        // The first 2 words are reserved for reference counting
-        let firstFieldOffset = MemoryLayout<Int>.size * 2
-
-        return Unmanaged
-            .passUnretained(underlyingTimer)
-            .toOpaque()
-            .load(fromByteOffset: firstFieldOffset,
-                  as: CFRunLoopTimer?.self)
-#else
-        fatalError("unreachable")
-#endif
     }
-#endif // canImport(CoreFoundation)
+#endif // canImport(Darwin)
 }
 
 extension RunLoop {
     internal func add(_ timer: Timer, forMode mode: RunLoop.Mode) {
-        // There is a bug in swift-corelibs-foundation prior to Swift 5.2 where
-        // the timer is added to the current run loop instead of the one we're calling
-        // this method on, so we fall back to CoreFoundation.
-#if canImport(Darwin) || swift(<5.2)
+#if canImport(Darwin)
         CFRunLoopAddTimer(getCFRunLoop(),
                           timer.getCFRunLoopTimer(),
                           mode.asCFRunLoopMode())
@@ -138,26 +116,15 @@ extension RunLoop {
 #if canImport(Darwin)
         CFRunLoopPerformBlock(getCFRunLoop(), CFRunLoopMode.defaultMode.rawValue, block)
 #else
-        perform(block)
+        perform { block() }
 #endif
     }
 }
 
-#if canImport(CoreFoundation)
+#if canImport(Darwin)
 extension RunLoop.Mode {
     fileprivate func asCFRunLoopMode() -> CFRunLoopMode {
-#if canImport(Darwin)
         return CFRunLoopMode(rawValue as CFString)
-#else
-        return rawValue.withCString {
-          let encoding = CFStringBuiltInEncodings.UTF8.rawValue
-          return CFStringCreateWithCString(
-              nil,
-              $0,
-              encoding
-          )
-        }
-#endif
     }
 }
-#endif // canImport(CoreFoundation)
+#endif // canImport(Darwin)

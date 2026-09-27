@@ -5,7 +5,7 @@
 //  Created by Sergej Jaskiewicz on 14.06.2020.
 //
 
-#if !os(WASI) // TEST_DISCOVERY_CONDITION
+#if !os(WASI)
 
 import Foundation
 import XCTest
@@ -332,7 +332,7 @@ extension OperationQueueScheduler.SchedulerTimeType: DateBackedSchedulerTimeType
 @available(macOS 10.15, iOS 13.0, tvOS 13.0, watchOS 6.0, *)
 extension OperationQueueScheduler: RunLoopLikeScheduler {}
 
-private final class TestOperationQueue: OperationQueue {
+private final class TestOperationQueue: OperationQueue, @unchecked Sendable {
 
     enum Event {
         case progress
@@ -374,13 +374,13 @@ private final class TestOperationQueue: OperationQueue {
         super.addOperations(ops, waitUntilFinished: wait)
     }
 
-    override func addOperation(_ block: @escaping () -> Void) {
+    override func addOperation(_ block: @escaping @Sendable () -> Void) {
         history.append(.addBlockOperation(block))
         super.addOperation(block)
     }
 
     @available(macOS 10.15, iOS 13.0, tvOS 13.0, watchOS 6.0, *)
-    override func addBarrierBlock(_ barrier: @escaping () -> Void) {
+    override func addBarrierBlock(_ barrier: @escaping @Sendable () -> Void) {
         history.append(.addBarrierBlock(barrier))
         super.addBarrierBlock(barrier)
     }

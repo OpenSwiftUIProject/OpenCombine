@@ -24,10 +24,6 @@ final class SequenceTests: XCTestCase {
         Result<Output, Failure>.OCombine.Publisher
 #endif
 
-    // Fix compile issue on Swift 5.8~5.9
-    // It should be fixed on Xcode 15.1 with Swift 5.9.2
-    private var empty: EmptyCollection<Int> { .init() }
-
     func testEmptySequence() {
 
         let emptyCounter = Counter(upperBound: 0)
@@ -308,7 +304,7 @@ final class SequenceTests: XCTestCase {
 
     func testCollectOperatorSpecialization() {
         XCTAssertEqual(makePublisher(1 ..< 5).collect(), .init([1, 2, 3, 4]))
-        XCTAssertEqual(makePublisher(empty).collect(), .init([]))
+        XCTAssertEqual(makePublisher(EmptyCollection<Int>()).collect(), .init([]))
     }
 
     func testCompactMapOperatorSpecialization() {
@@ -318,19 +314,19 @@ final class SequenceTests: XCTestCase {
     }
 
     func testMinOperatorSpecialization() {
-        XCTAssertEqual(makePublisher(empty).min(), .init(nil))
+        XCTAssertEqual(makePublisher(EmptyCollection<Int>()).min(), .init(nil))
         XCTAssertEqual(makePublisher([3, 4, 5, -1, 2]).min(), .init(-1))
         XCTAssertEqual(makePublisher([3, 4, 5, -1, 2]).min(by: >), .init(5))
     }
 
     func testMaxOperatorSpecialization() {
-        XCTAssertEqual(makePublisher(empty).max(), .init(nil))
+        XCTAssertEqual(makePublisher(EmptyCollection<Int>()).max(), .init(nil))
         XCTAssertEqual(makePublisher([3, 4, 5, -1, 2]).max(), .init(5))
         XCTAssertEqual(makePublisher([3, 4, 5, -1, 2]).max(by: >), .init(-1))
     }
 
     func testContainsOperatorSpecialization() {
-        XCTAssertEqual(makePublisher(empty).contains(12), .init(false))
+        XCTAssertEqual(makePublisher(EmptyCollection<Int>()).contains(12), .init(false))
         XCTAssertEqual(makePublisher(0 ..< 12).contains(12), .init(false))
         XCTAssertEqual(makePublisher(0 ... 12).contains(12), .init(true))
 
@@ -342,7 +338,7 @@ final class SequenceTests: XCTestCase {
         XCTAssertFalse(try makePublisher(0 ..< 100).tryContains { $0 > 100 }.result.get())
         XCTAssertTrue(try makePublisher(99 ..< 200).tryContains { $0 < 100 }.result.get())
         XCTAssertFalse(
-            try makePublisher(empty)
+            try makePublisher(EmptyCollection<Int>())
                 .tryContains(where: throwing).result.get()
         )
         assertThrowsError(
@@ -354,7 +350,7 @@ final class SequenceTests: XCTestCase {
     func testDropWhileOperatorSpecialization() {
         XCTAssertEqual(Array(makePublisher(0 ..< 7).drop { $0 < 5 }.sequence), [5, 6])
         XCTAssertEqual(
-            Array(makePublisher(empty).drop { _ in true }.sequence),
+            Array(makePublisher(EmptyCollection<Int>()).drop { _ in true }.sequence),
             []
         )
     }
@@ -363,7 +359,7 @@ final class SequenceTests: XCTestCase {
         XCTAssertEqual(Array(makePublisher(0 ..< 4).dropFirst().sequence), [1, 2, 3])
         XCTAssertEqual(Array(makePublisher(0 ..< 4).dropFirst(3).sequence), [3])
         XCTAssertEqual(
-            Array(makePublisher(empty).dropFirst(.max).sequence),
+            Array(makePublisher(EmptyCollection<Int>()).dropFirst(.max).sequence),
             []
         )
     }
@@ -372,7 +368,7 @@ final class SequenceTests: XCTestCase {
         XCTAssertEqual(makePublisher(1 ..< 9).first { $0.isMultiple(of: 4) }, .init(4))
         XCTAssertEqual(makePublisher(1 ..< 9).first { $0.isMultiple(of: 13) }, .init(nil))
         XCTAssertEqual(
-            makePublisher(empty).first { $0.isMultiple(of: 13) },
+            makePublisher(EmptyCollection<Int>()).first { $0.isMultiple(of: 13) },
             .init(nil)
         )
     }
@@ -403,24 +399,24 @@ final class SequenceTests: XCTestCase {
         XCTAssertEqual(Array(makePublisher(0 ..< 10).prefix { $0 < 0 }.sequence),
                        [])
         XCTAssertEqual(
-            Array(makePublisher(empty).prefix { $0 < 0 }.sequence),
+            Array(makePublisher(EmptyCollection<Int>()).prefix { $0 < 0 }.sequence),
             []
         )
     }
 
     func testReduceOperatorSpecialization() {
         XCTAssertEqual(makePublisher(0 ..< 5).reduce(10, +), .init(20))
-        XCTAssertEqual(makePublisher(empty).reduce(1, *), .init(1))
+        XCTAssertEqual(makePublisher(EmptyCollection<Int>()).reduce(1, *), .init(1))
     }
 
     func testTryReduceOperatorSpecialization() {
         XCTAssertEqual(try makePublisher(0 ..< 5).tryReduce(10, +).result.get(), 20)
         XCTAssertEqual(
-            try makePublisher(empty).tryReduce(1, *).result.get(),
+            try makePublisher(EmptyCollection<Int>()).tryReduce(1, *).result.get(),
             1
         )
         XCTAssertEqual(
-            try makePublisher(empty).tryReduce(1, throwing).result.get(),
+            try makePublisher(EmptyCollection<Int>()).tryReduce(1, throwing).result.get(),
             1
         )
 
@@ -460,12 +456,12 @@ final class SequenceTests: XCTestCase {
 
     func testFirstOperatorSpecialization() {
         XCTAssertEqual(makePublisher([1, 2, 3]).first(), .init(1))
-        XCTAssertEqual(makePublisher(empty).first(), .init(nil))
+        XCTAssertEqual(makePublisher(EmptyCollection<Int>()).first(), .init(nil))
     }
 
     func testCountOperatorSpecialization() {
         XCTAssertEqual(makePublisher(0 ..< .max).count(), Just(.max))
-        XCTAssertEqual(makePublisher(empty).count(), Just(0))
+        XCTAssertEqual(makePublisher(EmptyCollection<Int>()).count(), Just(0))
         XCTAssertEqual(makePublisher([1, 1, 1, 1, 1, 1]).count(), Just(6))
         XCTAssertEqual(
             makePublisher([1, 1, 1, 1, 1, 1])
@@ -534,14 +530,14 @@ final class SequenceTests: XCTestCase {
 
     func testLastOperatorSpecialization() {
         XCTAssertEqual(makePublisher([1, 2, 3]).last(), .init(3))
-        XCTAssertEqual(makePublisher(empty).last(), .init(nil))
+        XCTAssertEqual(makePublisher(EmptyCollection<Int>()).last(), .init(nil))
     }
 
     func testLastWhereOperatorSpecialization() {
         XCTAssertEqual(makePublisher(1 ..< 9).last { $0.isMultiple(of: 4) }, .init(8))
         XCTAssertEqual(makePublisher(1 ..< 9).last { $0.isMultiple(of: 13) }, .init(nil))
         XCTAssertEqual(
-            makePublisher(empty).last { $0.isMultiple(of: 13) },
+            makePublisher(EmptyCollection<Int>()).last { $0.isMultiple(of: 13) },
             .init(nil)
         )
     }

@@ -21,6 +21,9 @@ The documentation of the package can be found at [OpenCombine Documentation](htt
 
 
 ### Installation
+
+The current branch requires Swift 6.3 or later. On Apple platforms, use Xcode 26.6 or later.
+The package uses Swift 5 language mode.
 `OpenCombine` contains three public targets: `OpenCombine`, `OpenCombineFoundation` and `OpenCombineDispatch` (the fourth one, `COpenCombineHelpers`, is considered private. Don't import it in your projects).
 
 OpenCombine itself does not have any dependencies. Not even Foundation or Dispatch. If you want to use OpenCombine with Dispatch (for example for using `DispatchQueue` as `Scheduler` for operators like `debounce`, `receive(on:)` etc.), you will need to import both `OpenCombine` and `OpenCombineDispatch`. The same applies to Foundation: if you want to use, for instance, `NotificationCenter` or `URLSession` publishers, you'll need to also import `OpenCombineFoundation`.
@@ -51,9 +54,9 @@ targets: [
 ```
 
 ###### Xcode
-`OpenCombine` can also be added as a SwiftPM dependency directly in your Xcode project *(requires Xcode 11 upwards)*.
+`OpenCombine` can also be added as a SwiftPM dependency directly in your Xcode project *(requires Xcode 26.6 or later)*.
 
-To do so, open Xcode, use **File** → **Swift Packages** → **Add Package Dependency…**, enter the [repository URL](https://github.com/OpenSwiftUIProject/OpenCombine.git), choose the latest available version, and activate the checkboxes:
+To do so, open Xcode, use **File** → **Add Package Dependencies…**, enter the [repository URL](https://github.com/OpenSwiftUIProject/OpenCombine.git), choose the latest available version, and activate the checkboxes:
 
 <p align="center">
 <img alt="Select the OpenCombine and OpenCombineDispatch targets" 

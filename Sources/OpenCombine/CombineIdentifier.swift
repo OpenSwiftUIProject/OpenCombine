@@ -6,7 +6,7 @@
 //
 
 #if canImport(COpenCombineHelpers)
-@_implementationOnly import COpenCombineHelpers
+internal import COpenCombineHelpers
 #endif
 
 #if os(WASI)
