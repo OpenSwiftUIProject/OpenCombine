@@ -334,8 +334,12 @@ private final class ObservedDerivedWithObservedBase: ObservedBase {
     @Published var subclassPublished2 = 2
 }
 
+#if OPENCOMBINE_COMPATIBILITY_TEST
 @available(macOS 10.15, iOS 13.0, tvOS 13.0, watchOS 6.0, *)
+extension NSNumber: @retroactive ObservableObject {}
+#else
 extension NSNumber: ObservableObject {}
+#endif
 
 @available(macOS 10.15, iOS 13.0, tvOS 13.0, watchOS 6.0, *)
 private final class ObjCClassSubclass: NSObject, ObservableObject {
@@ -343,18 +347,22 @@ private final class ObjCClassSubclass: NSObject, ObservableObject {
 }
 
 @available(macOS 10.15, iOS 13.0, tvOS 13.0, watchOS 6.0, *)
-private class ResilientClassSubclass: JSONDecoder, ObservableObject {
+private class ResilientClassSubclass: JSONDecoder, ObservableObject, @unchecked Sendable {
     @Published var published0 = 10
     @Published var published1 = "hello!"
 }
 
 @available(macOS 10.15, iOS 13.0, tvOS 13.0, watchOS 6.0, *)
-private final class ResilientClassSubclass2: ResilientClassSubclass {
+private final class ResilientClassSubclass2: ResilientClassSubclass, @unchecked Sendable {
     @Published var published3 = true
 }
 
+#if OPENCOMBINE_COMPATIBILITY_TEST
 @available(macOS 10.15, iOS 13.0, tvOS 13.0, watchOS 6.0, *)
+extension JSONEncoder: @retroactive ObservableObject {}
+#else
 extension JSONEncoder: ObservableObject {}
+#endif
 
 @available(macOS 10.15, iOS 13.0, tvOS 13.0, watchOS 6.0, *)
 private final class GenericClass<Value1, Value2>: ObservableObject {
@@ -388,7 +396,8 @@ private class NSObjectSubclass: NSObject, ObservableObject {
 @available(macOS 10.15, iOS 13.0, tvOS 13.0, watchOS 6.0, *)
 private class ResilientClassGenericSubclass<Value1, Value2>
     : JSONDecoder,
-      ObservableObject
+      ObservableObject,
+      @unchecked Sendable
 {
     @Published var value1: Value1
     @Published var value2: Value2
@@ -401,7 +410,7 @@ private class ResilientClassGenericSubclass<Value1, Value2>
 
 @available(macOS 10.15, iOS 13.0, tvOS 13.0, watchOS 6.0, *)
 private final class ResilientClassGenericSubclass2<Value1, Value2>
-    : ResilientClassGenericSubclass<Value1, Value2>
+    : ResilientClassGenericSubclass<Value1, Value2>, @unchecked Sendable
 {
     @Published var value3 = false
 }

@@ -5,7 +5,7 @@
 //  Created by Sergej Jaskiewicz on 26.08.2019.
 //
 
-#if !os(WASI) // TEST_DISCOVERY_CONDITION
+#if !os(WASI)
 
 import Dispatch
 import XCTest
@@ -186,8 +186,7 @@ final class DispatchQueueSchedulerTests: XCTestCase {
         makeStride = Stride.init(__guessFromUnknown:)
 #endif
 
-// riscv64 is not support on Swift 5.7 Toolchain
-#if arch(x86_64) || arch(arm64) || arch(powerpc64) || arch(powerpc64le) || arch(s390x) /*|| arch(riscv64)*/
+#if _pointerBitWidth(_64)
         // 64-bit platforms
         let minNanoseconds = -0x13B13B13B13B13B0 // Int64.min / 6.5
         let maxNanoseconds =  0x2C4EC4EC4EC4EC4D // Int64.max / 2.889
@@ -263,8 +262,7 @@ final class DispatchQueueSchedulerTests: XCTestCase {
         XCTAssertEqual(Stride.microseconds(2).magnitude, 2_000)
         XCTAssertEqual(Stride.nanoseconds(2).magnitude, 2)
 
-// riscv64 is not support on Swift 5.7 Toolchain
-#if arch(x86_64) || arch(arm64) || arch(powerpc64) || arch(powerpc64le) || arch(s390x) /*|| arch(riscv64)*/
+#if _pointerBitWidth(_64)
         // 64-bit platforms
         XCTAssertEqual(
             Stride.seconds(Double(Int.max) / 1_000_000_000 - 1).magnitude,
@@ -293,8 +291,7 @@ final class DispatchQueueSchedulerTests: XCTestCase {
     }
 
     func testStrideFromTooMuchSeconds() {
-// riscv64 is not support on Swift 5.7 Toolchain
-#if arch(x86_64) || arch(arm64) || arch(powerpc64) || arch(powerpc64le) || arch(s390x) /*|| arch(riscv64)*/
+#if _pointerBitWidth(_64)
         // 64-bit platforms
         XCTAssertEqual(
             Stride.seconds(Double(Int.max) / 1_000_000_000).magnitude,

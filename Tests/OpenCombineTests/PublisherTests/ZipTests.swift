@@ -767,7 +767,9 @@ final class ZipTests: XCTestCase {
             })
             .store(in: &subscriptions)
 
-        wait(for: [expectation], timeout: 5)
+        withExtendedLifetime(subscriptions) {
+            wait(for: [expectation], timeout: 5)
+        }
 
         XCTAssertEqual(result?.0, 1)
         XCTAssertEqual(result?.1, 2)

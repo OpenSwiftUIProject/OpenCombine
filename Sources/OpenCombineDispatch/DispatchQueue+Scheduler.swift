@@ -299,7 +299,7 @@ extension DispatchQueue {
             queue.async(group: options.group,
                         qos: options.qos,
                         flags: options.flags,
-                        execute: action)
+                        execute: { action() })
         }
 
         public func schedule(after date: SchedulerTimeType,
@@ -310,7 +310,7 @@ extension DispatchQueue {
             queue.asyncAfter(deadline: date.dispatchTime,
                              qos: options.qos,
                              flags: options.flags,
-                             execute: action)
+                             execute: { action() })
         }
 
         /// Performs the action at some time after the specified date, at the specified
@@ -413,7 +413,7 @@ private func clampedIntProduct(_ lhs: Int64, _ rhs: Int64) -> Int64 {
 extension DispatchTime {
 
     fileprivate func polyfillDistance(to other: DispatchTime) -> DispatchTimeInterval {
-#if canImport(Darwin) && compiler(>=5.1)
+#if canImport(Darwin)
         if #available(macOS 12.0, iOS 15.0, watchOS 8.0, tvOS 15.0, *) {
             return distance(to: other)
         }

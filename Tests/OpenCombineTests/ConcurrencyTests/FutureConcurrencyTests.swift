@@ -13,8 +13,7 @@ import Combine
 import OpenCombine
 #endif
 
-// swiftlint:disable:next line_length
-#if !os(Windows) && !os(WASI) // TEST_DISCOVERY_CONDITION
+#if !os(Windows) && !os(WASI)
 @available(macOS 12.0, iOS 15.0, tvOS 15.0, watchOS 8.0, *)
 final class FutureConcurrencyTests: XCTestCase {
 

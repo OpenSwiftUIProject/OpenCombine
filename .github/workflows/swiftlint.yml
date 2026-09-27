@@ -5,22 +5,22 @@ on:
     paths:
       - ".github/workflows/swiftlint.yml"
       - ".swiftlint.yml"
+      - "Tests/.swiftlint.yml"
+      - "utils/lint.sh"
       - "**/*.swift"
 
 jobs:
   SwiftLint:
-    runs-on: ubuntu-22.04
+    runs-on: macos-26
     steps:
-      - uses: actions/checkout@v4
-      # Fetch current versions of files
-      - name: Fetch base ref
-        run: |
-          git fetch --prune --no-tags --depth=1 origin +refs/heads/${{ github.base_ref }}:refs/heads/${{ github.base_ref }}
-      # Diff pull request to current files, then SwiftLint changed files
-      - name: GitHub Action for SwiftLint
-        uses: mayk-it/action-swiftlint@3.2.2
-        env:
-          DIFF_BASE: ${{ github.base_ref }}
-          DIFF_HEAD: HEAD
+      - uses: actions/checkout@v6
         with:
-          args: --strict
+          fetch-depth: 0
+      - name: Setup Xcode
+        uses: OpenSwiftUIProject/setup-xcode@v2
+        with:
+          xcode-version: "26.6"
+      - name: Check new SwiftLint violations
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+        run: bash utils/lint.sh "$BASE_SHA"

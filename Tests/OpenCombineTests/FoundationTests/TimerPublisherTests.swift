@@ -5,7 +5,7 @@
 //  Created by Sergej Jaskiewicz on 23.06.2020.
 //
 
-#if !os(WASI) // TEST_DISCOVERY_CONDITION
+#if !os(WASI)
 
 import Foundation
 import XCTest

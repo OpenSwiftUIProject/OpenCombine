@@ -7,22 +7,16 @@ on:
     branches: [main]
 
 jobs:
-  wasmer_test:
+  wasm_test:
     name: Execute tests on WASM
-    strategy:
-      fail-fast: false
-      matrix:
-        swift_version: ["wasm-5.9.1-RELEASE", "wasm-5.10-SNAPSHOT-2024-01-13-a"]
-        os: [ubuntu-22.04]
-    runs-on: ${{ matrix.os }}
+    runs-on: ubuntu-24.04
+    container: swift:6.3.3-noble
     steps:
-      - uses: actions/checkout@v4
-      - uses: swiftwasm/setup-swiftwasm@v1
-        with:
-          swift-version: ${{ matrix.swift_version }}
-      - name: build
+      - uses: actions/checkout@v6
+      - name: Install Swift SDK for WebAssembly
         run: |
-          swift build
-      - name: test
-        run: |
-          swift test
+          swift sdk install \
+            https://download.swift.org/swift-6.3.3-release/wasm-sdk/swift-6.3.3-RELEASE/swift-6.3.3-RELEASE_wasm.artifactbundle.tar.gz \
+            --checksum cabfa08b73bb8ac783927ecd15fa386e99d0c139c5f232445067bcf58379cae7
+      - name: Build and run tests on WebAssembly
+        run: swift test --swift-sdk swift-6.3.3-RELEASE_wasm

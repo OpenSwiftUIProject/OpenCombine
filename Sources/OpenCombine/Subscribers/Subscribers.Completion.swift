@@ -5,9 +5,7 @@
 //  Created by Sergej Jaskiewicz on 11.06.2019.
 //
 
-#if canImport(_Concurrency) && compiler(>=5.5)
 import _Concurrency
-#endif
 
 extension Subscribers {
 
@@ -28,9 +26,7 @@ extension Subscribers.Completion: Equatable where Failure: Equatable {}
 
 extension Subscribers.Completion: Hashable where Failure: Hashable {}
 
-#if canImport(_Concurrency) && compiler(>=5.5) || compiler(>=5.5.1)
 extension Subscribers.Completion: Sendable {}
-#endif
 
 extension Subscribers.Completion {
     private enum CodingKeys: String, CodingKey {

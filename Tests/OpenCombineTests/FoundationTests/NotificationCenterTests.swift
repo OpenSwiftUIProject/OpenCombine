@@ -5,7 +5,7 @@
 //  Created by Sergej Jaskiewicz on 10.12.2019.
 //
 
-#if !os(WASI) // TEST_DISCOVERY_CONDITION
+#if !os(WASI)
 
 import Foundation
 import XCTest
@@ -49,7 +49,7 @@ final class NotificationCenterTests: XCTestCase {
 
                 var i = 0
 
-                let center = TestNotificationCenter()
+                let center = NotificationCenter()
                 let name = Notification.Name(rawValue: "testName")
                 let publisher = makePublisher(center, for: name, object: nil)
 
@@ -85,6 +85,7 @@ final class NotificationCenterTests: XCTestCase {
         XCTAssertEqual(numberOfInputsHistory, expectedNumberOfInputsHistory)
     }
 
+#if canImport(ObjectiveC)
     func testBasicBehavior() throws {
         let center = TestNotificationCenter()
         let name = Notification.Name(rawValue: "testName")
@@ -296,8 +297,10 @@ final class NotificationCenterTests: XCTestCase {
                         .value(note)])
     }
 
+#endif
+
     func testRecursivelyReceiveValue() throws {
-        let center = TestNotificationCenter()
+        let center = NotificationCenter()
         let name = Notification.Name(rawValue: "testName")
         let publisher = makePublisher(center, for: name, object: nil)
         let tracking = TrackingSubscriberBase<Notification, Never>(
@@ -334,6 +337,7 @@ final class NotificationCenterTests: XCTestCase {
                                           .value(note)])
     }
 
+#if canImport(ObjectiveC)
     func testCancelAlreadyCancelled() throws {
         let center = TestNotificationCenter()
         let name = Notification.Name(rawValue: "testName")
@@ -428,6 +432,61 @@ final class NotificationCenterTests: XCTestCase {
         )
     }
 
+#endif
+
+    func testFiltersNotificationsAndCancelsSubscription() throws {
+        let center = NotificationCenter()
+        let name = Notification.Name("testName")
+        let object = NSObject()
+        let publisher = makePublisher(center, for: name, object: object)
+        var subscription: Subscription?
+        let tracking = TrackingSubscriberBase<Notification, Never>(
+            receiveSubscription: { subscription = $0 }
+        )
+        publisher.subscribe(tracking)
+
+        let note = Notification(name: name, object: object)
+        center.post(note)
+        XCTAssertEqual(tracking.inputs.count, 0)
+
+        try XCTUnwrap(subscription).request(.max(1))
+        center.post(name: Notification.Name("unrelated"), object: object)
+        center.post(name: name, object: NSObject())
+        center.post(name: name, object: nil)
+        XCTAssertEqual(tracking.inputs.count, 0)
+
+        center.post(note)
+        center.post(note)
+        XCTAssertEqual(tracking.history, [.subscription("NotificationCenter Observer"),
+                                          .value(note)])
+
+        try XCTUnwrap(subscription).request(.unlimited)
+        try XCTUnwrap(subscription).cancel()
+        try XCTUnwrap(subscription).cancel()
+        center.post(note)
+        XCTAssertEqual(tracking.inputs.count, 1)
+        XCTAssertEqual(tracking.completions.count, 0)
+    }
+
+    func testRealCenterReleasedAfterCancellation() throws {
+        weak var weakCenter: NotificationCenter?
+        var subscription: Subscription?
+        do {
+            let center = NotificationCenter()
+            weakCenter = center
+            let publisher = makePublisher(center,
+                                          for: Notification.Name("testName"),
+                                          object: nil)
+            let tracking = TrackingSubscriberBase<Notification, Never>(
+                receiveSubscription: { subscription = $0 }
+            )
+            publisher.subscribe(tracking)
+        }
+        XCTAssertNotNil(weakCenter)
+        try XCTUnwrap(subscription).cancel()
+        XCTAssertNil(weakCenter)
+    }
+
     func testEquatable() {
         let center1 = NotificationCenter()
         let center2 = NotificationCenter()
@@ -474,9 +533,11 @@ private func makePublisher(
 }
 #endif
 
+// Corelibs Foundation exposes these methods in extensions that cannot be overridden.
+#if canImport(ObjectiveC)
 /// A simple mock notification center that always sends notifications to **all**
 /// observers in non-thread safe manner.
-private final class TestNotificationCenter: NotificationCenter {
+private final class TestNotificationCenter: NotificationCenter, @unchecked Sendable {
 
     enum Event {
         case postNotificationWithName(Notification.Name, Any?, [AnyHashable : Any]?)
@@ -555,6 +616,8 @@ private final class TestNotificationCenter: NotificationCenter {
     }
 }
 
+#endif
+
 private final class TestObject: NSObject {
 
     static let one = TestObject()
@@ -562,6 +625,7 @@ private final class TestObject: NSObject {
     static let two = TestObject()
 }
 
+#if canImport(ObjectiveC)
 extension TestNotificationCenter.Event: Equatable {
     fileprivate static func == (lhs: TestNotificationCenter.Event,
                                 rhs: TestNotificationCenter.Event) -> Bool {
@@ -625,5 +689,7 @@ extension TestNotificationCenter.Event: CustomStringConvertible {
         }
     }
 }
+
+#endif // canImport(ObjectiveC)
 
 #endif // !os(WASI)

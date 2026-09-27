@@ -5,7 +5,7 @@
 //  Created by Sergej Jaskiewicz on 14.12.2019.
 //
 
-#if !os(WASI) // TEST_DISCOVERY_CONDITION
+#if !os(WASI)
 
 import Foundation
 import XCTest
@@ -79,8 +79,7 @@ final class RunLoopSchedulerTests: XCTestCase {
         XCTAssertEqual(time.advanced(by: stride2),
                        .init(Date(timeIntervalSinceReferenceDate: 9780)))
 
-// riscv64 is not support on Swift 5.7 Toolchain
-#if arch(x86_64) || arch(arm64) || arch(powerpc64) || arch(powerpc64le) || arch(s390x) /*|| arch(riscv64)*/
+#if _pointerBitWidth(_64)
         // 64-bit platforms
         XCTAssertEqual(time.advanced(by: .nanoseconds(.max)).date,
                        Date(timeIntervalSinceReferenceDate: 9223382036.854776))
@@ -167,8 +166,7 @@ final class RunLoopSchedulerTests: XCTestCase {
         XCTAssertEqual(Stride.milliseconds(2).timeInterval, 0.002)
         XCTAssertEqual(Stride.microseconds(2).timeInterval, 2E-06)
         XCTAssertEqual(Stride.nanoseconds(2).timeInterval, 2E-09)
-// riscv64 is not support on Swift 5.7 Toolchain
-#if arch(x86_64) || arch(arm64) || arch(powerpc64) || arch(powerpc64le) || arch(s390x) /*|| arch(riscv64)*/
+#if _pointerBitWidth(_64)
         // 64-bit platforms
         XCTAssertEqual(Stride.seconds(Int.max).timeInterval, 9.223372036854776E+18)
         XCTAssertEqual(Stride.milliseconds(.max).timeInterval, 9.223372036854776E+15)

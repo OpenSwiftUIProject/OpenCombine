@@ -13,14 +13,14 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - os: windows-2019
-            swift_version: "5.9.2"
+          - os: windows-2025
+            swift_version: "6.3.3"
     runs-on: ${{ matrix.os }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - uses: compnerd/gha-setup-swift@main
         with:
-          branch: swift-${{ matrix.swift_version }}-release
-          tag: ${{ matrix.swift_version }}-RELEASE
+          swift-version: swift-${{ matrix.swift_version }}-release
+          swift-build: ${{ matrix.swift_version }}-RELEASE
       - name: Building and running tests in debug mode
         run: swift test

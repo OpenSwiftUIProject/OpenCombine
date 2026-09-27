@@ -13,11 +13,11 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - os: macos-13
-            xcode-version: "15.2"   # Swift 5.9.2
+          - os: macos-26
+            xcode-version: "26.6"   # Swift 6.3.3
     runs-on: ${{ matrix.os }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - name: Setup Xcode
         uses: OpenSwiftUIProject/setup-xcode@v2
         with:

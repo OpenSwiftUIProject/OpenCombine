@@ -82,7 +82,7 @@ extension Publisher {
     ///     }
     ///
     ///     cancellable = Just(DiceRoll(${dice_roll_init}))
-    ///         .map(${', '.join(['\.' + s for s in example_dice_roll_properties])})
+    ///         .map(${', '.join(['\\.' + s for s in example_dice_roll_properties])})
 %     if arity == 1:
     ///         .sink {
     ///             print ("Rolled: \($0)")

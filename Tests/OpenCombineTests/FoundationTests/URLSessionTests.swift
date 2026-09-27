@@ -14,7 +14,7 @@ import XCTest
 import FoundationNetworking
 #endif
 
-#if !os(WASI) // TEST_DISCOVERY_CONDITION
+#if !os(WASI)
 
 #if OPENCOMBINE_COMPATIBILITY_TEST
 import Combine
@@ -247,7 +247,7 @@ final class URLSessionTests: XCTestCase {
 
 /// A simple mock URLSession that records its history and allows executing
 /// callbacks synchronously
-private class TestURLSession: URLSession {
+private class TestURLSession: URLSession, @unchecked Sendable {
 
     enum Event: Equatable {
         case delegateQueue
@@ -356,18 +356,18 @@ private class TestURLSession: URLSession {
         super.invalidateAndCancel()
     }
 
-    override func reset(completionHandler: @escaping () -> Void) {
+    override func reset(completionHandler: @escaping @Sendable () -> Void) {
         history.append(.reset)
         super.reset(completionHandler: completionHandler)
     }
 
-    override func flush(completionHandler: @escaping () -> Void) {
+    override func flush(completionHandler: @escaping @Sendable () -> Void) {
         history.append(.flush)
         super.flush(completionHandler: completionHandler)
     }
 
     override func getTasksWithCompletionHandler(
-        _ completionHandler: @escaping ([URLSessionDataTask],
+        _ completionHandler: @escaping @Sendable ([URLSessionDataTask],
                                         [URLSessionUploadTask],
                                         [URLSessionDownloadTask]) -> Void
     ) {
@@ -376,7 +376,9 @@ private class TestURLSession: URLSession {
     }
 
     @available(macOS 10.11, iOS 9.0, *)
-    override func getAllTasks(completionHandler: @escaping ([URLSessionTask]) -> Void) {
+    override func getAllTasks(
+        completionHandler: @escaping @Sendable ([URLSessionTask]) -> Void
+    ) {
         history.append(.getAllTasks)
         super.getAllTasks(completionHandler: completionHandler)
     }
@@ -393,7 +395,7 @@ private class TestURLSession: URLSession {
 
     override func dataTask(
         with url: URL,
-        completionHandler: @escaping (Data?, URLResponse?, Error?) -> Void
+        completionHandler: @escaping @Sendable (Data?, URLResponse?, Error?) -> Void
     ) -> URLSessionDataTask {
         history.append(.dataTaskWithURLAndCompletion(url))
         dataTaskCompletionHandlers.append(completionHandler)
@@ -402,7 +404,7 @@ private class TestURLSession: URLSession {
 
     override func dataTask(
         with request: URLRequest,
-        completionHandler: @escaping (Data?, URLResponse?, Error?) -> Void
+        completionHandler: @escaping @Sendable (Data?, URLResponse?, Error?) -> Void
     ) -> URLSessionDataTask {
         history.append(.dataTaskWithRequestAndCompletion(request))
         dataTaskCompletionHandlers.append(completionHandler)
@@ -431,7 +433,7 @@ private class TestURLSession: URLSession {
     override func uploadTask(
         with request: URLRequest,
         fromFile fileURL: URL,
-        completionHandler: @escaping (Data?, URLResponse?, Error?) -> Void
+        completionHandler: @escaping @Sendable (Data?, URLResponse?, Error?) -> Void
     ) -> URLSessionUploadTask {
         history.append(.uploadTaskWithRequestFromFileWithCompletion(request, fileURL))
         return super.uploadTask(with: request,
@@ -442,7 +444,7 @@ private class TestURLSession: URLSession {
     override func uploadTask(
         with request: URLRequest,
         from bodyData: Data?,
-        completionHandler: @escaping (Data?, URLResponse?, Error?) -> Void
+        completionHandler: @escaping @Sendable (Data?, URLResponse?, Error?) -> Void
     ) -> URLSessionUploadTask {
         history.append(.uploadTaskWithRequestFromDataWithCompletion(request, bodyData))
         return super.uploadTask(with: request,
@@ -462,7 +464,7 @@ private class TestURLSession: URLSession {
 
     override func downloadTask(
         with request: URLRequest,
-        completionHandler: @escaping (URL?, URLResponse?, Error?) -> Void
+        completionHandler: @escaping @Sendable (URL?, URLResponse?, Error?) -> Void
     ) -> URLSessionDownloadTask {
         history.append(.downloadTaskWithRequestAndCompletion(request))
         return super.downloadTask(with: request, completionHandler: completionHandler)
@@ -470,7 +472,7 @@ private class TestURLSession: URLSession {
 
     override func downloadTask(
         with url: URL,
-        completionHandler: @escaping (URL?, URLResponse?, Error?) -> Void
+        completionHandler: @escaping @Sendable (URL?, URLResponse?, Error?) -> Void
     ) -> URLSessionDownloadTask {
         history.append(.downloadTaskWithURLAndCompletion(url))
         return super.downloadTask(with: url, completionHandler: completionHandler)
@@ -478,7 +480,7 @@ private class TestURLSession: URLSession {
 
     override func downloadTask(
         withResumeData resumeData: Data,
-        completionHandler: @escaping (URL?, URLResponse?, Error?) -> Void
+        completionHandler: @escaping @Sendable (URL?, URLResponse?, Error?) -> Void
     ) -> URLSessionDownloadTask {
         history.append(.downloadTaskWithResumeDataAndCompletion(resumeData))
         return super.downloadTask(withResumeData: resumeData,
@@ -527,7 +529,7 @@ private class TestURLSession: URLSession {
 #endif // canImport(Darwin) && !os(watchOS)
 }
 
-private final class TestURLSessionDataTask: URLSessionDataTask {
+private final class TestURLSessionDataTask: URLSessionDataTask, @unchecked Sendable {
 
     enum Event: Equatable {
         case taskIdentifier

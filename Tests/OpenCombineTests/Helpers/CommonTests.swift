@@ -216,12 +216,6 @@ func unreachable() -> Never {
 
 func fromNever<T>(_ resultType: T.Type) -> (Never) -> T {
     // This is to avoid the 'Will never be executed' warning.
-    //
-    // The first variant doesn't produce warnings in Swift 5.1, but doesn't compile
-    // with early Swift versions.
-    //
-    // The second variant compiles with all Swift versions,
-    // but produces a warning in Swift 5.1.
     return { (_: Never) -> T in }
 }
 

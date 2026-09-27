@@ -6,7 +6,7 @@
 //  Audited for 2023 Release
 
 #if canImport(COpenCombineHelpers)
-@_implementationOnly import COpenCombineHelpers
+internal import COpenCombineHelpers
 #endif
 
 // MARK: - merge methods on Publisher
