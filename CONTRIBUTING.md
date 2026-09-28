@@ -20,6 +20,23 @@ Or enable the `-DOPENCOMBINE_COMPATIBILITY_TEST` compiler flag in Xcode's build 
 Run `bash utils/lint.sh origin/main` to check SwiftLint violations introduced by your changes.
 The script uses the base revision as a temporary baseline for existing violations.
 
+#### Testing on Android
+
+The Android CI job builds the tests with the
+[Swift SDK for Android](https://www.swift.org/documentation/articles/swift-sdk-for-android-getting-started.html)
+and runs them on an Android emulator. To do the same locally:
+
+1. Install a swift.org toolchain (Xcode's toolchain can't cross-compile for Android), the Swift SDK
+   for Android of the same version, and the Android NDK (r27d or later). Point `ANDROID_NDK_HOME`
+   at the NDK.
+1. Start an emulator or connect a device running Android 9 (API level 28) or later.
+   Use an x86_64 system image on Intel and Linux hosts, and an arm64 one on Apple silicon.
+1. Run `make test-android`.
+
+`bash utils/android_test.sh build` and `bash utils/android_test.sh run` run the two steps
+separately. `run` accepts XCTest filters, for example
+`bash utils/android_test.sh run OpenCombineTests.JustTests`.
+
 #### Releasing a new version
 
 1. Create a new branch from master and call it `release/<major>.<minor>.<patch>`.

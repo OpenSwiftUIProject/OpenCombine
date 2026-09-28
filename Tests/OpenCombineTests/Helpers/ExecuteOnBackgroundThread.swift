@@ -11,6 +11,8 @@
 import Darwin
 #elseif canImport(Glibc)
 import Glibc
+#elseif canImport(Android)
+import Android
 #elseif os(Windows)
 import WinSDK
 #else
@@ -28,7 +30,7 @@ func executeOnBackgroundThread<ResultType>(
 
 #if canImport(Darwin)
         typealias ThreadHandle = UnsafeMutablePointer<pthread_t?>
-#elseif canImport(Glibc)
+#elseif canImport(Glibc) || canImport(Android)
         typealias ThreadHandle = UnsafeMutablePointer<pthread_t>
 #elseif os(Windows)
         typealias ThreadHandle = HANDLE?
