@@ -18,7 +18,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v6
-      - uses: compnerd/gha-setup-swift@main
+      - uses: compnerd/gha-setup-swift@v0.5.0
         with:
           swift-version: swift-${{ matrix.swift_version }}-release
           swift-build: ${{ matrix.swift_version }}-RELEASE
