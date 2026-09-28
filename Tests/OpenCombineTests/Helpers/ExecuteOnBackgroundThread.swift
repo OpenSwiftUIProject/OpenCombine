@@ -86,12 +86,11 @@ func executeOnBackgroundThread<ResultType>(
                 _backgroundThread,
                 nil,
                 { context in
-#if canImport(Darwin)
-                    let context = context
-#else
-                    let context = context!
-#endif
-                    return context
+                    // Optional with Glibc and Android NDK r28+, but non-optional on
+                    // Darwin and with Android NDK r27.
+                    let context: UnsafeMutableRawPointer? = context
+
+                    return context!
                         .assumingMemoryBound(to: ThreadRoutine.self)
                         .pointee()
                 },

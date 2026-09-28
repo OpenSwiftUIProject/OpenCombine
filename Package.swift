@@ -20,7 +20,12 @@ let supportedPlatforms: [Platform] = [
 ]
 
 let cOpenCombineHelpersTarget: Target = .target(
-    name: "COpenCombineHelpers"
+    name: "COpenCombineHelpers",
+    linkerSettings: [
+        // SwiftPM links libstdc++ for C++ targets, which on Android is only a stub
+        // for operator new/delete. The C++ standard library there is libc++_shared.
+        .linkedLibrary("c++_shared", .when(platforms: [.android])),
+    ]
 )
 let openCombineShimTarget: Target = .target(
     name: "OpenCombineShim",
