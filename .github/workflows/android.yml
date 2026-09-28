@@ -8,7 +8,7 @@ on:
 
 jobs:
   android_test:
-    name: Execute tests on Android
+    name: Execute tests on Android (${{ matrix.swift_version }}, API ${{ matrix.android_api_level }})
     permissions:
       contents: read
     strategy:
@@ -43,7 +43,9 @@ jobs:
           cd "$RUNNER_TEMP"
           curl -fsSL --retry 3 -o swift.tar.gz "$url"
           curl -fsSL --retry 3 -o swift.tar.gz.sig "$url.sig"
-          curl -fsSL --retry 3 https://www.swift.org/keys/all-keys.asc | gpg --batch --import
+          # The CDN may serve the keys compressed; zcat -f passes plain text through.
+          curl -fsSL --retry 3 --compressed https://www.swift.org/keys/all-keys.asc \
+            | zcat -f | gpg --batch --import
           gpg --batch --verify swift.tar.gz.sig swift.tar.gz
           mkdir swift
           tar -xzf swift.tar.gz -C swift --strip-components=1
