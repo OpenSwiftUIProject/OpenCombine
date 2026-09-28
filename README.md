@@ -18,6 +18,7 @@ The documentation of the package can be found at [OpenCombine Documentation](htt
 |[![Ubuntu](https://github.com/OpenSwiftUIProject/OpenCombine/actions/workflows/ubuntu.yml/badge.svg)](https://github.com/OpenSwiftUIProject/OpenCombine/actions/workflows/ubuntu.yml)|
 |[![Windows](https://github.com/OpenSwiftUIProject/OpenCombine/actions/workflows/windows.yml/badge.svg)](https://github.com/OpenSwiftUIProject/OpenCombine/actions/workflows/windows.yml)|
 |[![Wasm](https://github.com/OpenSwiftUIProject/OpenCombine/actions/workflows/wasm.yml/badge.svg)](https://github.com/OpenSwiftUIProject/OpenCombine/actions/workflows/wasm.yml)|
+|[![Android](https://github.com/OpenSwiftUIProject/OpenCombine/actions/workflows/android.yml/badge.svg)](https://github.com/OpenSwiftUIProject/OpenCombine/actions/workflows/android.yml)|
 
 
 ### Installation

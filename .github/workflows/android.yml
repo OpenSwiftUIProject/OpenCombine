@@ -1,0 +1,76 @@
+name: Android
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  android_test:
+    name: Execute tests on Android (${{ matrix.swift_version }}, API ${{ matrix.android_api_level }})
+    permissions:
+      contents: read
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: ubuntu-24.04
+            swift_version: "6.3.3"
+            android_sdk_checksum: "d160cc3206dd1886dae3fef2337af5e25ec034692cd0ec225721c56cc69da7f5"
+            android_api_level: 28
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 60
+    defaults:
+      run:
+        shell: bash
+    env:
+      SWIFT_VERSION: ${{ matrix.swift_version }}
+      SWIFT_ANDROID_SDK_CHECKSUM: ${{ matrix.android_sdk_checksum }}
+      ANDROID_API_LEVEL: ${{ matrix.android_api_level }}
+      ANDROID_ARCH: x86_64
+    steps:
+      - uses: actions/checkout@v6
+      - name: Free disk space for the Android emulator
+        run: |
+          sudo rm -rf /opt/microsoft /opt/google /opt/az /opt/ghc /usr/share/dotnet \
+            /usr/local/share/boost /opt/hostedtoolcache /usr/local/share/chromium
+          df -h /
+      - name: Install Swift toolchain
+        run: |
+          tag="swift-${SWIFT_VERSION}-RELEASE"
+          url="https://download.swift.org/swift-${SWIFT_VERSION}-release/ubuntu2404/${tag}/${tag}-ubuntu24.04.tar.gz"
+          cd "$RUNNER_TEMP"
+          curl -fsSL --retry 3 -o swift.tar.gz "$url"
+          curl -fsSL --retry 3 -o swift.tar.gz.sig "$url.sig"
+          # The CDN may serve the keys compressed; zcat -f passes plain text through.
+          curl -fsSL --retry 3 --compressed https://www.swift.org/keys/all-keys.asc \
+            | zcat -f | gpg --batch --import
+          gpg --batch --verify swift.tar.gz.sig swift.tar.gz
+          mkdir swift
+          tar -xzf swift.tar.gz -C swift --strip-components=1
+          rm swift.tar.gz swift.tar.gz.sig
+          echo "$RUNNER_TEMP/swift/usr/bin" >> "$GITHUB_PATH"
+      - name: Swift version
+        run: swift --version
+      - name: Install Swift SDK for Android
+        run: |
+          swift sdk install \
+            "https://download.swift.org/swift-${SWIFT_VERSION}-release/android-sdk/swift-${SWIFT_VERSION}-RELEASE/swift-${SWIFT_VERSION}-RELEASE_android.artifactbundle.tar.gz" \
+            --checksum "$SWIFT_ANDROID_SDK_CHECKSUM"
+      # Links the Android NDK preinstalled on the runner ($ANDROID_NDK_HOME)
+      # into the Swift SDK before building.
+      - name: Build tests for Android
+        run: bash utils/android_test.sh build
+      - name: Enable KVM for the Android emulator
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' \
+            | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+      - name: Run tests on Android emulator
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: ${{ matrix.android_api_level }}
+          arch: ${{ env.ANDROID_ARCH }}
+          script: bash utils/android_test.sh run

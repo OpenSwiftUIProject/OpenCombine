@@ -17,6 +17,9 @@ test-debug-sanitize-thread:
 test-release:
 	$(SWIFT_EXE) test -c release $(SWIFT_BUILD_FLAGS) $(SWIFT_TEST_FLAGS)
 
+test-android:
+	bash utils/android_test.sh
+
 swift-version:
 	$(SWIFT_EXE) -version
 
@@ -41,6 +44,7 @@ clean:
 .PHONY: debug release \
 	    test-debug \
 	    test-release \
+	    test-android \
 	    swift-version \
 	    test-compatibility-debug \
 		library-evolution \

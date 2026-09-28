@@ -11,6 +11,8 @@
 import Darwin
 #elseif canImport(Glibc)
 import Glibc
+#elseif canImport(Android)
+import Android
 #elseif os(Windows)
 import WinSDK
 #else
@@ -28,7 +30,7 @@ func executeOnBackgroundThread<ResultType>(
 
 #if canImport(Darwin)
         typealias ThreadHandle = UnsafeMutablePointer<pthread_t?>
-#elseif canImport(Glibc)
+#elseif canImport(Glibc) || canImport(Android)
         typealias ThreadHandle = UnsafeMutablePointer<pthread_t>
 #elseif os(Windows)
         typealias ThreadHandle = HANDLE?
@@ -84,12 +86,11 @@ func executeOnBackgroundThread<ResultType>(
                 _backgroundThread,
                 nil,
                 { context in
-#if canImport(Darwin)
-                    let context = context
-#else
-                    let context = context!
-#endif
-                    return context
+                    // Optional with Glibc and Android NDK r28+, but non-optional on
+                    // Darwin and with Android NDK r27.
+                    let context: UnsafeMutableRawPointer? = context
+
+                    return context!
                         .assumingMemoryBound(to: ThreadRoutine.self)
                         .pointee()
                 },
